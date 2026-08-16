@@ -1,0 +1,189 @@
+{
+  "modulo": "08",
+  "titulo": "Arquitetura de Sistemas com IA",
+  "aulas": [
+    {
+      "titulo": "Arquitetura tradicional vs AI-driven",
+      "tempo": 50,
+      "resumo": "Seis diferenças que mudam tudo — e por que chamada de LLM não é chamada de função.",
+      "conteudo": "## As seis diferenças\n\n| | Sistema tradicional | Sistema com IA |\n|---|---|---|\n| Saída | Determinística | Probabilística |\n| Teste | `assert` de igualdade | Avaliação com faixa aceitável |\n| Falha | Exceção clara | **Resposta plausível e errada** |\n| Custo | Por infraestrutura | Por chamada, variável |\n| Latência | Milissegundos | Segundos |\n| Versionamento | Código | Código + prompt + modelo + dado |\n\n## A que mais dói: falha silenciosa\n\nSistema tradicional que quebra, quebra. Sistema de IA devolve algo bem escrito, coerente e errado — e o usuário acredita.\n\nConsequência de arquitetura: você precisa de **detecção de qualidade**, não só de disponibilidade. Um sistema com 100% de uptime e 30% de respostas erradas está fora do ar para o usuário.\n\n## Chamada de LLM não é chamada de função\n\nToda chamada precisa de:\n- timeout\n- retry diferenciado por erro\n- fallback\n- teto de custo\n- registro\n- avaliação contínua\n\nSe o seu código chama a API do modelo direto, sem essa camada, você tem uma bomba-relógio. Foi para isso que existiu o `llm-core` do módulo 02.\n\n## O versionamento em quatro dimensões\n\nO comportamento do sistema depende de: código + prompt + modelo + dado indexado. Mudar qualquer um muda o produto.\n\n**Implicação prática:** o registro de cada resposta precisa gravar as quatro versões. Sem isso, você não reproduz um caso de duas semanas atrás.\n\n## Latência e UX\n\nSegundos de espera exigem desenho: streaming, estado de progresso, e — quando possível — processamento assíncrono com notificação. Arquitetura de IA é, em boa parte, arquitetura de espera.",
+      "exercicio": "Pegue uma feature de IA sua e liste, para cada uma das 6 diferenças, o que você tem hoje e o que falta. O resultado é o seu backlog de arquitetura.",
+      "videos": [
+        { "t": "Busca: AI system architecture production patterns", "u": "https://www.youtube.com/results?search_query=ai+system+architecture+production+patterns", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Designing Data-Intensive Applications (fundamentos)", "u": "https://dataintensive.net/" }
+      ]
+    },
+    {
+      "titulo": "Os cinco padrões: Prompting, Responsible AI, UX, AI-Ops, Optimization",
+      "tempo": 45,
+      "resumo": "As cinco dimensões que todo sistema inteligente precisa endereçar.",
+      "conteudo": "## Os cinco\n\n**1. Prompting** — como a instrução é construída, versionada, testada e evoluída. Inclui registro de prompts, teste de regressão e estratégia de contexto.\n\n**2. Responsible AI** — viés, transparência, consentimento, limites de uso, explicabilidade. Não é departamento jurídico: é decisão de arquitetura (o que registrar, o que expor, o que impedir).\n\n**3. UX** — como o usuário percebe incerteza, espera e erro. Streaming, indicador de confiança, caminho de correção, saída para humano.\n\n**4. AI-Ops** — deploy, monitoramento, avaliação e rollback do **comportamento**. Feature flag por tenant, canary de prompt, conjunto de avaliação rodando continuamente.\n\n**5. Optimization** — custo, latência, cache, escolha de modelo, model tiering.\n\n## Como usar isso na prática\n\nÉ um checklist de revisão de arquitetura. Para qualquer sistema de IA, pergunte:\n\n| Dimensão | Pergunta |\n|---|---|\n| Prompting | Como eu mudo um prompt sem risco? Como sei que piorei? |\n| Responsible AI | O usuário sabe que é IA? Consigo explicar uma resposta? |\n| UX | O que o usuário vê enquanto espera? E quando erra? |\n| AI-Ops | Como faço rollback de comportamento? Em quanto tempo? |\n| Optimization | Quanto custa por usuário? Onde está o desperdício? |\n\n## O padrão mais negligenciado\n\n**AI-Ops.** A maioria dos projetos trata prompt como configuração solta: alguém edita, sobe, e ninguém sabe o que mudou. Quando a qualidade cai, não há como voltar com precisão.\n\nTratar prompt com o mesmo rigor de código — versão, revisão, teste, flag, rollback — é o que separa protótipo de produto.",
+      "exercicio": "Faça a revisão das 5 dimensões num sistema de IA seu que está no ar. Para cada pergunta da tabela, responda honestamente. Onde a resposta for \"não sei\", você achou uma lacuna de arquitetura.",
+      "videos": [
+        { "t": "Busca: responsible AI design patterns production", "u": "https://www.youtube.com/results?search_query=responsible+ai+design+patterns+production", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Microsoft — padrões de design de IA", "u": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/" }
+      ]
+    },
+    {
+      "titulo": "Decision framework: IA, regra determinística ou híbrido",
+      "tempo": 60,
+      "resumo": "A pergunta de arquitetura mais frequente em entrevista sênior. E a resposta certa costuma ser 'os dois'.",
+      "conteudo": "## Use REGRA quando\n\n- a entrada é estruturada\n- a regra é escrevível (mesmo que longa)\n- o erro é caro\n- a resposta precisa ser idêntica sempre\n- a latência precisa ser de milissegundos\n- precisa auditar a decisão com exatidão\n\n## Use IA quando\n\n- a entrada é linguagem natural ou não estruturada\n- as variações são infinitas\n- \"aproximadamente certo\" resolve\n- escrever a regra custaria mais que tolerar o erro\n- o padrão muda com frequência\n\n## Use HÍBRIDO — quase sempre\n\n```\nIA extrai e interpreta  →  regra valida e decide\n```\n\nExemplos:\n\n| Caso | IA faz | Regra faz |\n|---|---|---|\n| Leitura de boleto | Extrai valor, data, beneficiário | Confere soma, valida CPF, checa se a data é plausível |\n| Triagem de mensagem | Classifica intenção | Decide o roteamento por tabela |\n| Priorização de backlog | Estima fatores | Calcula o score |\n| Detecção de anomalia | Explica e prioriza | **Detecta** (estatística) |\n\nRepare no último: inverte quem faz o quê. O híbrido não tem uma forma única.\n\n## Os quatro eixos de justificativa\n\nQualquer escolha se defende em: **latência, precisão, custo, performance**. Saber articular o trade-off nesses quatro eixos é o que se espera de arquiteto.\n\n```\nClassificação de mensagem de cobrança:\n\n  Regra (regex + palavras-chave)\n    latência 1ms · precisão ~70% · custo zero · manutenção alta\n\n  LLM pequeno\n    latência 400ms · precisão ~92% · R$ 0,0002/msg · manutenção baixa\n\n  Híbrido (regra pega os 60% óbvios, LLM o resto)\n    latência média 160ms · precisão ~93% · R$ 0,00008/msg\n\n→ Híbrido. Corta 60% do custo e da latência sem perder precisão.\n```\n\n## O erro que impressiona quando você não comete\n\nUsar IA onde um `if` resolvia. Saber dizer \"aqui IA foi a escolha errada\" é sinal de senioridade mais forte que qualquer implementação sofisticada.",
+      "exercicio": "Pegue 5 features de sistemas seus e decida IA / regra / híbrido, com justificativa nos 4 eixos. PELO MENOS UMA conclusão deve ser \"aqui IA foi a escolha errada\".",
+      "videos": [
+        { "t": "Busca: when not to use AI machine learning decision", "u": "https://www.youtube.com/results?search_query=when+not+to+use+ai+machine+learning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Google — Rules of Machine Learning", "u": "https://developers.google.com/machine-learning/guides/rules-of-ml" }
+      ]
+    },
+    {
+      "titulo": "Single-agent: Reactive, Memory-Enhanced, Tool-Using, ReAct, Self-Reflection",
+      "tempo": 50,
+      "resumo": "Cinco padrões em ordem crescente de custo. Comece sempre no menor que resolve.",
+      "conteudo": "## Os padrões\n\n| Padrão | O que faz | Custo | Quando |\n|---|---|---|---|\n| **Reactive** | Entrada → saída, sem estado | 1 chamada | Classificar, extrair, traduzir |\n| **Memory-Enhanced** | Lembra interações anteriores | 1 chamada + busca | Assistente contínuo |\n| **Tool-Using** | Chama ferramentas externas | 2 a 5 chamadas | Consultar sistema |\n| **ReAct** | Alterna raciocínio e ação | 3 a 15 chamadas | Diagnóstico, exploração |\n| **Self-Reflection** | Critica a própria saída | +1 a 2 chamadas | Código, texto de cliente |\n\n## A regra\n\n> **Comece no padrão mais simples que resolve.** Suba um nível só quando medir que o anterior não basta.\n\nA maioria dos sistemas que se dizem \"agentes\" resolveria com Reactive ou Tool-Using. A diferença de custo entre Reactive e ReAct pode ser de 10×.\n\n## Reactive é subestimado\n\nClassificar, extrair campo, resumir, traduzir, reescrever: uma chamada, barata, rápida, testável. É o que sustenta a maior parte do valor real de IA em produto.\n\nNão é menos sofisticado. É adequado.\n\n## Memory-Enhanced\n\nO ponto de atenção não é técnico, é de produto: memória cria expectativa. Se o assistente lembra de algumas coisas e esquece outras sem critério visível, a experiência fica pior do que se não lembrasse de nada.\n\nDefina explicitamente o que ele lembra e deixe o usuário ver e apagar.\n\n## Tool-Using\n\nO padrão de melhor retorno em ambiente corporativo: o modelo consulta o sistema real em vez de inventar. Combinado com MCP (módulo 03), vira infraestrutura reutilizável.\n\n## Contexto ideal do single-agent\n\nTarefa curta, orçamento limitado, latência baixa. Se a sua tarefa cabe aqui, **não use multi-agente** — é a próxima aula, e ela começa dizendo isso.",
+      "exercicio": "Classifique 6 funcionalidades de IA (suas ou conhecidas) nos 5 padrões. Para cada uma, pergunte: dá para resolver com o padrão anterior? Se der, você achou uma economia.",
+      "videos": [
+        { "t": "Busca: single agent patterns llm architecture", "u": "https://www.youtube.com/results?search_query=llm+agent+patterns+architecture", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — Building Effective Agents", "u": "https://www.anthropic.com/engineering/building-effective-agents" }
+      ]
+    },
+    {
+      "titulo": "Multi-agent: Sequential, Parallel, Supervisor, Hierarchical, Group Chat, Handoff",
+      "tempo": 50,
+      "resumo": "Os padrões de orquestração e o custo real de cada um.",
+      "conteudo": "## Antes de tudo\n\n> Se um agente com boas ferramentas resolve, **use um**.\n\nMulti-agente multiplica custo, latência e modos de falha. A justificativa precisa ser específica.\n\n## Os padrões\n\n| Padrão | Custo relativo | Bom para |\n|---|---|---|\n| **Sequential** | 1× | Etapas distintas e ordenadas |\n| **Parallel** | 1× (mais rápido) | Análises independentes que depois se juntam |\n| **Supervisor** | 1,5× | Roteamento por especialidade |\n| **Handoff** | 1,2× | Atendimento com especialistas |\n| **Hierarchical** | 2–3× | Domínio muito grande |\n| **Group Chat** | 3–5× | Debate, exploração criativa |\n| **Consensus** | N× | Alta exigência de acerto |\n\nO custo do Group Chat explode porque todos os agentes veem tudo: o contexto cresce com o quadrado das mensagens.\n\n## Justificativas válidas para multi-agente\n\n✅ Especialidades com prompts e ferramentas genuinamente incompatíveis\n✅ Etapas que rodam em paralelo e economizam tempo de parede\n✅ Necessidade de opiniões independentes (consenso reduz erro)\n✅ Isolamento de contexto — cada agente com sua janela, evitando estouro\n\n## Justificativas inválidas\n\n❌ \"Parece mais sofisticado\"\n❌ As especialidades são prompts levemente diferentes\n❌ A tarefa é linear\n❌ O framework facilita, então vamos usar\n\n## Escolha rápida\n\n```\nA tarefa tem etapas independentes?  → Parallel\nTem etapas dependentes e ordenadas? → Sequential\nPrecisa escolher um especialista?   → Supervisor ou Handoff\nPrecisa de opiniões divergentes?    → Consensus\nNenhuma das anteriores?             → Um agente só\n```\n\nO último ramo é o mais frequente na prática, e o menos escolhido no papel.",
+      "exercicio": "Desenhe um sistema multi-agente para um problema seu e depois desenhe o mesmo problema com um agente só. Estime custo e latência dos dois. Justifique a escolha final nos 4 eixos do decision framework.",
+      "videos": [
+        { "t": "Busca: multi agent orchestration patterns comparison", "u": "https://www.youtube.com/results?search_query=multi+agent+orchestration+patterns+comparison", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — multi-agent", "u": "https://langchain-ai.github.io/langgraphjs/concepts/multi_agent/" }
+      ]
+    },
+    {
+      "titulo": "Desafios distribuídos e propagação de erro entre agentes",
+      "tempo": 50,
+      "resumo": "Sistema distribuído clássico, com uma camada extra de não determinismo.",
+      "conteudo": "## Os problemas conhecidos\n\nFalha de nó, coordenação, controle de estado, sincronização, ordem de mensagens, exatamente-uma-vez. Nada disso é novo — a literatura de sistemas distribuídos resolve há décadas.\n\n## O problema novo\n\n> **O erro de um agente vira entrada do outro e se propaga como se fosse verdade.**\n\nO agente A conclui, com confiança, que a causa do incidente é X. Para o agente B, isso é fato estabelecido. B constrói em cima. C decide com base em B. Ninguém questiona.\n\nEm sistema tradicional, dado errado costuma quebrar algo. Aqui ele é absorvido com naturalidade.\n\n## Mitigações\n\n**1. Validação determinística entre etapas**\n```ts\nconst r = await agenteAnalista.executar(entrada)\nconst erros = validarEsquema(r)              // código, não LLM\nif (erros.length) return replanejar(erros)\n```\n\n**2. Exigir evidência junto da conclusão**\nO agente A não entrega \"a causa é X\": entrega \"a causa é X, evidência: trecho Y do log Z\". O agente B pode conferir.\n\n**3. Nível de confiança propagado**\nSe A tinha confiança baixa, B precisa saber. Confiança que se perde no caminho vira certeza falsa.\n\n**4. Agente crítico**\nUm agente cuja única função é **discordar** e procurar o furo. Custa uma chamada e pega muita coisa.\n\n**5. Limite de profundidade**\nQuanto mais longa a cadeia, mais o erro se acumula. Cadeias com mais de 4 saltos merecem desconfiança de projeto.\n\n## Estado compartilhado\n\nDuas abordagens:\n\n| Abordagem | Prós | Contras |\n|---|---|---|\n| **Quadro-negro** (estado comum) | Simples, todos veem | Contexto cresce, acoplamento |\n| **Mensagem ponto a ponto** | Isolado, escalável | Precisa de esquema e roteamento |\n\nPara a maioria dos casos, mensagem com esquema definido envelhece melhor.\n\n## O que NÃO passar entre agentes\n\nO histórico bruto da conversa. Passe **resultado estruturado + evidência**. Passar histórico é o que faz o custo explodir sem melhorar a qualidade.",
+      "exercicio": "Monte uma cadeia de 3 agentes e injete um erro no primeiro. Meça até onde ele se propaga. Depois adicione validação entre etapas e um agente crítico, e meça de novo.",
+      "videos": [
+        { "t": "Busca: error propagation multi agent llm systems", "u": "https://www.youtube.com/results?search_query=error+propagation+multi+agent+llm", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Designing Data-Intensive Applications — cap. sobre confiabilidade", "u": "https://dataintensive.net/" }
+      ]
+    },
+    {
+      "titulo": "RAG avançado: Basic, Hybrid, Multi-Index, Agentic",
+      "tempo": 60,
+      "resumo": "Quatro níveis, em ordem de custo e capacidade. Suba só quando medir necessidade.",
+      "conteudo": "## Os quatro\n\n**Basic** — embeddar a pergunta, buscar top-k, gerar. Resolve mais casos do que se imagina.\n\n**Hybrid Search** — vetorial + full-text, com fusão dos rankings (RRF é o método padrão).\n> **Obrigatório** quando existe identificador: placa, SKU, CPF, código de erro, nome próprio raro.\n\n**Multi-Index** — fontes diferentes com estratégias diferentes. Runbook indexado por seção; ticket indexado por conversa; código indexado por função. Buscar em todos e fundir.\n\n**Agentic RAG** — o agente decide **o que** buscar, avalia se o resultado responde, reformula e busca de novo.\n```\npergunta → o agente busca → \"isso não responde\" → reformula → busca\n         → \"agora sim\" → responde\n```\nMais caro (várias chamadas), muito melhor em pergunta complexa ou ambígua.\n\n## Ordem de investimento\n\nSe o seu RAG está ruim, ataque nesta ordem:\n\n1. **Chunking** — a causa da maioria dos problemas\n2. **Busca híbrida**\n3. **Query rewriting**\n4. **Re-ranking**\n5. Só então Agentic\n\nQuase todo mundo pula para o passo 5 e continua com o problema do passo 1.\n\n## Técnicas complementares\n\n| Técnica | O que resolve |\n|---|---|\n| **Query rewriting** | Pergunta coloquial vira consulta boa |\n| **Re-ranking** | Recupera 30, reordena, envia 5 |\n| **HyDE** | Vocabulário da pergunta ≠ do documento |\n| **Compressão de contexto** | Corta do trecho o que não responde |\n| **Metadata filtering** | Ambiente, data, tenant — antes de buscar |\n\n## Como medir\n\nSem medição você está adivinhando. Monte 20 perguntas com o trecho correto conhecido e meça **recall@k**: em quantas o trecho certo apareceu entre os k recuperados?\n\nSe o recall está bom e a resposta está ruim, o problema é geração. Se o recall está ruim, é recuperação. Sem separar os dois, você otimiza o lado errado.",
+      "exercicio": "Monte o conjunto de 20 perguntas com trecho esperado. Meça recall@5 no seu RAG atual. Aplique busca híbrida e meça de novo. Registre o ganho por hora investida.",
+      "videos": [
+        { "t": "Busca: hybrid search RRF reranking rag", "u": "https://www.youtube.com/results?search_query=hybrid+search+reciprocal+rank+fusion+reranking+rag", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Self-RAG (paper)", "u": "https://arxiv.org/abs/2310.11511" },
+        { "t": "pgvector — busca híbrida", "u": "https://github.com/pgvector/pgvector#hybrid-search" }
+      ]
+    },
+    {
+      "titulo": "Model Router e Intent-Based Routing",
+      "tempo": 60,
+      "resumo": "A alavanca de custo mais forte que existe — de 40% a 70% de redução.",
+      "conteudo": "## Model Router\n\nA ideia: nem toda tarefa precisa do modelo caro.\n\n```\nclassificar complexidade (modelo pequeno, ~R$0,0001)\n        ↓\nsimples   → modelo pequeno\nmédia     → modelo intermediário\ncomplexa  → modelo grande\n```\n\nA classificação custa muito menos que a diferença de preço entre os modelos, então o roteamento se paga já na primeira chamada desviada.\n\n## Como classificar\n\nTrês abordagens, em ordem de simplicidade:\n\n**1. Heurística** — tamanho da entrada, presença de palavras-chave, tipo de tarefa. Grátis e resolve boa parte.\n\n**2. Classificador dedicado** — modelo pequeno treinado ou instruído para rotular a complexidade.\n\n**3. Escalonamento** — tente o pequeno; se a resposta falhar na validação ou a confiança for baixa, refaça no grande.\n\nO terceiro é elegante: você só paga o caro quando precisa. O custo é a latência dobrada nos casos que escalam.\n\n## Intent-Based Routing\n\nAntes de escolher o modelo, escolha o **fluxo**:\n\n```\nintenção detectada\n  ├── \"qual meu saldo?\"        → consulta em banco, SEM LLM\n  ├── \"como faço X?\"           → RAG\n  ├── \"faça X para mim\"        → agente com ferramentas\n  └── conversa aberta           → LLM direto\n```\n\nO primeiro ramo é o mais valioso: **a melhor otimização é não chamar o modelo**. Em muitos produtos, 30% a 50% dos pedidos têm resposta determinística.\n\n## Medir para provar\n\n| Métrica | Antes | Depois |\n|---|---|---|\n| Custo por 1.000 pedidos | | |\n| Latência p50 / p95 | | |\n| Qualidade no conjunto de avaliação | | |\n| % roteado para cada modelo | | |\n\nA terceira linha é obrigatória: economia com queda de qualidade não é economia, é degradação.\n\n## Meta do Projeto 8\n\n**40% de redução comprovada**, com queda de qualidade dentro da margem que você declarar. Esse número, medido e defensável, é o que você cita em entrevista.",
+      "exercicio": "Implemente intent routing primeiro e meça quantos pedidos deixaram de chamar LLM. Depois adicione o model router. Registre as 4 métricas antes e depois de cada etapa.",
+      "videos": [
+        { "t": "Busca: llm model routing cost optimization", "u": "https://www.youtube.com/results?search_query=llm+model+routing+cost+optimization", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenRouter — comparativo de preços por modelo", "u": "https://openrouter.ai/models" }
+      ]
+    },
+    {
+      "titulo": "Semantic Cache, Prompt Cache e o risco de vazamento",
+      "tempo": 60,
+      "resumo": "Cache que economiza muito — e a armadilha que vira incidente de dados.",
+      "conteudo": "## Os três caches\n\n**Prompt Cache** (do provedor) — reaproveita o prefixo estável. Coloque instruções e documentos fixos **no começo**, o que varia no fim. Economia de até 90% na parte cacheada.\n\n**Response Cache** (exato) — hash de (prompt + parâmetros + modelo). Só acerta em repetição literal.\n\n**Semantic Cache** — pergunta *semanticamente equivalente* devolve a resposta guardada. Muito mais acertos.\n\n## A armadilha do cache semântico\n\n```\nUsuário A: \"qual o meu saldo?\"\nUsuário B: \"qual o meu saldo?\"\n```\n\nSemanticamente **idênticas**. Respostas completamente diferentes.\n\nUm cache semântico ingênuo entrega o saldo de A para B. Isso não é bug de performance: é **incidente de vazamento de dados**, com implicação de LGPD.\n\n## A chave correta\n\n```ts\nconst chave = {\n  embedding: await embeddar(pergunta),\n  escopo: {\n    tenant: ctx.tenantId,\n    usuario: ctx.podeVerDadoDeOutros ? null : ctx.userId,\n    permissoes: hash(ctx.permissoes.sort()),\n  },\n  versao: { prompt: PROMPT_V, modelo: MODELO, indice: INDICE_V },\n}\n```\n\nTrês grupos: **similaridade**, **escopo de acesso** e **versão do comportamento**. Faltando qualquer um, o cache está errado.\n\n## O que NUNCA cachear\n\n- Resposta que contém dado específico de uma pessoa\n- Resposta que depende do momento (\"quantos pendentes agora?\")\n- Resposta de ação (o cache devolveria \"feito\" sem fazer)\n\n## Limiar de similaridade\n\nAlto demais (0.99) e o cache quase não acerta. Baixo demais (0.85) e ele responde uma pergunta com a resposta de outra.\n\nComece em 0.95, meça a taxa de acerto **e** a taxa de resposta inadequada em amostra revisada por humano. Ajuste com dado, não com intuição.\n\n## Invalidação\n\nSempre que mudar prompt, modelo ou o índice do RAG, o cache antigo passa a devolver comportamento velho. Por isso a versão entra na chave: a invalidação acontece sozinha.",
+      "exercicio": "Implemente cache semântico com escopo na chave. Escreva um teste que prova que o usuário B NÃO recebe a resposta do usuário A para a mesma pergunta. Esse teste é critério de aceite do Projeto 8.",
+      "videos": [
+        { "t": "Busca: semantic cache llm implementation", "u": "https://www.youtube.com/results?search_query=semantic+cache+llm+implementation", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — prompt caching", "u": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" }
+      ]
+    },
+    {
+      "titulo": "Human-in-the-loop: approval gates e confidence thresholds",
+      "tempo": 45,
+      "resumo": "Colocar o humano onde a decisão é difícil, e só onde ela é difícil.",
+      "conteudo": "## Approval Gates\n\nAção sensível espera aprovação. Já detalhado no módulo 04; aqui o foco é o **desenho arquitetural**:\n\n- A aprovação é **assíncrona** — o sistema não pode ficar bloqueado esperando\n- O estado precisa ser **persistido** (checkpointing) para retomar depois\n- Precisa ter **expiração**: pedido não aprovado em X horas é cancelado, não fica pendurado\n- Precisa de **fila com prioridade** — senão o crítico fica atrás de 40 rotineiros\n\n## Confidence Thresholds\n\nAbaixo de um nível de confiança, escala para humano.\n\n```ts\nif (r.confianca < 0.7) return paraHumano(r, 'confiança baixa')\nif (r.confianca < 0.9 && acao.critica) return paraHumano(r, 'ação crítica')\nreturn executar(r)\n```\n\n**O problema:** o modelo é mal calibrado. Ele diz 0.9 quando acerta 60% das vezes.\n\n**A solução:** calibre com dado real. Pegue 200 respostas com confiança declarada, verifique quantas estavam certas em cada faixa, e monte a curva. Aí sim o limiar significa alguma coisa.\n\nSinais mais confiáveis que a autoavaliação: consistência entre múltiplas amostragens, se o RAG encontrou fonte, e se a saída passou na validação de schema.\n\n## Audit Trails\n\nToda decisão automatizada precisa ser reconstituível: entrada, contexto recuperado, versões (prompt, modelo, índice), saída, confiança, se houve aprovação e de quem.\n\nÉ o que responde ao cliente que pergunta \"por que meu pedido foi negado?\" — e é exigência da LGPD para decisão automatizada (módulo 10).\n\n## O dimensionamento correto\n\nHumano demais: o sistema não escala e as pessoas viram carimbo.\nHumano de menos: erro caro passa direto.\n\nO calibre é o **custo do erro**. Ação barata e reversível: automatize. Ação cara ou irreversível: aprovação, sempre.",
+      "exercicio": "Calibre a confiança do seu sistema: colete 100 respostas com confiança declarada, verifique manualmente quantas estavam certas por faixa e monte a curva. Defina o limiar com base nela.",
+      "videos": [
+        { "t": "Busca: llm confidence calibration uncertainty", "u": "https://www.youtube.com/results?search_query=llm+confidence+calibration+uncertainty", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — human-in-the-loop", "u": "https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/" }
+      ]
+    },
+    {
+      "titulo": "Stack enterprise: gateway, orquestração, serviços, observabilidade",
+      "tempo": 60,
+      "resumo": "A arquitetura completa de IA em produção — e como cortar o que não precisa.",
+      "conteudo": "## O stack\n\n```\nCliente\n  ↓\nAPI Gateway ......... autenticação · rate limit · quota por tenant\n  ↓\nOrquestração ........ fila · workers · roteamento de modelo · retry\n  ↓\nServiços compartilhados\n  ├── Prompt registry (versionado)\n  ├── Vector store\n  ├── Cache (prompt + semântico)\n  ├── Tool / MCP layer\n  └── Guardrails (entrada e saída)\n  ↓\nProvedores .......... múltiplos, com fallback\n  ↓\nObservabilidade ..... trace de prompt · custo · latência · avaliação contínua\n```\n\n## Por camada\n\n**Gateway** — a primeira linha. Quota por tenant é o que impede um cliente de consumir a conta inteira. Rate limit por usuário impede abuso.\n\n**Orquestração** — fila e workers. Chamada de LLM não mora em rota síncrona (módulo 02).\n\n**Serviços compartilhados** — é o que evita cada equipe reimplementar cache, prompt e guardrail do seu jeito. Também é onde a governança se aplica de uma vez só.\n\n**Provedores** — múltiplos, com fallback. Depender de um só é risco de negócio, não só técnico.\n\n**Observabilidade** — módulo 02, mais avaliação contínua.\n\n## Como cortar\n\n> **Arquitetura boa é a menor que resolve.**\n\nPara um produto pequeno, isso pode ser: rota com auth e rate limit → fila simples → `llm-core` (que já tem retry, cache e fallback) → Langfuse. Cinco caixas viram três.\n\nO stack completo é referência para saber **o que você está deixando de fora conscientemente** — não uma lista de compras.\n\n## Os três princípios\n\n**Loose Coupling** — trocar de provedor não pode exigir refatorar o produto.\n\n**Clear Interfaces** — o resto do sistema não sabe qual modelo está sendo usado. Se sabe, você tem acoplamento escondido.\n\n**Policy-Driven Control** — quem pode chamar o quê, com que limite, é **configuração**, não código. Mudar política não deveria exigir deploy.",
+      "exercicio": "Desenhe o stack do SEU sistema, marcando o que existe, o que falta e o que você está cortando conscientemente. Justifique cada corte. Esse documento é entregável do Projeto 8.",
+      "videos": [
+        { "t": "Busca: enterprise llm platform architecture gateway", "u": "https://www.youtube.com/results?search_query=enterprise+llm+platform+architecture+gateway", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Azure — arquitetura de referência para IA", "u": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/" }
+      ]
+    },
+    {
+      "titulo": "Loose coupling, clear interfaces e policy-driven control",
+      "tempo": 45,
+      "resumo": "Os três princípios que decidem se o sistema envelhece bem.",
+      "conteudo": "## Loose Coupling\n\nO teste: **quanto código muda se você trocar de provedor?**\n\n```ts\n// Acoplado — o produto conhece o provedor\nimport OpenAI from 'openai'\nconst r = await openai.chat.completions.create({ model: 'gpt-...', messages })\n\n// Desacoplado — o produto conhece a capacidade\nconst r = await llm.complete({ tarefa: 'resumir_ticket', entrada })\n```\n\nNa segunda forma, qual modelo atende `resumir_ticket` é **configuração**. Trocar é mudar uma linha de config, não caçar chamadas pelo código.\n\n## Clear Interfaces\n\nO resto do sistema não deve saber qual modelo está sendo usado, nem quantas chamadas foram feitas, nem se houve cache.\n\nQuando um componente de produto precisa saber isso, ele está acoplado à implementação da IA — e vai quebrar quando você otimizar.\n\n**Exceção legítima:** o produto pode precisar saber o **custo** e a **confiança**. Exponha isso na interface, de forma neutra.\n\n## Policy-Driven Control\n\nPolítica é dado, não código:\n\n```yaml\ntenants:\n  cliente-a:\n    modelos_permitidos: [pequeno, medio]\n    teto_mensal_brl: 500\n    features: [busca_semantica, resumo]\n    dados_saem_do_pais: false\n  cliente-b:\n    modelos_permitidos: [pequeno, medio, grande]\n    teto_mensal_brl: 5000\n    features: [busca_semantica, resumo, agente]\n```\n\nMudar o teto de um cliente não deveria exigir deploy. Se exige, a política está no lugar errado.\n\n## O teste dos três\n\n1. Trocar de provedor: quantos arquivos mudam? *(Loose coupling)*\n2. O componente de UI sabe qual modelo respondeu? *(Clear interfaces)*\n3. Mudar limite de um cliente exige deploy? *(Policy-driven)*\n\nRespostas ideais: poucos, não, não.\n\n## Por que isso importa mais em IA\n\nO ritmo de mudança de modelo é muito maior que o de banco de dados ou de framework. Um sistema acoplado ao provedor de 2026 estará obsoleto em meses. Um desacoplado troca de modelo em uma linha e aproveita cada melhoria.",
+      "exercicio": "Faça o teste dos três no seu sistema e responda com números reais. Se algum resultado for ruim, escreva o plano de correção — é dívida de arquitetura, e vai cobrar juros.",
+      "videos": [
+        { "t": "Busca: loose coupling software architecture principles", "u": "https://www.youtube.com/results?search_query=loose+coupling+software+architecture+principles", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Clean Architecture — princípios de fronteira", "u": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" }
+      ]
+    },
+    {
+      "titulo": "Avaliação contínua e versionamento de comportamento",
+      "tempo": 60,
+      "resumo": "Como mudar prompt ou modelo sem descobrir a regressão pelo suporte.",
+      "conteudo": "## O problema\n\nVocê troca de modelo para economizar. Duas semanas depois, o suporte reclama que \"a IA piorou\". Você não tem como provar nem quando começou.\n\n## O conjunto de avaliação\n\nEntre 20 e 100 casos reais com resultado esperado:\n\n```json\n{\n  \"id\": \"eval-014\",\n  \"entrada\": \"o boleto de agosto do contrato 4471 já venceu?\",\n  \"contexto_esperado\": [\"doc:contratos/4471\", \"doc:regras-vencimento\"],\n  \"criterios\": [\n    { \"tipo\": \"contem\", \"valor\": \"15/08\" },\n    { \"tipo\": \"cita_fonte\", \"valor\": true },\n    { \"tipo\": \"nao_contem\", \"valor\": \"não tenho acesso\" }\n  ],\n  \"categoria\": \"consulta_simples\"\n}\n```\n\nInclua sempre: casos fáceis, casos difíceis, e **casos sem resposta na base** (para medir se ele admite não saber).\n\n## Tipos de critério\n\n| Tipo | Como verifica |\n|---|---|\n| Determinístico | contém, não contém, regex, obedece ao schema |\n| Recuperação | o trecho certo foi recuperado (recall@k) |\n| LLM-as-judge | rubrica escrita, com amostra revisada por humano |\n| Custo e latência | dentro do orçamento declarado |\n\nPrefira determinístico sempre que possível: é grátis, rápido e não tem viés.\n\n## Quando rodar\n\n- Toda mudança de prompt\n- Toda mudança de modelo\n- Toda mudança no índice do RAG\n- Semanalmente em produção, por amostragem\n\n## Versionamento de comportamento\n\n```\nv1.4  prompt v7 · modelo pequeno · índice 2026-08-10\n      qualidade 0.87 · custo R$ 0,004 · p95 2,1s\nv1.5  prompt v8 · modelo pequeno · índice 2026-08-14\n      qualidade 0.91 · custo R$ 0,004 · p95 2,3s   ← promovida\n```\n\nCom flag por tenant, você promove gradualmente: 5% → 25% → 100%, observando as métricas. E faz rollback sem deploy quando precisa.\n\n## O que isso te dá em entrevista\n\nA pergunta \"como você garante que trocar de modelo não quebre o produto?\" tem uma resposta concreta: conjunto de avaliação, versionamento das 4 dimensões, promoção gradual por flag e rollback sem deploy.",
+      "exercicio": "Monte um conjunto de avaliação com 25 casos reais, incluindo 5 sem resposta na base. Rode contra dois modelos diferentes e compare qualidade, custo e latência. Registre o resultado versionado.",
+      "videos": [
+        { "t": "Busca: llm evaluation regression testing production", "u": "https://www.youtube.com/results?search_query=llm+evaluation+regression+testing+production", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — avaliação e testes", "u": "https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests" }
+      ]
+    },
+    {
+      "titulo": "Model tiering e implantação híbrida",
+      "tempo": 45,
+      "resumo": "Níveis de modelo por criticidade e onde cada carga roda.",
+      "conteudo": "## Model Tiering\n\nDefina níveis e a política de uso de cada um:\n\n| Tier | Modelo | Usar para | Teto de custo |\n|---|---|---|---|\n| **T0** | Local (Ollama) | Classificação, extração simples, alto volume | infra fixa |\n| **T1** | Pequeno (API) | Tarefa fechada, formatação, resumo curto | R$ x/1k |\n| **T2** | Intermediário | Resposta a usuário, RAG | R$ y/1k |\n| **T3** | Grande | Raciocínio complexo, código, decisão crítica | R$ z/1k |\n\nRegras associadas: T3 exige justificativa por caso de uso; nenhuma tarefa nova entra direto em T3; toda tarefa é revisada trimestralmente para descer de tier.\n\nA última regra é a que gera economia contínua: modelo pequeno de hoje é melhor que o grande de ontem, e tarefas descem de tier naturalmente com o tempo — se alguém olhar.\n\n## Implantação\n\n| Ambiente | Bom para | Cuidado |\n|---|---|---|\n| **Kubernetes** | Carga estável, modelo self-hosted | Custo de operação |\n| **Serverless** | Carga irregular, picos | Cold start, limite de tempo |\n| **Edge** | Latência baixa, modelo pequeno | Recurso limitado |\n| **Híbrido** | O realista | Complexidade de roteamento |\n\n## O híbrido típico\n\n```\nEdge/cliente ..... modelo minúsculo: classificação, sugestão\nServerless ....... rota de API, streaming\nKubernetes/VPS ... workers de fila, modelo local, jobs longos\nAPI externa ...... T2 e T3\n```\n\n## Residência de dado decide arquitetura\n\nSe o contrato exige que o dado não saia do país ou do perímetro, isso **elimina** opções antes de qualquer discussão técnica. Levante essa restrição no começo do projeto, não no fim — é o tipo de descoberta que joga fora semanas de trabalho.\n\n## Fechando o módulo\n\nVocê agora consegue: decidir IA versus regra, escolher entre single e multi-agente, projetar RAG no nível certo, cortar custo com roteamento e cache, montar o stack e defender cada escolha nos quatro eixos. É exatamente o conteúdo de uma entrevista de system design de IA.",
+      "exercicio": "Defina os tiers do seu sistema e classifique cada uso atual de LLM. Identifique pelo menos uma tarefa que pode descer de tier e meça a economia. Registre a política de tiering como documento.",
+      "videos": [
+        { "t": "Busca: llm deployment hybrid edge serverless kubernetes", "u": "https://www.youtube.com/results?search_query=llm+deployment+hybrid+edge+serverless+kubernetes", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Ollama — modelos e requisitos", "u": "https://ollama.com/library" }
+      ]
+    }
+  ]
+}

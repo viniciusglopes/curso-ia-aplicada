@@ -1,0 +1,230 @@
+{
+  "modulo": "07",
+  "titulo": "Ferramentas de IA para Gestão de Projetos",
+  "aulas": [
+    {
+      "titulo": "Requirements copilot: de conversa a critério de aceite",
+      "tempo": 60,
+      "resumo": "O maior ganho isolado do módulo — critério de aceite mal escrito é a origem de metade do retrabalho.",
+      "conteudo": "## O problema real\n\nA demanda chega assim: *\"precisa melhorar a tela de disparo, tá confuso\"*.\n\nEntre isso e código existe um trabalho que quase ninguém faz direito: separar **necessidade** de **solução disfarçada**, e escrever o que significa \"pronto\".\n\n## Onde a IA ajuda\n\n**1. Transcrever e extrair** — reunião vira lista de necessidades declaradas.\n\n**2. Separar necessidade de solução**\n> Pedido: \"quero um botão de exportar para Excel\"\n> Necessidade: \"preciso conferir os números fora do sistema\"\n> Outras soluções: relatório pronto, API, integração direta\n\nEssa separação sozinha evita construir a coisa errada com competência.\n\n**3. Gerar épico e histórias** — com o cuidado de não virar burocracia.\n\n**4. Levantar casos de borda** — aqui a IA é ótima. Ela pergunta o que ninguém perguntou.\n\n## Critério de aceite: o antes e depois\n\n```\n❌ \"O usuário consegue exportar os dados\"\n\n✅ Dado que sou operador com acesso à regional X,\n   quando clico em Exportar com filtro de status \"erro\",\n   então recebo um CSV com as colunas A, B, C, apenas da regional X,\n   com no máximo 10.000 linhas,\n   e vejo aviso se o filtro exceder esse limite.\n\n   Casos de borda:\n   - filtro sem resultado → CSV com cabeçalho e aviso na tela\n   - export em andamento → botão desabilitado com indicador\n   - falha no servidor → mensagem clara e opção de tentar de novo\n```\n\n## O prompt\n\n```\nTransforme a demanda abaixo em épico, histórias e critérios de aceite.\n\nPara CADA história:\n- formato Dado/Quando/Então\n- casos de borda: vazio, erro, permissão, limite, concorrência\n- o que está FORA do escopo\n- perguntas que você faria ao solicitante antes de estimar\n\nSe a demanda contiver uma solução em vez de uma necessidade, aponte isso.\n\nDemanda: {{texto}}\n```\n\nA última seção — perguntas ao solicitante — costuma valer mais que o resto.",
+      "exercicio": "Pegue uma demanda real, escrita do jeito que chegou. Gere épico, histórias e critérios. Conte quantos casos de borda a IA levantou que você não tinha pensado.",
+      "videos": [
+        {
+          "t": "Busca: critérios de aceite histórias de usuário boas práticas",
+          "u": "https://www.youtube.com/results?search_query=crit%C3%A9rios+de+aceite+hist%C3%B3rias+de+usu%C3%A1rio",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Atlassian — user stories",
+          "u": "https://www.atlassian.com/agile/project-management/user-stories"
+        }
+      ]
+    },
+    {
+      "titulo": "Priorização com RICE, WSJF e MoSCoW assistidos",
+      "tempo": 60,
+      "resumo": "IA estima os fatores; você valida. E a pontuação sempre vem com justificativa.",
+      "conteudo": "## Os três frameworks\n\n| Framework | Fórmula | Quando usar |\n|---|---|---|\n| **RICE** | (Reach × Impact × Confidence) / Effort | Produto com muita ideia e pouco dado |\n| **WSJF** | Custo do atraso / duração | Ambiente com dependência e prazo |\n| **MoSCoW** | Must / Should / Could / Won't | Release com data fixa |\n\n## Como a IA entra\n\nEla **estima os fatores e explica**, item por item:\n\n```\nItem: reenvio automático de recusados\n\nReach:      ~40 regionais × ~15 recusas/dia = 600 registros/dia   [alta confiança]\nImpact:     3/3 — hoje a recusa é perda definitiva de contato      [média]\nConfidence: 80% — o volume é medido; o ganho de conversão é estimado\nEffort:     5 pessoas-dia — endpoint existe, falta reset e trava\n\nRICE = (600 × 3 × 0.8) / 5 = 288\n\nO que eu NÃO sei: se a recusa se repete no reenvio. Se repetir,\no Impact cai para 1 e o RICE vai para 96.\n```\n\nA última linha é o que transforma a estimativa em algo utilizável.\n\n## A regra de auditabilidade\n\n> **Toda pontuação gerada por IA precisa vir com a justificativa registrada.**\n\nSem isso, o time olha o ranking, não entende, não confia, e o processo morre em duas semanas. Com a justificativa, a discussão passa a ser sobre o fator específico — que é a discussão útil.\n\n## O que a IA não sabe\n\nPolítica interna, contrato assinado, promessa feita ao cliente, prioridade estratégica que ninguém escreveu. Por isso a pontuação é **insumo**, não decisão.\n\nQuando o time discorda do ranking da IA, isso normalmente revela um fator de negócio que não estava no contexto — e vale documentar, porque ele vai aparecer de novo.",
+      "exercicio": "Priorize seu backlog real com RICE assistido. Gere a tabela com pontuação, justificativa por fator e confiança. Compare com a ordem do seu instinto e analise cada divergência.",
+      "videos": [
+        {
+          "t": "Busca: RICE WSJF MoSCoW priorização produto",
+          "u": "https://www.youtube.com/results?search_query=RICE+WSJF+MoSCoW+prioriza%C3%A7%C3%A3o+produto",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Intercom — RICE scoring",
+          "u": "https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/"
+        }
+      ]
+    },
+    {
+      "titulo": "Auditabilidade da pontuação gerada por IA",
+      "tempo": 40,
+      "resumo": "Como fazer o time confiar num ranking que uma máquina ajudou a montar.",
+      "conteudo": "## O problema de confiança\n\nUm número sem origem é rejeitado — com razão. \"O RICE deu 288\" não convence ninguém a mudar a ordem do sprint.\n\n## O registro mínimo\n\nPara cada item priorizado, guarde:\n\n```json\n{\n  \"item\": \"reenvio automático de recusados\",\n  \"framework\": \"RICE\",\n  \"score\": 288,\n  \"fatores\": {\n    \"reach\":  { \"valor\": 600, \"fonte\": \"query de disparos recusados, últimos 30d\", \"confianca\": \"alta\" },\n    \"impact\": { \"valor\": 3,   \"fonte\": \"estimativa\", \"confianca\": \"media\" },\n    \"effort\": { \"valor\": 5,   \"fonte\": \"estimativa do time em 12/08\", \"confianca\": \"alta\" }\n  },\n  \"incertezas\": [\"não se sabe se a recusa se repete no reenvio\"],\n  \"ajuste_humano\": { \"por\": \"vinicius\", \"campo\": \"impact\", \"de\": 3, \"para\": 2, \"motivo\": \"cliente X já reclamou de duplicidade\" },\n  \"versao_prompt\": 2,\n  \"data\": \"2026-08-16\"\n}\n```\n\n## Os três elementos que geram confiança\n\n**1. Fonte por fator** — número medido vale mais que número estimado, e a tabela precisa mostrar qual é qual.\n\n**2. Incertezas declaradas** — o que mudaria a conclusão se fosse diferente.\n\n**3. Ajuste humano registrado** — quando alguém muda um fator, fica gravado quem, o quê e por quê. Isso é o que faz o processo evoluir: depois de 20 ajustes, você vê o padrão do que a IA sempre subestima.\n\n## Reprodutibilidade\n\nGuarde a versão do prompt e a data. Se o ranking mudar de um mês para o outro, você precisa saber se mudou o dado ou mudou o método.\n\n## O sinal de que está funcionando\n\nAs reuniões de priorização passam a discutir **fatores específicos** (\"o reach está superestimado porque só metade das regionais usa isso\") em vez de discutir posições (\"acho que isso deveria vir antes\"). É uma conversa muito mais produtiva.",
+      "exercicio": "Implemente o registro completo de priorização para 10 itens. Faça uma reunião usando isso e observe: as pessoas discutiram fatores ou posições?",
+      "videos": [
+        {
+          "t": "Busca: decision documentation product prioritization",
+          "u": "https://www.youtube.com/results?search_query=product+prioritization+decision+documentation",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "ADR — Architecture Decision Records",
+          "u": "https://adr.github.io/"
+        }
+      ]
+    },
+    {
+      "titulo": "Cronograma, capacidade e análise what-if",
+      "tempo": 50,
+      "resumo": "Dependências, capacidade real e cenários — antes de prometer data.",
+      "conteudo": "## Identificação de dependências\n\nA IA lê o backlog e propõe o grafo:\n\n```\n[migration 053] → [endpoint de reenvio] → [botão no painel]\n                                        ↘ [automação do cron]\n[trava de já enviado] → [endpoint de reenvio]\n```\n\nO valor está em achar a dependência que ninguém declarou — normalmente entre times diferentes, e normalmente descoberta tarde.\n\n## Capacidade real\n\nO erro clássico do cronograma: assumir que a pessoa produz 8 horas por dia.\n\n```\nCapacidade nominal:  5 pessoas × 8h × 5 dias = 200h\nCapacidade real:\n  − reuniões (15%)             −30h\n  − suporte e interrupção (20%) −40h\n  − férias (1 pessoa, 2 dias)   −16h\n  = 114h  (57% do nominal)\n```\n\nSe o seu planejamento usa o número nominal, ele já nasceu errado. Meça o seu fator real com o histórico de 3 sprints.\n\n## Análise what-if\n\nAs perguntas que valem:\n\n- E se a pessoa X sair do projeto? *(o que revela concentração de conhecimento)*\n- E se o fornecedor atrasar 2 semanas?\n- E se adicionarmos mais uma pessoa? *(costuma atrasar, não adiantar — Brooks)*\n- E se cortarmos o item Y?\n\nA IA simula rapidamente e mostra o impacto na data. O valor não é a precisão da simulação: é **ter a conversa antes**, com números na mesa.\n\n## Cuidado com precisão falsa\n\nCronograma gerado por IA parece muito confiável, com datas exatas e barras bonitas. Ele é tão bom quanto as estimativas que o alimentam — e estimativa é chute educado.\n\nÉ exatamente por isso que a próxima aula existe: **entregue faixa de probabilidade, não data única**.",
+      "exercicio": "Calcule o fator de capacidade real do seu time com o histórico de 3 sprints. Depois rode 3 análises what-if num projeto em andamento e leve os resultados para a próxima reunião de planejamento.",
+      "videos": [
+        {
+          "t": "Busca: capacity planning agile team",
+          "u": "https://www.youtube.com/results?search_query=capacity+planning+agile+team",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "The Mythical Man-Month — resumo dos conceitos",
+          "u": "https://en.wikipedia.org/wiki/The_Mythical_Man-Month"
+        }
+      ]
+    },
+    {
+      "titulo": "Estimativas com histórico e simulação de Monte Carlo",
+      "tempo": 60,
+      "resumo": "Trocar 'termina dia 20' por '70% de chance até dia 20' muda a conversa inteira.",
+      "conteudo": "## A pergunta que vem antes\n\n> **Você tem histórico?**\n\nSem estimado versus realizado registrado, IA nenhuma melhora sua acurácia — ela produz chute educado com aparência de análise. Se você não tem, comece a registrar hoje; em 3 meses vale ouro.\n\n## Monte Carlo em uma explicação\n\nEm vez de somar estimativas, você **simula o projeto milhares de vezes**, sorteando a duração de cada tarefa a partir da distribuição histórica. O resultado é uma curva de probabilidade.\n\n```js\nfunction simular(tarefas, execucoes = 10000) {\n  const totais = []\n  for (let i = 0; i < execucoes; i++) {\n    let total = 0\n    for (const t of tarefas) {\n      // sorteia um valor do histórico de tarefas semelhantes\n      total += t.historico[Math.floor(Math.random() * t.historico.length)]\n    }\n    totais.push(total)\n  }\n  totais.sort((a, b) => a - b)\n  return {\n    p50: totais[Math.floor(execucoes * 0.50)],\n    p70: totais[Math.floor(execucoes * 0.70)],\n    p85: totais[Math.floor(execucoes * 0.85)],\n    p95: totais[Math.floor(execucoes * 0.95)],\n  }\n}\n```\n\n## Por que isso muda a conversa\n\n```\n❌ \"O projeto termina em 20 de setembro.\"\n   → se atrasar um dia, você errou\n\n✅ \"50% de chance até 20/09, 85% até 03/10, 95% até 12/10.\n    Para prometer com segurança, use 03/10.\"\n   → agora o stakeholder escolhe o nível de risco que quer assumir\n```\n\nVocê deixa de ser quem erra prazo e passa a ser quem informa risco. É uma mudança de posição profissional, não só de método.\n\n## Onde a IA entra\n\n1. Agrupar tarefas semelhantes para montar a distribuição\n2. Identificar quais tarefas têm maior variância — são elas que dominam o resultado\n3. **Explicar a curva** para quem não é técnico\n4. Recomendar o percentil conforme o custo do atraso\n\n## Regra prática\n\nCompromisso externo com cliente: p85 ou p95. Planejamento interno: p50. Nunca prometa o p50 para fora.",
+      "exercicio": "Implemente Monte Carlo em JavaScript sobre o histórico real de entregas de um projeto seu. Produza a curva e apresente p50, p85 e p95 para alguém não técnico. Observe a reação.",
+      "videos": [
+        {
+          "t": "Busca: monte carlo simulation project forecasting agile",
+          "u": "https://www.youtube.com/results?search_query=monte+carlo+simulation+project+forecasting+agile",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Actionable Agile Metrics (conceitos de previsão)",
+          "u": "https://www.actionableagile.com/"
+        }
+      ]
+    },
+    {
+      "titulo": "AIOps de projeto: detecção automática de risco",
+      "tempo": 50,
+      "resumo": "Sinais que dá para ler sozinho no repositório e no board, antes de virar atraso.",
+      "conteudo": "## Os sinais detectáveis\n\n| Sinal | O que costuma indicar |\n|---|---|\n| Tarefa parada há N dias em \"em andamento\" | Bloqueio não declarado |\n| Estimativa crescendo a cada refinamento | Escopo mal entendido |\n| Reabertura recorrente da mesma tarefa | Critério de aceite ruim |\n| PR envelhecendo sem revisão | Gargalo de revisão |\n| Concentração: 1 pessoa em 80% dos commits de um módulo | Risco de barramento |\n| Muitos itens em andamento ao mesmo tempo | WIP alto, entrega baixa |\n| Commits fora do horário, com frequência | Sobrecarga |\n| Tarefa sem critério de aceite entrando no sprint | Retrabalho a caminho |\n\nTodos saem de dados que você já tem, sem ninguém preencher nada.\n\n## O ponto ético — leia antes de implementar\n\nEsses dados falam sobre **pessoas**. A linha que não se atravessa:\n\n✅ \"O módulo de cobrança tem concentração de conhecimento em uma pessoa\" — risco de sistema\n❌ \"Fulano commita menos que os outros\" — vigilância\n\nUse para **detectar risco de projeto**, nunca para avaliar produtividade individual. Métrica de indivíduo destrói confiança e é facilmente burlada — as pessoas passam a otimizar a métrica, não o trabalho.\n\nDeixe isso explícito na política de IA (módulo 10) e comunique ao time o que é coletado e para quê.\n\n## Plano de mitigação\n\nDetectado o risco, a IA propõe:\n\n```\nRISCO: concentração de conhecimento — módulo de disparo\nEvidência: 87% dos commits dos últimos 90 dias de uma única pessoa;\n           nenhum outro membro abriu PR nesse módulo.\nImpacto: se essa pessoa sair ou adoecer, o módulo crítico fica sem manutenção.\nMitigação sugerida:\n  1. Pareamento nas próximas 3 tarefas do módulo\n  2. ADR documentando as decisões principais\n  3. Runbook de operação do módulo\nEsforço: ~2 pessoas-dia. Redução de risco: alta.\n```\n\n## Frequência\n\nSemanal. Diário vira ruído; mensal chega tarde.",
+      "exercicio": "Implemente a detecção de 3 sinais a partir do seu repositório e board. Rode sobre os últimos 90 dias e valide: os riscos apontados correspondem a problemas que de fato aconteceram?",
+      "videos": [
+        {
+          "t": "Busca: engineering metrics DORA team health",
+          "u": "https://www.youtube.com/results?search_query=engineering+metrics+dora+team+health",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "DORA — métricas de entrega",
+          "u": "https://dora.dev/guides/dora-metrics-four-keys/"
+        }
+      ]
+    },
+    {
+      "titulo": "Reuniões: transcrição, decisões e follow-ups",
+      "tempo": 45,
+      "resumo": "Transformar conversa em ação — com o cuidado legal que ninguém lembra.",
+      "conteudo": "## O que extrair (nesta ordem de valor)\n\n**1. Decisões** — o que ficou decidido e por quê. É o que se perde primeiro e o que mais falta depois.\n\n**2. Ações** — o quê, quem e até quando. Ação sem responsável e sem data não é ação, é intenção.\n\n**3. Pendências** — o que ficou em aberto e o que falta para resolver.\n\n**4. Riscos levantados** — costumam ser mencionados de passagem e esquecidos.\n\n**5. Resumo** — o item menos valioso, e o único que a maioria das ferramentas entrega.\n\n## O prompt\n\n```\nA partir da transcrição, extraia:\n\nDECISÕES: o que foi decidido, por quem, e o motivo declarado.\n  Se algo foi discutido mas NÃO decidido, liste em pendências.\n\nAÇÕES: descrição, responsável (nome citado na reunião), prazo.\n  Se responsável ou prazo não foram ditos, marque como \"não definido\"\n  em vez de inferir.\n\nPENDÊNCIAS: o que ficou em aberto e o que falta para decidir.\n\nRISCOS: qualquer preocupação levantada, mesmo de passagem.\n\nNão invente responsável nem prazo. \"Não definido\" é a resposta certa.\n```\n\nA instrução de não inferir é essencial: ação atribuída à pessoa errada gera conflito real.\n\n## Integração\n\nAção extraída vira card no board, com origem (\"reunião de 16/08\") e link para o trecho da transcrição. Sem isso, alguém vai perguntar \"de onde saiu isso?\" e ninguém vai saber.\n\n## O cuidado legal\n\nGravar reunião envolve **consentimento**. No Brasil, com participantes cientes, é geralmente aceitável — mas:\n\n- Avise no início, sempre\n- Defina retenção e apague depois\n- Cuidado com transcrição indo para API de terceiro que pode reter o conteúdo\n- Reunião com dado sensível de cliente ou de RH: avalie não gravar\n\nIsso volta em consentimento e minimização no módulo 10.",
+      "exercicio": "Monte a extração das 5 categorias para uma reunião real. Compare com a ata que alguém escreveu na mão: o que a IA pegou que faltou? O que ela inventou?",
+      "videos": [
+        {
+          "t": "Busca: AI meeting notes action items extraction",
+          "u": "https://www.youtube.com/results?search_query=ai+meeting+notes+action+items+extraction",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "OpenAI — speech to text",
+          "u": "https://platform.openai.com/docs/guides/speech-to-text"
+        }
+      ]
+    },
+    {
+      "titulo": "Status report adaptado a 3 públicos",
+      "tempo": 50,
+      "resumo": "Mesmo dado, três textos. E como não virar relatório que ninguém lê.",
+      "conteudo": "## Os três públicos\n\n**Técnico** — o que mudou, o que quebrou, dívida acumulada, decisões técnicas pendentes.\n\n**Gestão** — prazo, escopo, risco, bloqueio, o que precisa de decisão.\n\n**Diretoria** — impacto no negócio, custo, e a decisão necessária. Nada de nome de branch.\n\n## Exemplo do mesmo fato\n\n> **Técnico:** Migration 053 aplicada em produção (aditiva, `prevent_destroy` mantido). O endpoint de reenvio agora filtra por `erp_tipo`. Pendente: a trava de \"já enviado\" (item 4) segue sem autorização.\n>\n> **Gestão:** A correção de reenvio está no ar desde 14/08 e eliminou o retrabalho de reexportação manual. Um item de segurança (trava contra reenvio duplicado) segue aguardando sua autorização — sem ele, existe risco de mensagem duplicada em reexportação.\n>\n> **Diretoria:** A automação de cobrança passou a recuperar automaticamente as exportações que falhavam, reduzindo intervenção manual. Há uma proteção adicional pronta para implantar, pendente de aprovação, que elimina o risco de mensagem duplicada ao cliente.\n\nMesmo fato, três níveis de abstração. O terceiro não tem uma palavra técnica.\n\n## Como não virar texto que ninguém lê\n\n1. **Curto** — diretoria: 5 linhas. Gestão: 15. Técnico: o que precisar\n2. **Comece pelo que mudou desde o último**, não pelo status geral\n3. **Destaque o que precisa de decisão** — é a única parte que garante leitura\n4. **Número, sempre** — \"reduziu 40% do retrabalho\" bate \"melhorou bastante\"\n5. **Seja honesto sobre problema** — relatório que só traz boa notícia perde credibilidade e vira ruído\n\n## Automação\n\nFonte: commits, PRs, cards movidos, incidentes, métricas. Roda na sexta, entrega onde a pessoa já está.\n\n**Teste de valor:** depois de 3 semanas, pergunte a quem recebe o que ele fez com o último relatório. Se a resposta for \"não li\", o formato está errado — ajuste em vez de insistir.",
+      "exercicio": "Automatize o relatório nas 3 versões a partir do seu repositório e board. Rode por 3 semanas e faça o teste de valor com quem recebe.",
+      "videos": [
+        {
+          "t": "Busca: executive summary technical writing",
+          "u": "https://www.youtube.com/results?search_query=executive+summary+technical+communication",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Google — cursos de escrita técnica",
+          "u": "https://developers.google.com/tech-writing"
+        }
+      ]
+    },
+    {
+      "titulo": "Governança, compliance e trilha de auditoria",
+      "tempo": 45,
+      "resumo": "Verificações automáticas que mantêm o processo honesto sem burocracia.",
+      "conteudo": "## O que verificar automaticamente\n\n```js\n// roda no CI e no cron semanal\nconst verificacoes = [\n  { nome: 'PR referencia card',        checa: pr => /\\b[A-Z]+-\\d+\\b/.test(pr.title + pr.body) },\n  { nome: 'card tem critério de aceite', checa: c => c.criterios?.length > 0 },\n  { nome: 'decisão técnica tem ADR',   checa: pr => !pr.labels.includes('arquitetura') || temADR(pr) },\n  { nome: 'migration é reversível',    checa: m => temDown(m) },\n  { nome: 'release tem changelog',     checa: r => r.notas?.length > 0 },\n]\n```\n\nJavaScript simples, sem IA. A IA entra depois, para **explicar** o que faltou e sugerir como corrigir.\n\n## Trilha de decisão\n\nPara auditoria interna, o que importa é conseguir responder: *quem decidiu o quê, quando, com base em quê, e quem aprovou.*\n\nADR resolve para decisões técnicas. Para as demais, um registro simples no board com campo de justificativa já cobre.\n\n## Documentação de qualidade\n\nA IA gera bem o rascunho a partir do que já existe (código, PR, teste). Dois cuidados:\n\n1. **Documentação gerada e não revisada envelhece mal** — e documentação errada é pior que ausente\n2. **Ligue a geração ao evento**: documento atualizado no mesmo PR que muda o comportamento, não numa força-tarefa trimestral\n\n## Rastreabilidade\n\nO encadeamento que uma auditoria pede:\n\n```\nnecessidade → épico → história → PR → teste → deploy → métrica de resultado\n```\n\nSe você consegue percorrer isso para uma funcionalidade qualquer, está bem. Se quebra no meio — e quase sempre quebra entre história e PR — é ali que a verificação automática deve agir.\n\n## O equilíbrio\n\nGovernança que atrapalha é contornada. Comece com 3 verificações que o time concorda que fazem sentido, e só adicione mais quando as três estiverem em 100% há um mês.",
+      "exercicio": "Implemente 3 verificações automáticas em JavaScript no seu repositório. Rode sobre os últimos 50 PRs e meça a taxa de conformidade atual. Depois ligue no CI.",
+      "videos": [
+        {
+          "t": "Busca: architecture decision records ADR practice",
+          "u": "https://www.youtube.com/results?search_query=architecture+decision+records+adr",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "ADR — templates e prática",
+          "u": "https://adr.github.io/"
+        }
+      ]
+    },
+    {
+      "titulo": "Automação em Jira, Notion, Trello e Slack",
+      "tempo": 60,
+      "resumo": "Bot que opera o board por linguagem natural — começando pelo seguro.",
+      "conteudo": "## O padrão NL → workflow\n\n```\n\"cria uma task pro Pedro revisar o disparo de sexta e me avisa se\n não fechar até quinta\"\n        ↓\n{\n  acao: 'criar_card',\n  titulo: 'Revisar disparo de sexta',\n  responsavel: 'pedro',\n  prazo: '2026-08-21',\n  automacao: { tipo: 'lembrete', condicao: 'nao_concluido', data: '2026-08-21' }\n}\n```\n\nA parte difícil não é gerar o JSON: é **resolver as referências**. Qual Pedro? Qual sexta? Qual board?\n\n## Resolução de referência\n\n```\nContexto disponível:\n- usuário: vinicius (fuso America/Sao_Paulo, hoje é 16/08/2026, sábado)\n- membros do time: pedro.silva, pedro.almeida, camilla, joao\n- boards que o usuário acessa: Operação, Produto\n\nSe houver ambiguidade (dois Pedros, board não especificado),\nPERGUNTE. Não escolha por conta própria.\n```\n\nA instrução final evita o pior erro possível: criar a tarefa para a pessoa errada com confiança total.\n\n## Ordem de implementação\n\n| Fase | O que | Risco |\n|---|---|---|\n| 1 | Ler e resumir (\"o que está atrasado?\") | Nenhum |\n| 2 | Criar card | Baixo — reversível |\n| 3 | Atualizar campo, mover coluna | Baixo |\n| 4 | Notificar e lembrar | Médio — incomoda gente |\n| 5 | Fechar, arquivar, remover | **Só com confirmação** |\n\nComece pela fase 1. Ela já entrega valor e não quebra nada.\n\n## Confirmação para escrita\n\n```\nVou criar:\n  Título: Revisar disparo de sexta\n  Board: Operação · Coluna: A fazer\n  Responsável: Pedro Silva\n  Prazo: quinta, 21/08\n  + lembrete se não concluir até lá\n\n[ Confirmar ]  [ Ajustar ]  [ Cancelar ]\n```\n\n## Regras de negócio automatizadas\n\nAs que costumam pagar o investimento: lembrete de card parado, aviso de PR sem revisão há mais de 2 dias, alerta de prazo em risco, e resumo diário do que mudou.",
+      "exercicio": "Construa o bot no canal que seu time já usa. Comece pela fase 1 (leitura), depois adicione criação com confirmação. Teste a ambiguidade de propósito: peça algo com dois Pedros possíveis.",
+      "videos": [
+        {
+          "t": "Busca: natural language to workflow automation bot",
+          "u": "https://www.youtube.com/results?search_query=natural+language+workflow+automation+bot",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Jira — API REST",
+          "u": "https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/"
+        },
+        {
+          "t": "Notion — API",
+          "u": "https://developers.notion.com/"
+        }
+      ]
+    },
+    {
+      "titulo": "Portfólio e OKRs: outcome vs output",
+      "tempo": 45,
+      "resumo": "A distinção que a maioria dos times erra — e que decide se o trabalho importou.",
+      "conteudo": "## A distinção\n\n| | Output | Outcome |\n|---|---|---|\n| O que é | O que você **entregou** | O que **mudou** por causa disso |\n| Exemplo | \"Lançamos o reenvio automático\" | \"A recuperação de recusados subiu de 0% para 34%\" |\n| Fácil de medir | Sim | Não |\n| O que o time celebra | Isso | Deveria ser isso |\n\nMedir output é confortável: você sempre entrega alguma coisa. Medir outcome é desconfortável, porque às vezes você entregou e nada melhorou.\n\n**É exatamente por isso que é importante.**\n\n## OKR bem escrito\n\n```\n❌ Objetivo: Melhorar o sistema de disparo\n   KR1: Implementar reenvio automático     ← output disfarçado de KR\n   KR2: Refatorar o worker                 ← output\n\n✅ Objetivo: Reduzir a perda de contatos na cobrança\n   KR1: Recuperação de recusados de 0% para 30%\n   KR2: Taxa de entrega de 87% para 94%\n   KR3: Intervenção manual por dia de 12 para 2\n```\n\nRepare: no segundo, o **como** fica livre. Se o reenvio automático não mover os números, o time troca de abordagem em vez de comemorar a entrega.\n\n## Onde a IA ajuda\n\n1. **Detectar KR que é output disfarçado** — ela é boa nisso, e é um bom exercício de time\n2. **Ligar iniciativa a OKR** — quais itens do backlog realmente movem qual KR? Costuma sobrar item que não move nenhum\n3. **Analisar portfólio** — onde está o esforço versus onde estão os resultados\n4. **Propor ajuste com dado** — o KR não está andando; o que os dados sugerem?\n\n## A pergunta do módulo inteiro\n\n> Para cada item entregue no último trimestre: **o que mudou por causa dele?**\n\nSe você não consegue responder para metade dos itens, o problema não é de medição — é de priorização.",
+      "exercicio": "Pegue os OKRs atuais e classifique cada KR como outcome ou output. Reescreva os que forem output. Depois liste os itens entregues no último trimestre e responda a pergunta final para cada um.",
+      "videos": [
+        {
+          "t": "Busca: OKR outcome vs output produto",
+          "u": "https://www.youtube.com/results?search_query=okr+outcome+vs+output+produto",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Outcomes over Output — conceito",
+          "u": "https://www.oreilly.com/library/view/outcomes-over-output/9781098128517/"
+        }
+      ]
+    }
+  ]
+}

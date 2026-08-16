@@ -1,0 +1,232 @@
+{
+  "modulo": "06",
+  "titulo": "Ferramentas de IA para DevOps",
+  "aulas": [
+    {
+      "titulo": "IA generativa aplicada a infraestrutura e suas limitações",
+      "tempo": 50,
+      "resumo": "Por que texto técnico é fácil para o modelo e por que isso é perigoso.",
+      "conteudo": "## Por que LLM vai bem em infra\n\nYAML, HCL, log e stack trace são texto altamente estruturado e repetitivo, com muito exemplo público. O modelo escreve Terraform fluentemente.\n\n**E é justamente aí que mora o problema.**\n\n## As alucinações típicas de infra\n\n| Alucinação | Consequência |\n|---|---|\n| Flag que não existe no provider | `terraform plan` falha — barato |\n| Atributo depreciado | Funciona hoje, quebra no upgrade |\n| `apiVersion` errada do Kubernetes | Recurso não aplica |\n| Permissão IAM mais ampla que o necessário | **Buraco de segurança silencioso** |\n| Recurso sem `prevent_destroy` | **Perda de dado** |\n\nAs duas últimas são as que assustam: passam no plan, aplicam com sucesso e só aparecem no incidente.\n\n## A regra inegociável do módulo\n\n> **Toda saída de IA para infraestrutura passa por validador determinístico antes de qualquer coisa.**\n\n`terraform validate` + `terraform plan` + política OPA + `kubeconform`. Sem exceção, nem para \"mudança pequena\".\n\n## Padrões de prompting para infra\n\nSempre exija três coisas junto do código:\n1. **A versão do provider** usada como referência\n2. **A explicação** do que a mudança faz e do que ela afeta\n3. **O comando de validação** correspondente\n\nE uma restrição: *\"se você não tiver certeza de um atributo, diga que não tem certeza em vez de inventar\"*.\n\n## RAG sobre documentação técnica\n\nO ganho maior do módulo: indexar seus runbooks, ADRs, wikis e — o mais valioso — **incidentes já resolvidos**. Isso transforma conhecimento que hoje mora na cabeça de uma pessoa em algo consultável às 3h da manhã.",
+      "exercicio": "Peça a um modelo um recurso Terraform de algo que você conhece bem. Rode validate e plan. Conte quantos problemas apareceram e quantos passariam despercebidos sem validação.",
+      "videos": [
+        { "t": "Busca: AI generated terraform risks validation", "u": "https://www.youtube.com/results?search_query=ai+generated+terraform+risks+validation", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Terraform — validate e plan", "u": "https://developer.hashicorp.com/terraform/cli/commands/validate" }
+      ]
+    },
+    {
+      "titulo": "RAG sobre documentação técnica interna",
+      "tempo": 60,
+      "resumo": "O caso de uso com melhor retorno do módulo inteiro.",
+      "conteudo": "## O que indexar, em ordem de valor\n\n1. **Incidentes resolvidos** — o que aconteceu, o que se tentou, o que funcionou. Ouro puro\n2. **Runbooks** — procedimentos operacionais\n3. **ADRs** — decisões de arquitetura e o porquê\n4. **README e wiki**\n5. **Changelog e mensagens de commit relevantes**\n\nA ordem importa: quase todo mundo começa pelo README (item 4) e se decepciona. O valor está no item 1.\n\n## Chunking para documento técnico\n\nDiferente de texto corrido:\n\n- Divida por **seção com título**, mantendo o título em cada chunk\n- **Nunca corte um bloco de código** no meio\n- Guarde metadados: sistema, ambiente, data, severidade, autor\n- Comando e configuração pedem **busca híbrida** — `CrashLoopBackOff` e `131042` são termos exatos\n\n## Filtro por metadado importa muito aqui\n\n\"Como reiniciar o serviço\" tem resposta diferente por ambiente. Sem filtro de metadado, o RAG mistura produção com homologação e entrega o procedimento errado no pior momento.\n\n## Resposta com procedimento\n\nPara runbook, a resposta ideal não é um parágrafo: é **os passos, na ordem, com o comando exato e a fonte**.\n\n```\nProcedimento: destravar disparo por billing\nFonte: runbooks/billing-bloqueado.md (atualizado 12/08/2026)\n\n1. Confirmar o status ao vivo:  GET /waba/{id}?fields=account_review_status\n2. Se ACCOUNT_RESTRICTED → verificar método de pagamento no BM\n3. ...\n\n⚠ Este runbook menciona a rota v18; confirme a versão atual antes de executar.\n```\n\nO aviso final é gerado quando o documento é antigo. Documentação desatualizada apresentada com confiança é pior que documentação ausente.",
+      "exercicio": "Indexe seus runbooks e incidentes reais com busca híbrida e filtro por ambiente. Monte 15 perguntas que você já teve que responder na mão e meça a taxa de acerto.",
+      "videos": [
+        { "t": "Busca: RAG internal documentation devops", "u": "https://www.youtube.com/results?search_query=rag+internal+documentation+devops", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Google SRE Book — post-mortems", "u": "https://sre.google/sre-book/postmortem-culture/" }
+      ]
+    },
+    {
+      "titulo": "IaC Copilot: Terraform, Pulumi, Helm",
+      "tempo": 60,
+      "resumo": "Linguagem natural vira infraestrutura — dentro de um funil de validação.",
+      "conteudo": "## O funil\n\n```\ndescrição em português\n        ↓\n     gerar HCL\n        ↓\nterraform fmt + validate     ← erro? volta para o modelo com a saída\n        ↓\n  terraform plan              ← erro? volta\n        ↓\n  política OPA                ← violou? volta com a regra violada\n        ↓\n    abrir PR                  ← humano revisa e aprova\n```\n\nO detalhe que faz funcionar: **em cada falha, devolva a saída literal do comando** para o modelo. Ele corrige sozinho na maioria dos casos.\n\n## Teto de tentativas\n\nTrês. Se em três não passou, o problema não é sintático — é conceitual. Escale para humano com o histórico das tentativas.\n\n## O que o copiloto NUNCA faz\n\n**Ele não aplica.** Ele abre PR. A separação entre \"gerar\" e \"aplicar\" é o guardrail central do módulo: mesmo que o modelo alucine, existe um humano e um pipeline entre a alucinação e a infraestrutura.\n\n## Prompt de geração\n\n```\nGere um módulo Terraform para: {{descrição}}\n\nContexto:\n- provider aws ~> 5.0\n- padrão de nomes: {{convenção}}\n- tags obrigatórias: Owner, Environment, CostCenter\n- todo bucket com versionamento e criptografia\n- todo recurso com dado tem prevent_destroy\n\nEntregue:\n1. o HCL\n2. explicação do que a mudança cria, altera ou destrói\n3. os comandos de validação\n4. os riscos que você identifica\n\nSe não tiver certeza de um atributo, marque com TODO em vez de inventar.\n```\n\n## Helm e Pulumi\n\nMesmo funil, validadores diferentes: `helm lint` + `helm template | kubeconform` para Helm, `pulumi preview` para Pulumi.",
+      "exercicio": "Prática 1 do módulo: construa o copiloto com o funil completo, teto de 3 tentativas e abertura de PR. Teste com 5 pedidos, sendo 2 que violam política de propósito. Verifique que os 2 são barrados.",
+      "videos": [
+        { "t": "Busca: terraform AI copilot generate validate", "u": "https://www.youtube.com/results?search_query=terraform+ai+copilot+generate+validate", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Terraform — boas práticas de módulo", "u": "https://developer.hashicorp.com/terraform/language/modules/develop" }
+      ]
+    },
+    {
+      "titulo": "Validação automatizada e Policy-as-Code com OPA",
+      "tempo": 60,
+      "resumo": "A política é o que impede o copiloto de aprovar besteira com convicção.",
+      "conteudo": "## Por que política, e não revisão humana\n\nRevisão humana cansa, tem pressa e confia em código que \"parece certo\". Política é determinística e não tem dia ruim.\n\nCom IA gerando volume, a revisão humana vira gargalo. A política escala.\n\n## OPA e Rego\n\n```rego\npackage terraform.seguranca\n\n# Nenhum bucket público\ndeny[msg] {\n  r := input.resource_changes[_]\n  r.type == \"aws_s3_bucket_public_access_block\"\n  r.change.after.block_public_acls == false\n  msg := sprintf(\"bucket %v permite ACL pública\", [r.address])\n}\n\n# Todo recurso com dado precisa de prevent_destroy\ndeny[msg] {\n  r := input.resource_changes[_]\n  r.type in {\"aws_db_instance\", \"aws_s3_bucket\", \"aws_dynamodb_table\"}\n  not r.change.after.lifecycle.prevent_destroy\n  msg := sprintf(\"%v guarda dado e não tem prevent_destroy\", [r.address])\n}\n\n# Tags obrigatórias\ndeny[msg] {\n  r := input.resource_changes[_]\n  obrigatorias := {\"Owner\", \"Environment\", \"CostCenter\"}\n  faltando := obrigatorias - {k | r.change.after.tags[k]}\n  count(faltando) > 0\n  msg := sprintf(\"%v sem as tags %v\", [r.address, faltando])\n}\n```\n\nRoda sobre o JSON do `terraform plan`, no CI, antes do merge.\n\n## As políticas que valem mais a pena\n\n1. Nada público por padrão (bucket, security group, banco)\n2. Criptografia em repouso obrigatória\n3. `prevent_destroy` em recurso com dado\n4. Tags obrigatórias (é o que viabiliza o FinOps da unidade IX)\n5. Sem credencial em texto claro\n6. Limite de tamanho de instância por ambiente\n\n## O bônus da IA aqui\n\nExplicar a política em linguagem natural quando ela bloqueia:\n\n> \"Bloqueado: o bucket `logs-app` permite ACL pública. A política existe porque em março tivemos exposição de log com dado de cliente. Para liberar, adicione o bloco `public_access_block` ou peça exceção ao time de segurança.\"\n\nIsso reduz muito o atrito com quem foi bloqueado — e é uma das aplicações mais bem recebidas de IA em DevOps.",
+      "exercicio": "Escreva 4 políticas OPA para a sua infraestrutura e rode contra um plan real. Depois use IA para gerar a explicação em português de cada bloqueio, incluindo o motivo histórico.",
+      "videos": [
+        { "t": "Busca: OPA Rego terraform policy as code tutorial", "u": "https://www.youtube.com/results?search_query=opa+rego+terraform+policy+as+code+tutorial", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Open Policy Agent — documentação", "u": "https://www.openpolicyagent.org/docs/latest/" },
+        { "t": "Checkov — políticas prontas", "u": "https://www.checkov.io/" }
+      ]
+    },
+    {
+      "titulo": "Workflow PR-first e detecção de drift",
+      "tempo": 45,
+      "resumo": "A IA propõe, o Git registra, o humano aprova, o pipeline aplica.",
+      "conteudo": "## O fluxo\n\n```\nIA gera → branch → PR → validação automática → revisão humana → merge → pipeline aplica\n```\n\nQuatro garantias que isso dá:\n1. **Rastreabilidade** — cada mudança tem autor, motivo e discussão\n2. **Reversibilidade** — `git revert` desfaz\n3. **Revisão** — mais um par de olhos, com contexto\n4. **Separação** — quem gera não aplica\n\n## Revisão de PR assistida\n\nA IA ajuda o revisor com um comentário estruturado:\n\n```\n## Impacto\nCria 3 recursos, altera 1, DESTRÓI 0.\n\n## Atenção\n⚠ O security group libera 0.0.0.0/0 na porta 22 — confirme se é intencional.\n⚠ A instância muda de t3.medium para m5.xlarge: +R$ 380/mês (Infracost).\n\n## Verificado\n✅ Todas as tags obrigatórias presentes\n✅ Criptografia em repouso habilitada\n✅ prevent_destroy no RDS\n\n## O que eu checaria manualmente\n- A mudança de instância foi dimensionada por métrica ou por chute?\n```\n\nA última seção é a mais útil: a IA aponta o que **ela não consegue** verificar.\n\n## Drift\n\nDrift é quando a infraestrutura real diverge do código — alguém mexeu no console às 2h da manhã durante um incidente.\n\nDetecção: `terraform plan` agendado. Se houver diferença sem PR correspondente, alerta.\n\nA IA ajuda a **classificar**: essa diferença é benigna (tag adicionada pelo provedor) ou é sinal de intervenção manual não registrada? E propõe: incorporar ao código ou reverter?\n\n**Ela não decide.** Drift costuma ter história por trás, e a história está com a pessoa que mexeu.",
+      "exercicio": "Configure detecção de drift agendada num ambiente seu. Provoque um drift de propósito (mude uma tag pelo console) e confirme que o alerta dispara com a classificação correta.",
+      "videos": [
+        { "t": "Busca: terraform drift detection ci", "u": "https://www.youtube.com/results?search_query=terraform+drift+detection+ci", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Infracost — custo no PR", "u": "https://www.infracost.io/docs/" }
+      ]
+    },
+    {
+      "titulo": "Agentes para Kubernetes: manifests, HPA/VPA, rollout",
+      "tempo": 60,
+      "resumo": "Gerar e ajustar Kubernetes com IA, sem entregar o cluster.",
+      "conteudo": "## Geração de manifests\n\nO risco específico: `apiVersion` errada ou depreciada. Valide sempre com `kubeconform` contra a versão real do seu cluster.\n\nSempre exija no manifest gerado: `resources` (requests e limits), probes (`liveness`, `readiness`, `startup`), `securityContext` sem privilégio, e labels padronizados.\n\nModelo esquece esses quatro com frequência, e cada um deles causa incidente característico.\n\n## HPA e VPA\n\n**HPA** escala réplicas; **VPA** ajusta requests e limits.\n\nA IA ajuda a **propor** valores a partir do histórico de uso:\n\n```\nAnálise dos últimos 30 dias do deployment api-cobranca:\n- CPU p50: 120m · p95: 340m · pico: 890m\n- Memória p95: 512Mi · pico: 720Mi (1 evento de OOMKilled em 12/08)\n\nProposta:\n  requests: cpu 150m, memory 640Mi\n  limits:   cpu 1000m, memory 1Gi\n  HPA: min 2, max 8, alvo 70% de CPU\n\nJustificativa: request no p50 com folga; limit acima do pico observado\npara evitar o OOMKilled recorrente; máximo de 8 cobre o pico de sexta.\n```\n\nProposta com evidência. Humano aprova.\n\n## Rollout\n\n| Estratégia | Quando |\n|---|---|\n| **Rolling** | Mudança de baixo risco |\n| **Canary** | Mudança de comportamento; observar métrica antes de completar |\n| **Blue-green** | Rollback instantâneo é essencial |\n\nA IA sugere a estratégia a partir do perfil da mudança (tocou schema? tocou rota crítica? mudou dependência?) — e a sugestão vira uma anotação no PR, não uma ação.\n\n## GitOps é o guardrail\n\nCom Argo CD ou Flux, o cluster reflete o repositório. A IA **commita**; o GitOps aplica.\n\nEssa separação significa: nenhum agente tem credencial de escrita no cluster. Se ele alucinar, o pior que acontece é um PR ruim.",
+      "exercicio": "Prática 2: construa um agente de deploy end-to-end que gera o manifest, valida com kubeconform, abre PR e — após o merge — verifica readiness N vezes antes de declarar sucesso.",
+      "videos": [
+        { "t": "Busca: kubernetes AI agent kubectl troubleshooting", "u": "https://www.youtube.com/results?search_query=kubernetes+ai+agent+k8sgpt", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "k8sgpt — diagnóstico assistido", "u": "https://k8sgpt.ai/" },
+        { "t": "Argo CD — documentação", "u": "https://argo-cd.readthedocs.io/" }
+      ]
+    },
+    {
+      "titulo": "GitOps com Argo CD e Flux como guardrail",
+      "tempo": 45,
+      "resumo": "Por que a separação entre commitar e aplicar é o controle mais importante.",
+      "conteudo": "## O princípio\n\n**O repositório é a verdade.** O controlador reconcilia o cluster com o Git, continuamente.\n\n```\nagente → commit → PR → merge → Argo/Flux detecta → aplica → reconcilia\n```\n\n## Por que isso é o guardrail central\n\nSem GitOps, dar autonomia a um agente significa dar credencial de escrita no cluster. Com GitOps, o agente só precisa de permissão para **abrir PR**.\n\nO pior caso muda completamente:\n\n| Sem GitOps | Com GitOps |\n|---|---|\n| Agente alucina → aplica no cluster → incidente | Agente alucina → PR ruim → revisor recusa |\n\n## Os benefícios que vêm junto\n\n- **Auditoria nativa** — o histórico do Git é a trilha\n- **Rollback** — `git revert` e o controlador reconcilia\n- **Drift corrigido sozinho** — mexeu no console? O controlador desfaz\n- **Ambientes consistentes** — mesma origem, valores diferentes\n\n## Onde a IA entra bem\n\n1. Gerar o commit (manifest, valores, kustomization)\n2. **Explicar** o diff no PR em linguagem clara\n3. Diagnosticar por que uma aplicação está `OutOfSync` ou `Degraded`\n4. Sugerir rollback com evidência quando a métrica piora após o deploy\n\n## Onde ela não entra\n\nNão dê ao agente permissão de `sync` manual nem de alterar a política do Argo. Isso é o equivalente a dar a chave do cluster com passos extras.\n\n## Detalhe operacional\n\nSe o seu ambiente não usa Kubernetes (Coolify, por exemplo), o princípio é o mesmo: o agente propõe mudança no repositório, o deploy acontece pelo pipeline, e o agente nunca tem credencial de produção.",
+      "exercicio": "Desenhe, para o SEU ambiente, onde ficaria a fronteira entre o que o agente pode commitar e o que só o pipeline pode aplicar. Liste as credenciais que o agente teria e prove que nenhuma delas altera produção diretamente.",
+      "videos": [
+        { "t": "Busca: GitOps Argo CD Flux tutorial", "u": "https://www.youtube.com/results?search_query=gitops+argocd+flux+tutorial", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenGitOps — princípios", "u": "https://opengitops.dev/" }
+      ]
+    },
+    {
+      "titulo": "Troubleshooting ReAct: CrashLoopBackOff, OOMKilled e cia",
+      "tempo": 90,
+      "resumo": "O método de diagnóstico do curso, automatizado.",
+      "conteudo": "## O loop de diagnóstico\n\n```\nhipótese → comando de verificação → observação → nova hipótese\n```\n\nÉ literalmente o ReAct do módulo 04 e o método dos 30 minutos do COMO-ESTUDAR. Você já treinou isso manualmente; agora automatiza.\n\n## Os clássicos e suas causas\n\n| Sintoma | Causas prováveis, em ordem |\n|---|---|\n| **CrashLoopBackOff** | Erro na inicialização · variável de ambiente faltando · dependência indisponível · probe agressiva demais |\n| **ImagePullBackOff** | Tag inexistente · credencial de registry · rede |\n| **OOMKilled** | Limite baixo · vazamento de memória · pico legítimo |\n| **Pending** | Sem nó com recurso · taint/toleration · PVC não vinculado |\n| **Readiness falhando** | Dependência fora · timeout curto · caminho errado |\n\nDar essa tabela ao agente como contexto melhora muito o diagnóstico — é conhecimento de domínio que ele não precisa deduzir.\n\n## O agente de diagnóstico\n\nFerramentas necessárias (todas de **leitura**):\n`descrever_pod`, `logs_pod` (inclusive `--previous`), `eventos_namespace`, `metricas_pod`, `estado_deployment`, `buscar_runbook`.\n\nO prompt precisa exigir **evidência**:\n\n```\nDiagnostique o problema. Para cada hipótese:\n1. Declare a hipótese\n2. Diga qual comando a confirma ou descarta\n3. Execute\n4. Conclua com base na saída, citando o trecho\n\nNunca conclua sem evidência. Se os dados não bastarem, diga\nexatamente qual informação falta.\n\nAo final: causa provável, evidência, correção sugerida e nível de confiança.\n```\n\n## A saída ideal\n\n> **Causa provável (confiança alta):** OOMKilled por limite de memória.\n> **Evidência:** `lastState.terminated.reason = OOMKilled`, `exitCode 137`; memória p95 de 890Mi contra limite de 512Mi.\n> **Correção:** subir o limite para 1Gi. Runbook: `runbooks/oom.md`.\n> **Ressalva:** o consumo cresce de forma linear desde 10/08 — pode ser vazamento. Subir o limite adia, não resolve.\n\nA ressalva é o que separa diagnóstico de sintoma.\n\n## Nesta unidade, ele só sugere\n\nCorreção aplicada por humano. Automação de remediação é a unidade XI, e vem com muito mais controle.",
+      "exercicio": "Prática 3: construa o sistema de diagnóstico com as 6 ferramentas de leitura e o prompt de evidência. Teste contra 5 incidentes reais ou reproduzidos e meça acerto da causa raiz.",
+      "videos": [
+        { "t": "Busca: kubernetes CrashLoopBackOff OOMKilled debug", "u": "https://www.youtube.com/results?search_query=kubernetes+crashloopbackoff+oomkilled+debug", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Kubernetes — debug de pods", "u": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/" }
+      ]
+    },
+    {
+      "titulo": "Análise de logs distribuídos e correlação de traces",
+      "tempo": 60,
+      "resumo": "Achar o erro real no meio do ruído — e ligar log a métrica e trace.",
+      "conteudo": "## O problema\n\nUm incidente produz milhares de linhas em vários serviços. O erro **real** costuma estar antes da cascata de erros derivados, e é o que menos aparece.\n\n## Onde a IA ajuda de fato\n\n1. **Separar causa de consequência** — o primeiro erro na janela costuma ser a causa; o resto é efeito\n2. **Agrupar por assinatura** — 4.000 linhas viram 6 problemas distintos\n3. **Detectar o que sumiu** — serviço que parou de logar é sinal forte\n4. **Traduzir stack trace** em explicação e em hipótese de causa\n\n## Correlação das três fontes\n\n```\nMétrica  → \"latência p95 subiu às 14h12\"\nTrace    → \"o salto está no span de consulta ao ERP\"\nLog      → \"connection pool exhausted, 14h11:47\"\n            ↓\nCausa: o pool acabou; a latência é consequência\n```\n\nSem correlação, você tem três equipes olhando três telas e discutindo. O agente que cruza as três economiza a discussão.\n\n## Como estruturar o prompt\n\n```\nJanela: 14h00 a 14h30\nServiços afetados: api-cobranca, worker-disparo\n\nDados fornecidos:\n<metricas>...</metricas>\n<traces>...</traces>\n<logs>...</logs>\n\nProduza:\n1. Linha do tempo dos eventos, em ordem\n2. Qual foi o PRIMEIRO sinal anômalo (com timestamp)\n3. O que é causa e o que é consequência\n4. Hipótese de causa raiz, com o trecho que a sustenta\n5. O que você NÃO consegue determinar com estes dados\n```\n\nO item 5 é o que evita conclusão fabricada.\n\n## Cuidado com custo\n\nLog é volumoso e imagem de dashboard custa caro em tokens. **Pré-filtre com código**: janela apertada, apenas níveis error e warn, deduplicação por assinatura, amostragem. Mande para o modelo o resumo, não o despejo.",
+      "exercicio": "Pegue um incidente real do seu histórico. Monte o pré-filtro em código e peça o diagnóstico com o prompt acima. Compare com a causa raiz que vocês descobriram na época.",
+      "videos": [
+        { "t": "Busca: distributed tracing log correlation root cause", "u": "https://www.youtube.com/results?search_query=distributed+tracing+log+correlation+root+cause", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenTelemetry — correlação de sinais", "u": "https://opentelemetry.io/docs/concepts/signals/" }
+      ]
+    },
+    {
+      "titulo": "AIOps: PromQL e LogQL por linguagem natural",
+      "tempo": 50,
+      "resumo": "Tirar a barreira de sintaxe entre a pergunta de negócio e o dado.",
+      "conteudo": "## O ganho\n\nA pessoa que sabe qual pergunta fazer raramente é a que sabe escrever PromQL. Traduzir linguagem natural em query elimina esse gargalo.\n\n```\n\"quantos disparos falharam por regional na última hora?\"\n        ↓\nsum by (regional) (\n  increase(disparo_falhas_total[1h])\n)\n```\n\n## Como fazer funcionar de verdade\n\nO modelo **não conhece as suas métricas**. Sem isso, ele inventa nome de métrica e a query retorna vazio — o pior tipo de erro, porque parece que \"não houve falha\".\n\nDê o catálogo no contexto:\n\n```\nMétricas disponíveis:\n- disparo_total{regional, fluxo, status}       counter\n- disparo_latencia_seconds{regional}           histogram\n- erp_requisicoes_total{endpoint, codigo}      counter\n- fila_pendentes{regional}                     gauge\n\nRegras:\n- counter sempre com rate() ou increase()\n- gauge nunca com rate()\n- sempre agrupe por regional quando a pergunta mencionar regional\n```\n\n## Validação obrigatória\n\nQuery gerada roda contra a API primeiro. **Resultado vazio é suspeito**: pode ser \"não houve evento\" ou \"nome de métrica errado\". O sistema precisa distinguir os dois — verificar se a métrica existe no catálogo antes de reportar zero.\n\nEssa é a armadilha número um de AIOps com IA: relatório dizendo \"zero falhas\" quando na verdade a query estava errada.\n\n## Dashboards\n\nGerar JSON de dashboard Grafana a partir de descrição funciona bem. O ganho é maior quando o dashboard é **contextualizado**: gerado no momento do incidente, com as métricas daquele serviço e daquela janela, em vez de um painel genérico.",
+      "exercicio": "Monte o catálogo das suas métricas e um tradutor de linguagem natural para PromQL, com validação que distingue \"resultado zero\" de \"métrica inexistente\". Teste com 10 perguntas, incluindo 2 sobre métricas que não existem.",
+      "videos": [
+        { "t": "Busca: PromQL tutorial natural language grafana", "u": "https://www.youtube.com/results?search_query=promql+tutorial+grafana", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "PromQL — documentação", "u": "https://prometheus.io/docs/prometheus/latest/querying/basics/" },
+        { "t": "LogQL — Grafana Loki", "u": "https://grafana.com/docs/loki/latest/query/" }
+      ]
+    },
+    {
+      "titulo": "Detecção de anomalia com ML clássico",
+      "tempo": 50,
+      "resumo": "A aula onde fica claro que nem tudo é LLM.",
+      "conteudo": "## Por que não usar LLM aqui\n\nDetectar anomalia em série temporal é um problema **estatístico**, resolvido há décadas, com métodos que são:\n\n- mais baratos (roda em CPU, sem custo por chamada)\n- mais rápidos (milissegundos)\n- determinísticos e explicáveis\n- treináveis com o seu histórico\n\nUsar LLM para isso é caro, lento e pior. É o exemplo mais didático do decision framework do módulo 08.\n\n## Os métodos\n\n| Método | Bom para | Observação |\n|---|---|---|\n| **Média móvel + desvio** | Métrica estável | Simples, e resolve muito caso |\n| **Prophet** | Série com sazonalidade (dia, semana) | Lida bem com feriado e tendência |\n| **Isolation Forest** | Anomalia multivariada | Não precisa de rótulo |\n| **STL** | Decompor tendência e sazonalidade | Ótimo para entender o padrão |\n\n## Sazonalidade é obrigatória\n\nSua operação tem padrão semanal forte: segunda é diferente de sexta, que é diferente de sábado. Um detector que não modela isso alerta todo domingo porque o volume caiu — e o time aprende a ignorar alertas.\n\n## Onde o LLM entra bem\n\nDepois da detecção:\n\n1. **Explicar** a anomalia em linguagem clara\n2. **Correlacionar** com deploys, mudanças e outros sinais\n3. **Priorizar** — isso precisa de gente agora ou pode esperar?\n4. **Redigir** o alerta com contexto acionável\n\n```\nDetector: fila de pendentes 4,2σ acima do esperado para uma sexta às 14h.\n\nLLM: A fila da regional Piedade está em 2.150 pendentes, contra ~380\nesperados para este horário. Coincide com o deploy de 13h47 no worker.\nDois blocos anteriores saíram normalmente. Sugestão: verificar se o\nworker está consumindo — o padrão é compatível com worker parado,\nnão com aumento de demanda.\n```\n\nDetecção estatística, explicação por LLM. Cada um no que é bom.\n\n## Redução de falso positivo\n\nO maior ganho de AIOps não é detectar mais: é **acordar menos gente à toa**. Agrupe alertas correlacionados em um só incidente e suprima os derivados.",
+      "exercicio": "Prática 4: implemente detecção de anomalia com sazonalidade sobre uma métrica real sua e um explicador por LLM. Rode contra 30 dias de histórico e conte falsos positivos.",
+      "videos": [
+        { "t": "Busca: anomaly detection time series prophet isolation forest", "u": "https://www.youtube.com/results?search_query=anomaly+detection+time+series+prophet+isolation+forest", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Prophet — documentação", "u": "https://facebook.github.io/prophet/" }
+      ]
+    },
+    {
+      "titulo": "ChatOps com aprovação humana e RBAC",
+      "tempo": 60,
+      "resumo": "Operar por conversa, com o controle no lugar certo.",
+      "conteudo": "## Por que ChatOps\n\nA operação já acontece no chat. Trazer o comando para lá reduz troca de contexto e, principalmente, **deixa tudo visível para o time** — a conversa é a auditoria.\n\n## Os comandos\n\n| Comando | Risco | Controle |\n|---|---|---|\n| `/investigar` | Nenhum | Livre |\n| `/status` | Nenhum | Livre |\n| `/scale` | Médio | Confirmação |\n| `/deploy` homologação | Médio | Confirmação |\n| `/deploy` produção | Alto | **Segunda pessoa aprova** |\n| `/rollback` | Alto | Confirmação + registro |\n\n## Mostre o impacto ANTES\n\nA etapa que evita quase todo desastre:\n\n```\n/deploy api-cobranca v2.4.1 → produção\n\nDiff em relação ao que está no ar (v2.4.0):\n  • 12 arquivos, +340 −89\n  • ⚠ migration 053: ALTER TABLE disparos ADD COLUMN (aditiva, reversível)\n  • ⚠ muda o comportamento de reenvio de recusados\n  • 3 dependências atualizadas\n\nImpacto estimado: 4 pods reiniciam, ~40s de rolling update\nRollback: git revert + redeploy (~3 min)\n\nSolicitado por: @vinicius\nPrecisa de aprovação de outra pessoa com papel deploy-prod.\n\n[ Aprovar ]  [ Recusar ]  [ Ver diff completo ]\n```\n\n## RBAC de verdade\n\n- Papéis por ambiente: `viewer`, `operator`, `deploy-prod`\n- **Quem pede não aprova.** Sempre. Sem exceção para \"é urgente\"\n- Permissão vem do sistema de identidade, não de uma lista no código\n- Toda negação é registrada — sequência de negações é sinal\n\n## Guardrails do bot\n\n- Ambiente **não produtivo por padrão**; produção exige flag explícita\n- Janela de mudança: fora dela, exige justificativa\n- Circuit breaker: 2 deploys falhados seguidos travam o comando\n- Kill switch\n- Log imutável de tudo, com quem pediu, quem aprovou e o resultado",
+      "exercicio": "Prática 5: construa o bot de ChatOps no Telegram com /investigar, /status e /deploy. Produção exige aprovação de segunda pessoa. Prove com teste que a mesma pessoa não consegue pedir e aprovar.",
+      "videos": [
+        { "t": "Busca: ChatOps bot deploy approval workflow", "u": "https://www.youtube.com/results?search_query=chatops+bot+deploy+approval+workflow", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Telegram Bot API", "u": "https://core.telegram.org/bots/api" }
+      ]
+    },
+    {
+      "titulo": "Segurança: Snyk, Trivy, Checkov e vazamento de secrets",
+      "tempo": 50,
+      "resumo": "Scan automatizado, correção assistida, e o achado mais comum de todos.",
+      "conteudo": "## As ferramentas\n\n| Ferramenta | Escaneia |\n|---|---|\n| **Trivy** | Imagem de container, filesystem, IaC, segredo |\n| **Checkov** | IaC (Terraform, CloudFormation, K8s) |\n| **Snyk** | Dependência, código, container, IaC |\n| **gitleaks / trufflehog** | Segredo no histórico do Git |\n\nRodam no CI, bloqueiam merge em severidade alta.\n\n## O achado mais comum: segredo no repositório\n\nE o detalhe que quase todo mundo erra:\n\n> **Remover o segredo em um commit novo NÃO resolve.** Ele continua no histórico, para sempre, acessível a qualquer clone.\n\nO procedimento correto:\n1. **Rotacionar o segredo imediatamente** — é o único passo que realmente importa\n2. Remover do código\n3. Considerar reescrita de histórico se o repositório for público\n4. Adicionar scan de segredo no pre-commit e no CI\n\nA ordem importa: rotacionar primeiro. Enquanto a chave for válida, ela está comprometida.\n\n## \"AI fix\" — útil e perigoso\n\nAs ferramentas sugerem correção automática de CVE. Funciona bem para bump de versão trivial.\n\n**Perigo:** aplicar sem revisar. Bump de major quebra API; correção de IaC pode alterar comportamento; e há CVE que não te afeta (você não usa aquele caminho de código).\n\nUse a IA para **triar**: este CVE afeta o meu uso? Qual o caminho de exploração? Vale a urgência?\n\n## Explicação em linguagem natural\n\nO melhor uso de IA em segurança de infra: traduzir o achado para quem precisa agir.\n\n> \"Bloqueado: a imagem usa `openssl 3.0.8`, com CVE-2023-XXXX (alta). Você é afetado porque o serviço termina TLS. Correção: subir a imagem base para `alpine 3.19`. Esforço: baixo. Se não corrigir agora, o risco é X.\"\n\n## Compliance\n\nGeração de relatório para SOC2, ISO 27001 e PCI-DSS a partir das evidências que o pipeline já produz. A IA monta o documento; **o auditor confere**. Nunca apresente relatório gerado sem revisão humana.",
+      "exercicio": "Rode gitleaks no histórico completo de um repositório seu. Se achar segredo, execute o procedimento correto começando pela rotação. Depois configure scan no pre-commit e no CI.",
+      "videos": [
+        { "t": "Busca: trivy checkov gitleaks CI security scan", "u": "https://www.youtube.com/results?search_query=trivy+checkov+gitleaks+ci+security+scan", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Trivy — documentação", "u": "https://aquasecurity.github.io/trivy/" },
+        { "t": "gitleaks", "u": "https://github.com/gitleaks/gitleaks" }
+      ]
+    },
+    {
+      "titulo": "CI/CD copilot e gates inteligentes",
+      "tempo": 50,
+      "resumo": "Pipelines gerados, gates que decidem por risco e rollback por métrica.",
+      "conteudo": "## Geração de pipeline\n\nGerar GitHub Actions, GitLab CI ou Jenkinsfile a partir de descrição funciona bem, com uma ressalva: o modelo tende a usar sintaxe antiga de actions e a esquecer permissões mínimas.\n\nSempre exija: versões fixadas (não `@latest`), `permissions` explícito e mínimo, cache configurado, e sem segredo em `echo`.\n\n## Gates inteligentes\n\nEm vez de rodar tudo sempre, o gate se ajusta ao **risco da mudança**:\n\n```\nMudou só documentação          → lint apenas\nMudou componente de front      → teste unitário + build + visual\nMudou rota de API              → + teste de integração + contrato\nMudou migration                → + teste de migração + revisão obrigatória\nMudou dependência              → + SCA + auditoria de licença\nMudou IaC                      → + plan + política OPA + custo\n```\n\nGanho duplo: pipeline mais rápido no caso comum e mais rigoroso onde importa.\n\n## Análise de impacto em PR\n\nA IA responde o que o diff não mostra: quais rotas são afetadas, quais consumidores dependem disso, e se há mudança incompatível.\n\n```\n## Impacto\nAltera a resposta de GET /api/disparos (campo `status` vira enum).\n2 consumidores conhecidos: painel-web, bot-telegram.\n⚠ Mudança incompatível: valores fora do enum passarão a ser rejeitados.\nSugestão: aceitar ambos por 2 semanas e depreciar.\n```\n\n## Rollback automático por métrica\n\n```\ndeploy canary 10%\n   ↓ observar 10 minutos\ntaxa de erro > baseline + 2%?  → rollback automático\nlatência p95 > baseline + 30%? → rollback automático\ncaso contrário                 → 50% → 100%\n```\n\nO gatilho é **métrica objetiva**, não julgamento de IA. A IA escreve o relatório do que aconteceu; a decisão é do limiar.\n\nEssa distinção — IA explica, número decide — é o padrão de todo o módulo.",
+      "exercicio": "Implemente gates por tipo de mudança no seu pipeline e meça o tempo médio de CI antes e depois. Depois configure rollback automático por métrica num ambiente de teste e provoque uma regressão de propósito.",
+      "videos": [
+        { "t": "Busca: canary deployment automatic rollback metrics", "u": "https://www.youtube.com/results?search_query=canary+deployment+automatic+rollback+metrics", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "GitHub Actions — segurança e permissões", "u": "https://docs.github.com/en/actions/security-guides" }
+      ]
+    },
+    {
+      "titulo": "FinOps: Infracost, rightsizing e zombie resources",
+      "tempo": 50,
+      "resumo": "Mostrar o preço antes do merge — e fazer o FinOps da própria IA.",
+      "conteudo": "## Custo no PR\n\nInfracost comenta o impacto financeiro da mudança direto no PR:\n\n```\nCusto mensal estimado: R$ 1.240 → R$ 1.620  (+R$ 380, +31%)\n  + aws_instance.api    m5.xlarge   +R$ 420\n  − aws_instance.worker t3.medium   −R$ 40\n```\n\n**O momento certo de mostrar preço é antes do merge.** Depois, ninguém volta atrás.\n\n## Rightsizing por histórico\n\n```\napi-cobranca: request 2 vCPU, uso p95 0,3 vCPU\n→ desperdício de ~85%\n→ proposta: 0,5 vCPU (p95 + 60% de folga)\n→ economia: R$ 210/mês\n→ risco: pico de sexta chega a 0,8 — HPA cobre\n```\n\nProposta com risco declarado. Aprovação humana.\n\n## Zombie resources\n\nOs suspeitos de sempre: volume desanexado, IP elástico sem uso, snapshot antigo, load balancer sem target, ambiente de teste esquecido ligado, log com retenção infinita.\n\nSão a economia mais fácil que existe, e a que ninguém faz porque dá trabalho procurar. Automatizar a busca é retorno garantido.\n\n**Cuidado:** \"parece órfão\" não é \"é órfão\". Sempre confirme com o dono antes de remover — e siga a regra de nunca deletar, apenas desativar e marcar para remoção futura.\n\n## Spot e reservada\n\nSpot para workload tolerante a interrupção (worker de fila, processamento em lote). Reservada para base estável. A IA ajuda a classificar o perfil de cada workload a partir do histórico.\n\n## O FinOps que ninguém faz: o custo da própria IA\n\nVocê tem os dados do módulo 02: tokens, custo, latência por chamada. Monte o relatório:\n\n| Métrica | Por quê |\n|---|---|\n| Custo por funcionalidade | Qual feature de IA consome o orçamento |\n| Custo por cliente | Cliente que dá prejuízo |\n| Custo por tarefa concluída | Eficiência real do agente |\n| Projeção 12 meses | O que a diretoria pergunta |\n\nEsse é o número que quase ninguém tem — e tê-lo te coloca em outra categoria profissional.",
+      "exercicio": "Monte o relatório de custo de IA da sua operação com as 4 métricas. Depois procure zombie resources na sua infra e calcule a economia potencial. Some os dois e apresente como um caso de FinOps.",
+      "videos": [
+        { "t": "Busca: FinOps kubernetes rightsizing cost optimization", "u": "https://www.youtube.com/results?search_query=finops+kubernetes+rightsizing+cost+optimization", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Infracost — documentação", "u": "https://www.infracost.io/docs/" },
+        { "t": "FinOps Foundation — framework", "u": "https://www.finops.org/framework/" }
+      ]
+    },
+    {
+      "titulo": "RAG de runbooks e post-mortem automático",
+      "tempo": 60,
+      "resumo": "Transformar conhecimento tácito em algo consultável às 3h da manhã.",
+      "conteudo": "## Por que este é o item de maior retorno\n\nTodo time tem uma pessoa que sabe. Quando ela está de férias, o incidente dura três vezes mais. RAG de runbooks ataca exatamente isso.\n\n## O que indexar\n\nJá visto na aula 2 deste módulo, com uma adição importante: **incidentes resolvidos são mais valiosos que runbooks**, porque contêm o que foi tentado e não funcionou.\n\n## Agente que consulta e executa runbook\n\nTrês níveis de autonomia, em ordem de maturidade:\n\n| Nível | O que faz | Quando adotar |\n|---|---|---|\n| **1. Consultivo** | Encontra o runbook e mostra os passos | Sempre. Comece aqui |\n| **2. Assistido** | Executa os passos de leitura, humano faz os de escrita | Depois de 20 incidentes bem diagnosticados |\n| **3. Automático** | Executa tudo, com dry-run e aprovação nos críticos | Só para causa conhecida e ação reversível (unidade XI) |\n\n## Timeline automática de incidente\n\nA partir de alertas, deploys, mensagens do chat e logs:\n\n```\n13:47  deploy api-cobranca v2.4.0 (@vinicius)\n14:02  alerta: latência p95 acima do limiar\n14:05  @camilla: \"alguém mexeu no worker?\"\n14:11  log: connection pool exhausted\n14:19  rollback para v2.3.9 (@vinicius)\n14:24  métricas normalizadas\n```\n\nMontar isso na mão leva uma hora e ninguém faz. Automatizado, sai em segundos — e é o que viabiliza o post-mortem realmente acontecer.\n\n## Post-mortem blameless\n\nA IA gera o rascunho: linha do tempo, impacto medido, causa raiz, o que funcionou, o que não funcionou, ações corretivas com responsável e prazo.\n\n**Dois cuidados:**\n1. **Blameless de verdade** — instrua explicitamente: descreva o que o sistema permitiu, não quem errou. \"O deploy não tinha gate de migration\" em vez de \"fulano esqueceu\"\n2. **O humano revisa e assina** — post-mortem gerado e publicado sem revisão destrói a confiança no processo\n\n## O ciclo que fecha\n\nPost-mortem → vira documento → é indexado no RAG → ajuda no próximo incidente. Cada incidente deixa o sistema melhor.",
+      "exercicio": "Gere a timeline automática de um incidente real do seu histórico, cruzando deploys, alertas e mensagens. Compare com o que foi registrado na época e veja o que ficou faltando.",
+      "videos": [
+        { "t": "Busca: blameless postmortem incident timeline", "u": "https://www.youtube.com/results?search_query=blameless+postmortem+incident+timeline", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Google SRE — post-mortem culture", "u": "https://sre.google/sre-book/postmortem-culture/" }
+      ]
+    },
+    {
+      "titulo": "Auto-remediação segura com dry-run e circuit breaker",
+      "tempo": 60,
+      "resumo": "O nível mais alto de autonomia — e as condições sem as quais não se chega nele.",
+      "conteudo": "## O fluxo obrigatório\n\n```\nalerta → VERIFICAR → mitigar → VALIDAR\n```\n\nAs duas maiúsculas são as etapas que todo mundo quer pular.\n\n**Verificar:** o alerta é real? Já não se resolveu sozinho? A causa é a conhecida? Alerta pode ser falso positivo, e agir sobre falso positivo cria o incidente que não existia.\n\n**Validar:** a mitigação funcionou? Se não, reverte e chama gente. Sem validação, você tem uma ação automática que pode ter piorado tudo silenciosamente.\n\n## As duas condições\n\n> **Auto-remediação só para causa CONHECIDA e ação REVERSÍVEL.**\n\nFora dessas duas, o sistema diagnostica e chama humano. Não há exceção que valha a pena.\n\n## Exemplos que passam no critério\n\n| Situação | Ação | Reversível? |\n|---|---|---|\n| Pod OOMKilled repetido | Subir limite de memória | Sim |\n| Disco em 90% | Limpar log antigo | Sim (com backup) |\n| Serviço sem responder | Reiniciar pod | Sim |\n| Fila crescendo | Escalar worker | Sim |\n\n## Exemplos que NÃO passam\n\nApagar dado, alterar schema, mudar configuração de rede, cancelar operação de cliente, qualquer coisa que envolva terceiro.\n\n## Os controles\n\n**Dry-run obrigatório** — a ação roda em modo simulação primeiro, e o resultado é registrado:\n```ts\nconst previsao = await acao.dryRun(ctx)\nregistrar({ acao: acao.nome, previsao })\nif (previsao.afetaMaisQue(LIMITE)) return escalarParaHumano(previsao)\nawait acao.executar(ctx)\n```\n\n**Circuit breaker** — se a mesma remediação disparou 3 vezes em 1 hora, ela não está resolvendo. Pare e chame gente. Remediação em loop mascara o problema real e consome recurso.\n\n**Rate limit nas próprias ações** — teto de remediações por hora, global.\n\n**Canary** — aplique em um subconjunto, observe, então complete.\n\n**Human-in-the-loop** para tudo que não passa nas duas condições.\n\n## O relatório\n\nToda remediação automática gera registro: o que disparou, o que foi verificado, o que foi feito, o resultado da validação. Se ninguém lê esse relatório semanalmente, você não tem auto-remediação: tem um agente agindo sozinho no escuro.",
+      "exercicio": "Implemente uma auto-remediação completa para UMA causa conhecida sua, com verificação, dry-run, validação e circuit breaker. Rode em ambiente de teste, provoque o problema 4 vezes e confirme que o circuit breaker abre na terceira.",
+      "videos": [
+        { "t": "Busca: auto remediation runbook automation safety", "u": "https://www.youtube.com/results?search_query=auto+remediation+runbook+automation+safety", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Google SRE — automação e toil", "u": "https://sre.google/sre-book/eliminating-toil/" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "modulo": "12",
+  "titulo": "Carreira e Entrevistas",
+  "aulas": [
+    {
+      "titulo": "LinkedIn otimizado para recrutador",
+      "tempo": 60,
+      "resumo": "Como o perfil é encontrado e o que faz o recrutador parar nele.",
+      "conteudo": "## Como o recrutador acha você\n\nEle busca por palavra-chave. Se os termos não estão no seu perfil, você não existe na busca — por melhor que seja.\n\nPalavras que importam hoje em IA aplicada: **LLM, RAG, agentes de IA, MCP, Model Context Protocol, LangChain, LangGraph, fine-tuning, vector database, prompt engineering, IA generativa, OpenAI, Anthropic**.\n\nColoque nos lugares que a busca indexa: headline, seção Sobre, experiências e competências.\n\n## Headline\n\nFórmula: **o que você faz · especialidade · prova**\n\n```\n❌ \"Desenvolvedor apaixonado por tecnologia\"\n❌ \"CTO | Empreendedor | Inovação\"\n✅ \"Engenheiro de IA Aplicada · RAG, agentes e MCP em produção ·\n    Micro-SaaS de IA no ar\"\n```\n\nA terceira diz o que você faz, em que é especialista, e prova que já entregou.\n\n## Seção Sobre\n\nTrês parágrafos, sem floreio:\n\n1. **O que você resolve** — o tipo de problema, com um número\n2. **Como** — a abordagem, citando um projeto concreto com link\n3. **O que procura** — específico, para o recrutador certo se identificar\n\n## Experiência: resultado, não tarefa\n\n```\n❌ \"Responsável por integrações de IA e automações\"\n\n✅ \"Reduzi 62% do custo de LLM implementando roteamento de modelos\n    e cache semântico (de R$ 8,2k para R$ 3,1k/mês)\"\n✅ \"Construí a camada MCP que conectou o ERP legado a assistentes de\n    IA, eliminando ~15h/semana de consulta manual\"\n```\n\nNúmero, verbo de ação, resultado. Se você não tem os números, comece a medir hoje — é o que os módulos 02 e 06 ensinaram.\n\n## Projetos\n\nOs 11 do curso, com link. O capstone primeiro, com a demo ao vivo.\n\n## SSI e alcance\n\nO índice sobe com atividade consistente: publicar, comentar, conectar. Não existe truque — existe frequência.\n\n**Tarefa das semanas 1–2:** reescrever headline, Sobre e a experiência mais recente.",
+      "exercicio": "Reescreva headline, Sobre e a experiência atual com as regras acima. Peça para uma pessoa da área ler e dizer, em 10 segundos, o que você faz. Se ela hesitar, refaça.",
+      "videos": [
+        {
+          "t": "Busca: otimizar LinkedIn para recrutadores tech",
+          "u": "https://www.youtube.com/results?search_query=otimizar+linkedin+recrutadores+tech",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "LinkedIn — como funciona a busca de talentos",
+          "u": "https://business.linkedin.com/talent-solutions"
+        }
+      ]
+    },
+    {
+      "titulo": "Networking estratégico: 5 conexões relevantes por semana",
+      "tempo": 30,
+      "resumo": "Meta pequena, mantida por 8 meses, vira 160 pessoas.",
+      "conteudo": "## A meta\n\n**5 conexões novas relevantes por semana.** Em 32 semanas, 160 pessoas na sua área.\n\nÉ pouco por semana e muito no total. É assim que funciona.\n\n## Quem conectar\n\n| Perfil | Por quê |\n|---|---|\n| **Recrutador técnico de IA** | É quem tem a vaga antes de ela ser publicada |\n| **Tech lead / staff de IA** | Referência técnica e indicação interna |\n| **Pessoas da sua cidade** | Meetup, evento, oportunidade local |\n| **Autores de conteúdo que você lê** | Relação de aprendizado genuína |\n\n## O convite\n\n```\n❌ Convite em branco\n❌ \"Vamos nos conectar para expandir nossa rede!\"\n\n✅ \"Oi, [nome]. Li seu post sobre custo de RAG em produção e apliquei\n    a ideia de cache semântico no meu projeto — cortei 40%. Estou\n    estudando IA aplicada e acompanho seu conteúdo. Abraço.\"\n```\n\nEspecífico, mostra que você leu, e não pede nada. Taxa de aceitação muito diferente.\n\n## Comunidades\n\n- Discords de LangChain e de MCP\n- Comunidades brasileiras de IA e dados\n- r/LocalLLaMA — o melhor lugar para acompanhar modelos abertos\n- Meetups locais e eventos de tecnologia\n\n## Engajamento vale mais que post\n\nNo começo, **comentar bem no post de alguém com audiência** te dá mais visibilidade que publicar para 200 seguidores.\n\nComentário que agrega: acrescenta um dado, conta uma experiência sua, ou faz uma pergunta boa. \"Ótimo conteúdo!\" não conta.\n\n## O que não fazer\n\nPedir emprego no primeiro contato. Mandar currículo sem contexto. Conectar em massa sem critério. Sumir por 6 meses e reaparecer pedindo indicação.\n\n## 30 minutos por semana\n\nBloco fixo no calendário: 5 convites com nota, 3 comentários bons, 1 post. Todo semana, no mesmo dia.",
+      "exercicio": "Defina o dia e o horário do seu bloco semanal de 30 minutos. Faça o primeiro: 5 convites com nota específica e 3 comentários que agregam.",
+      "videos": [
+        {
+          "t": "Busca: networking técnico LinkedIn desenvolvedores",
+          "u": "https://www.youtube.com/results?search_query=networking+t%C3%A9cnico+linkedin+desenvolvedores",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Never Search Alone — método de busca de vaga",
+          "u": "https://www.phyl.org/"
+        }
+      ]
+    },
+    {
+      "titulo": "Marca pessoal: publicar aprendizado, não conquista",
+      "tempo": 45,
+      "resumo": "As suas notas de estudo já são o conteúdo. Só falta editar.",
+      "conteudo": "## O que funciona e o que não funciona\n\n```\n❌ \"Concluí mais um curso! 🎉\"\n❌ \"Feliz em anunciar que...\"\n\n✅ \"Meu agente entrou em loop e gastou R$ 340 numa madrugada.\n    O que faltou e os 4 controles que eu deveria ter implementado.\"\n```\n\nO segundo tem: problema real, custo real, e algo que o leitor pode aplicar hoje. Alcance e credibilidade completamente diferentes.\n\n## A estrutura que funciona\n\n1. **O problema concreto** que você enfrentou\n2. **O que tentou** e não funcionou\n3. **O que descobriu**\n4. **O que o leitor pode aplicar** hoje\n\nQuatro parágrafos curtos. Sem \"vou te contar um segredo\", sem chamada para ação vazia, sem emoji em excesso.\n\n## Sua matéria-prima já existe\n\nAs notas semanais de `notas/semana-NN.md` (COMO-ESTUDAR) **são** o conteúdo. Você já escreveu o que aprendeu, o que travou e o que descobriu.\n\nPublicar é editar, não criar do zero. É por isso que o módulo 12 começa na semana 1: sem as notas, você chega na semana 30 sem nada para publicar.\n\n## Posicionamento: seja específico\n\n```\n❌ \"Especialista em IA\"\n✅ \"IA aplicada a operação de cobrança e atendimento em escala\"\n```\n\nO segundo é muito mais forte. Quem precisa exatamente disso te acha; e é mais fácil ser referência num nicho estreito do que competir em \"IA\".\n\n## Frequência sustentável\n\n**1 post por semana por 8 meses** (32 posts) vence 5 por semana por 3 semanas (15 posts e desistência).\n\n## Artigo técnico mais denso\n\nUm por trimestre, mais longo, sobre algo que você realmente dominou. É o que você linka quando alguém pergunta \"você entende de X?\".\n\nSugestões vindas do curso: como você cortou 40% do custo de LLM; o que aprendeu construindo um MCP server em produção; por que decidiu **não** fazer fine-tuning.\n\nO último título costuma performar melhor que os outros dois, porque quase ninguém escreve sobre decidir não fazer algo.",
+      "exercicio": "Pegue a nota da sua última semana de estudo e transforme em um post seguindo a estrutura de 4 partes. Publique. Não espere estar \"pronto\" — o post da semana 3 não precisa ser o melhor da sua vida.",
+      "videos": [
+        {
+          "t": "Busca: personal branding developers technical writing",
+          "u": "https://www.youtube.com/results?search_query=personal+branding+developers+technical+writing",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Julia Evans — blog técnico como referência de escrita clara",
+          "u": "https://jvns.ca/"
+        }
+      ]
+    },
+    {
+      "titulo": "Portfólio GitHub profissional e auditoria de segredos",
+      "tempo": 60,
+      "resumo": "Projeto deployado > projeto no repositório > README bonito e vazio.",
+      "conteudo": "## A hierarquia de impacto\n\n```\n1. Projeto no ar, com link que qualquer um abre\n2. Projeto no repositório, com README que explica e print\n3. Repositório com código e sem contexto\n4. Repositório vazio com README bonito\n```\n\nA distância entre 1 e 2 é maior do que parece. **O link é o que faz o recrutador parar.**\n\n## README de projeto\n\nDeve responder em 30 segundos: o que é, como parece (print ou GIF), como rodar, como funciona (diagrama), e quais são as limitações.\n\nDetalhado no módulo 11 — aplique a todos os projetos do curso, não só ao capstone.\n\n## Auditoria de segredos — antes de tornar público\n\n**Eliminatório em processo sério.** Faça agora:\n\n```bash\n# instale e rode em TODOS os seus repositórios\ngitleaks detect --source . --verbose\n\n# ou\ntrufflehog git file://. --only-verified\n```\n\nSe encontrar algo:\n1. **Rotacione a credencial imediatamente** — é o único passo que realmente importa\n2. Remova do código\n3. Considere reescrever o histórico se o repositório for público\n4. Adicione o scan no pre-commit\n\nLembre: remover em um commit novo **não** tira do histórico.\n\n## Qualidade do código exposto\n\n- Sem `console.log` esquecido\n- Sem `TODO: arrumar isso depois` em código central\n- Testes existem e passam\n- CI verde e visível no badge\n- Commits com mensagem que explica o porquê\n\nO recrutador técnico abre 2 ou 3 arquivos aleatórios. Eles precisam sustentar a primeira impressão do README.\n\n## Perfil do GitHub\n\n- README de perfil dizendo o que você faz\n- Projetos fixados: capstone primeiro, depois MCP e agente\n- Contribuição consistente — não precisa ser diária, precisa ser real\n\n## Contribuição open source\n\nUm MCP server útil publicado já te coloca num grupo pequeno. Não precisa ser grande: precisa resolver um problema real e ter documentação decente.",
+      "exercicio": "Rode gitleaks em TODOS os seus repositórios, hoje. Execute a rotação onde precisar. Depois escolha os 3 melhores projetos, escreva READMEs de verdade e fixe no perfil.",
+      "videos": [
+        {
+          "t": "Busca: github portfolio developers recruiters",
+          "u": "https://www.youtube.com/results?search_query=github+portfolio+developers+recruiters",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "gitleaks",
+          "u": "https://github.com/gitleaks/gitleaks"
+        }
+      ]
+    },
+    {
+      "titulo": "Expectativas por nível: júnior a principal",
+      "tempo": 45,
+      "resumo": "O que muda entre os níveis — e o que acelera a subida em IA aplicada.",
+      "conteudo": "## Os cinco níveis\n\n| Nível | Escopo | Autonomia | Impacto |\n|---|---|---|---|\n| **Júnior** | Tarefa definida | Precisa de revisão | O próprio trabalho |\n| **Pleno** | Feature completa | Trabalha sozinho | O time |\n| **Sênior** | Sistema | Define o **como** | Vários times |\n| **Staff** | Área técnica | Define o **quê** | A organização |\n| **Principal** | Direção técnica | Define o **porquê** | Empresa e mercado |\n\n## O que realmente diferencia\n\nNão é conhecimento técnico. É **escopo de ambiguidade que você aguenta**.\n\n- Júnior recebe a tarefa pronta\n- Pleno recebe o problema e resolve\n- Sênior recebe o objetivo e descobre qual é o problema\n- Staff percebe o problema que ninguém viu ainda\n\n## O que acelera em IA aplicada\n\n**1. Decisão bem justificada** — saber quando **não** usar IA é o sinal de senioridade mais forte que existe hoje na área. A maioria erra para o lado de usar IA onde um `if` resolvia.\n\n**2. Números** — quem fala em custo por conversa, latência p95 e taxa de alucinação medida opera em outro nível que quem fala em \"ficou muito bom\".\n\n**3. Modos de falha** — descrever como o sistema quebra vale mais que descrever como ele funciona.\n\n**4. Comunicação com não técnico** — traduzir arquitetura para impacto de negócio é o que separa sênior de staff.\n\n## Como saber onde você está\n\nPergunta honesta: **qual o maior problema que você resolveu sozinho, do zero, sem alguém dizendo o que fazer?**\n\nA resposta te posiciona melhor que qualquer título.\n\n## O que fazer com isso\n\nEm entrevista, calibre as histórias STAR para o nível da vaga. Para vaga sênior, escolha histórias onde você definiu o **como** — não onde executou bem o que mandaram.",
+      "exercicio": "Escreva, para cada um dos 5 níveis, um exemplo concreto do seu histórico. Onde você não conseguir dar exemplo, esse é o seu teto atual — e o alvo dos próximos 6 meses.",
+      "videos": [
+        {
+          "t": "Busca: engineering career levels senior staff principal",
+          "u": "https://www.youtube.com/results?search_query=engineering+career+levels+senior+staff+principal",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "StaffEng — histórias de carreira",
+          "u": "https://staffeng.com/"
+        }
+      ]
+    },
+    {
+      "titulo": "Entrevista de RH e método STAR",
+      "tempo": 60,
+      "resumo": "Seis histórias bem preparadas cobrem quase todas as perguntas.",
+      "conteudo": "## STAR\n\n**S**ituação — contexto, curto\n**T**arefa — sua responsabilidade\n**A**ção — o que **você** fez (primeira pessoa do singular)\n**R**esultado — **com número**\n\n```\nS: A operação de disparo perdia contatos porque exportações\n   falhavam parcialmente e ninguém percebia.\nT: Eu era responsável por diagnosticar e resolver.\nA: Investiguei 30 dias de logs e descobri duas causas opostas:\n   50% de falha era login do ERP (retry nunca resolvia) e 80-90%\n   era timeout (retry resolvia). Implementei classificação\n   automática com reprocessamento só para a causa certa.\nR: Eliminou ~4h/semana de trabalho manual e a taxa de exportação\n   completa subiu de 78% para 96% em três semanas.\n```\n\n## As seis histórias\n\nPrepare uma de cada. Bem escolhidas, cobrem quase tudo:\n\n1. **Conflito** — discordância técnica ou com stakeholder\n2. **Falha sua** — algo que deu errado por sua decisão\n3. **Liderança sem cargo** — você conduziu sem ser chefe\n4. **Prazo apertado** — o que cortou e por quê\n5. **Decisão técnica difícil** — trade-off real\n6. **Aprendizado recente** — algo que você não sabia e aprendeu\n\nUma boa história serve para 3 perguntas diferentes. Seis histórias cobrem uma entrevista inteira.\n\n## A história de falha\n\nA mais importante e a pior preparada. Regras:\n\n- Falha **real**, com consequência real\n- Sua responsabilidade, sem culpar terceiro\n- O que você fez para corrigir\n- **O que mudou no seu processo depois** — é isso que o entrevistador quer ouvir\n\n\"Meu maior defeito é ser perfeccionista\" queima a pergunta e a sua credibilidade.\n\n## Ponto fraco\n\nEscolha um real e mostre a ação em curso. \"Tenho dificuldade em delegar. Percebi quando virei gargalo no projeto X. Desde então, faço pareamento nas tarefas do meu módulo e documento decisão em ADR.\"\n\n## Alinhamento cultural\n\nPesquise a empresa e tenha **3 perguntas boas** — sobre desafio técnico atual, como decidem prioridade, e como é o processo de revisão. Não perguntar nada é o pior sinal possível.",
+      "exercicio": "Escreva as 6 histórias em STAR, com número no resultado. Grave você contando cada uma em até 2 minutos e assista. Vai doer e vai melhorar rápido.",
+      "videos": [
+        {
+          "t": "Busca: método STAR entrevista comportamental",
+          "u": "https://www.youtube.com/results?search_query=m%C3%A9todo+star+entrevista+comportamental",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Cracking the Coding Interview — capítulo comportamental",
+          "u": "https://www.crackingthecodinginterview.com/"
+        }
+      ]
+    },
+    {
+      "titulo": "Expectativa salarial e proposta de valor",
+      "tempo": 45,
+      "resumo": "Pesquisar antes, ancorar depois, e justificar por impacto.",
+      "conteudo": "## Pesquise antes de precisar\n\nFontes: Levels.fyi (internacional e algumas brasileiras), Glassdoor, pesquisas salariais brasileiras de tecnologia, grupos e comunidades, e — a melhor fonte — **conversa direta com pares**.\n\nMonte a faixa com três números: **mínimo aceitável**, **alvo confortável**, **teto realista**.\n\n## Timing\n\nNão dê número primeiro, se der para evitar:\n\n```\nRecrutador: \"Qual sua expectativa?\"\n\n✅ \"Estou avaliando o pacote como um todo. Vocês têm uma faixa\n    definida para a posição? Assim consigo dizer se faz sentido\n    seguirmos.\"\n```\n\nSe insistirem, dê **faixa com piso confortável** — nunca o seu mínimo aceitável:\n\n> \"Pelo que pesquisei para essa senioridade e escopo, entre X e Y. Depende do pacote completo e do escopo da posição.\"\n\n## Justifique por impacto, não por necessidade\n\n```\n❌ \"Preciso desse valor porque tenho contas\"\n✅ \"A automação que construí economiza cerca de 15h/semana da\n    operação e cortou 62% do custo de IA. É esse tipo de impacto\n    que trago.\"\n```\n\nO segundo é a razão pela qual o curso insiste tanto em medir. Sem números, você negocia com adjetivos.\n\n## O pacote completo\n\nSalário é uma parte. Considere: PLR e bônus, equity, benefícios, flexibilidade de horário e local, verba de estudo e certificação, plano de carreira, e — o que mais importa a médio prazo — **o que você vai aprender ali**.\n\nUma vaga que paga 15% menos e te coloca em contato com problemas de escala real pode valer mais em dois anos.\n\n## O caso de IA aplicada\n\nÉ uma área com demanda alta e oferta baixa de gente com experiência real de produção. Isso te dá poder de negociação — desde que você consiga **provar** a experiência com projeto no ar e números.\n\nÉ exatamente o que o portfólio do curso te dá.",
+      "exercicio": "Faça a pesquisa salarial e defina seus 3 números. Escreva a frase que você vai usar quando perguntarem a expectativa, e ensaie até sair natural.",
+      "videos": [
+        {
+          "t": "Busca: negociação salarial tecnologia expectativa",
+          "u": "https://www.youtube.com/results?search_query=negocia%C3%A7%C3%A3o+salarial+tecnologia+expectativa",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Levels.fyi",
+          "u": "https://www.levels.fyi/"
+        }
+      ]
+    },
+    {
+      "titulo": "Live coding e problem solving",
+      "tempo": 60,
+      "resumo": "O processo é avaliado tanto quanto a solução.",
+      "conteudo": "## O que o entrevistador está avaliando\n\nNão é se você sabe o algoritmo. É:\n\n- como você esclarece um problema mal definido\n- como você comunica raciocínio\n- como reage quando trava\n- se testa o que escreve\n- se é uma pessoa com quem dá para trabalhar\n\n## O roteiro\n\n**1. Esclareça antes de codar** (2-3 min)\n> \"Os dados cabem em memória? Existe limite de tamanho? Pode haver duplicata? O que devolvo para entrada vazia?\"\n\nQuem começa a digitar imediatamente perde pontos. Perguntar é sinal de experiência.\n\n**2. Diga a abordagem antes de escrever**\n> \"Penso em usar um mapa para contar frequência, depois ordenar. Fica O(n log n) por causa da ordenação. Faz sentido começar por aí?\"\n\n**3. Comece pela versão que funciona**\nOtimização vem depois. Solução O(n²) funcionando vale mais que O(n) pela metade.\n\n**4. Pense em voz alta**\nSilêncio é o pior sinal. Mesmo travado: \"estou tentando lembrar como lidar com o caso de empate; vou deixar um TODO e seguir\".\n\n**5. Teste casos de borda**\nVazio, nulo, um elemento, todos iguais, muito grande, negativo. Testar sem ser pedido impressiona.\n\n**6. Só então otimize**\n> \"Dá para tirar a ordenação usando um heap de tamanho k, fica O(n log k). Quer que eu implemente?\"\n\n## Quando travar\n\nNão congele. Diga onde está: \"sei que preciso de uma estrutura com busca rápida, estou entre mapa e conjunto — vou seguir com mapa porque preciso do valor\".\n\nO entrevistador quase sempre ajuda se você mostrar onde está. Ele não pode ajudar quem está em silêncio.\n\n## Prática\n\n**1 problema por semana a partir da semana 27**, cronometrado, falando em voz alta, de preferência gravado. Falar em voz alta enquanto programa é uma habilidade separada — e treina rápido.",
+      "exercicio": "Resolva um problema de nível médio em 40 minutos, gravando a tela e o áudio, falando em voz alta o tempo todo. Assista e avalie: você esclareceu antes? Testou borda? Ficou em silêncio?",
+      "videos": [
+        {
+          "t": "Busca: live coding interview think out loud",
+          "u": "https://www.youtube.com/results?search_query=live+coding+interview+think+out+loud",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Cracking the Coding Interview",
+          "u": "https://www.crackingthecodinginterview.com/"
+        }
+      ]
+    },
+    {
+      "titulo": "System design para sistemas de IA",
+      "tempo": 90,
+      "resumo": "O formato mais cobrado em vaga sênior — e onde o curso inteiro converge.",
+      "conteudo": "## O roteiro de 45 minutos\n\n| Tempo | Bloco | O que fazer |\n|---|---|---|\n| 5 min | **Requisitos** | Funcional, escala, latência, orçamento, precisão exigida |\n| 5 min | **API** | Endpoints e contratos |\n| 10 min | **Arquitetura macro** | Gateway, orquestração, RAG, agentes, dados |\n| 15 min | **Aprofundar** | O entrevistador escolhe o tema |\n| 5 min | **Escala e custo** | Gargalo, custo por usuário, o que quebra primeiro |\n| 5 min | **Trade-offs** | O que você sacrificou e por quê |\n\n## As perguntas de requisito específicas de IA\n\nAlém de escala e latência, pergunte:\n\n- **Precisão exigida** — 90% resolve ou precisa de 99%?\n- **Custo aceitável por interação** — muda toda a arquitetura\n- **O erro é reversível?** — define se precisa de human-in-the-loop\n- **Dado pode sair do país?** — elimina opções de saída\n- **A base de conhecimento muda com que frequência?** — RAG ou fine-tuning\n\nEssas cinco mostram que você já construiu algo de verdade.\n\n## O desenho padrão\n\n```\nCliente → Gateway (auth, rate limit, quota)\n        → Fila → Workers\n            ├── Roteador de modelo (módulo 08)\n            ├── Cache (prompt + semântico, com escopo)\n            ├── RAG (híbrido, filtrado por tenant)\n            └── Guardrails (entrada e saída)\n        → Provedores com fallback\n        → Observabilidade (custo, latência, avaliação contínua)\n```\n\n## Onde eles vão aprofundar\n\n- **RAG**: chunking, híbrido, re-ranking, como você mede qualidade\n- **Custo**: roteamento, cache, model tiering, números\n- **Cache semântico**: e aqui vem a pegadinha do escopo por usuário\n- **Avaliação**: como saber que não regrediu\n- **Segurança**: prompt injection, isolamento entre tenants\n\nTodos são módulos que você fez.\n\n## Problemas para praticar\n\n1. Assistente de suporte para 100 mil usuários\n2. Análise de documento para escritório de advocacia\n3. Copiloto interno sobre dados da empresa\n4. Moderação de conteúdo em tempo real\n\n## O diferencial\n\nTermine sempre com: **o que quebra primeiro se o uso multiplicar por 100**. Quem responde isso sem ser perguntado demonstra que já viu sistema em produção.",
+      "exercicio": "Pratique os 4 problemas, um por semana, cronometrando 45 minutos e desenhando de verdade. Grave e assista pelo menos um.",
+      "videos": [
+        {
+          "t": "Busca: system design interview AI LLM application",
+          "u": "https://www.youtube.com/results?search_query=system+design+interview+ai+llm+application",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "System Design Interview — Alex Xu",
+          "u": "https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF"
+        }
+      ]
+    },
+    {
+      "titulo": "Explicar decisões técnicas com trade-offs",
+      "tempo": 45,
+      "resumo": "A estrutura de cinco partes que funciona em qualquer decisão.",
+      "conteudo": "## A estrutura\n\n**contexto → alternativas consideradas → critério de escolha → trade-off aceito → como eu saberia que errei**\n\n```\nCONTEXTO\n\"Precisávamos de busca semântica sobre 40 mil trechos, com filtro por\ncliente e busca por identificador exato tipo número de contrato.\"\n\nALTERNATIVAS\n\"Avaliei Postgres com pgvector, Qdrant e Pinecone.\"\n\nCRITÉRIO\n\"Priorizei: já operamos Postgres, precisávamos de busca híbrida no\nmesmo lugar, e o time é pequeno — cada serviço novo tem custo de\noperação que ninguém contabiliza.\"\n\nTRADE-OFF\n\"Aceitei performance inferior em escala muito grande. Qdrant seria\nmelhor acima de alguns milhões de vetores; estamos em 40 mil.\"\n\nCOMO EU SABERIA QUE ERREI\n\"Se a latência p95 da busca passasse de 300ms com o volume atual, ou\nse precisássemos de features de filtro que o pgvector não tem.\nMonitoro as duas coisas.\"\n```\n\n## Por que o último item impressiona\n\nA maioria das pessoas defende decisão como se fosse identidade. Quem declara o critério de refutação demonstra:\n\n- que pensou no cenário de estar errado\n- que monitora, em vez de torcer\n- que trocaria de opinião com evidência\n\nÉ o comportamento de quem opera sistema de verdade.\n\n## O erro comum\n\nDefender a decisão como se fosse a única possível. Se você não consegue nomear uma alternativa razoável, o entrevistador conclui que você não pesquisou.\n\n## Quando a decisão foi por restrição\n\nÉ legítimo e maduro:\n\n> \"Escolhi Next.js porque é o que eu domino e o prazo era 4 semanas. Angular seria igualmente válido tecnicamente, mas eu entregaria menos.\"\n\nRestrição de prazo, de time e de conhecimento são critérios reais de engenharia. Fingir que a decisão foi puramente técnica é que soa falso.\n\n## Aplique isso ao capstone\n\nAs 3 decisões mais difíceis do seu projeto precisam estar nessa estrutura, prontas para a defesa. E os ADRs do módulo 11 já são exatamente esse formato escrito.",
+      "exercicio": "Escreva as 3 decisões mais difíceis do seu capstone na estrutura de 5 partes. Depois explique cada uma em voz alta, em 2 minutos, sem ler.",
+      "videos": [
+        {
+          "t": "Busca: explaining technical decisions trade-offs interview",
+          "u": "https://www.youtube.com/results?search_query=explaining+technical+decisions+tradeoffs+interview",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "ADR — registrar decisões arquiteturais",
+          "u": "https://adr.github.io/"
+        }
+      ]
+    },
+    {
+      "titulo": "As 8 perguntas técnicas recorrentes de IA",
+      "tempo": 60,
+      "resumo": "Todas já respondidas nos módulos. Agora é treinar a resposta falada.",
+      "conteudo": "## As oito\n\n**1. RAG ou fine-tuning?** *(módulo 09)*\n→ Framework de decisão: prompt → few-shot → RAG → fine-tuning. RAG para conhecimento, fine-tuning para comportamento.\n\n**2. Quando usar agente em vez de workflow?** *(módulo 04)*\n→ Agente quando o caminho não é previsível. Workflow quando é — mais barato, mais rápido, mais confiável.\n\n**3. Como otimizar custo de LLM?** *(módulos 02 e 08)*\n→ Em ordem: modelo menor, prompt caching, não chamar o LLM, cache de resposta, reduzir contexto, limitar max_tokens. Com número real seu.\n\n**4. Como tratar falha de provedor?** *(módulo 02)*\n→ Retry diferenciado por tipo de erro, backoff com jitter, fallback de modelo, circuit breaker, timeout sempre.\n\n**5. Como avaliar qualidade de saída de LLM?** *(módulos 02, 08 e 09)*\n→ Conjunto de avaliação com casos-âncora, critérios determinísticos quando possível, LLM-as-judge com rubrica, e casos sem resposta na base.\n\n**6. Como impedir prompt injection?** *(módulos 03 e 10)*\n→ Separar dado de instrução, autorização no servidor, allowlist de ações, guardrail na saída, aprovação humana no crítico. E o princípio: limitar o estrago, não confiar na resistência do modelo.\n\n**7. Como versionar comportamento de IA?** *(módulo 08)*\n→ Código + prompt + modelo + índice. Conjunto de avaliação a cada mudança, flag por tenant, promoção gradual, rollback sem deploy.\n\n**8. O que é MCP e por que importa?** *(módulo 03)*\n→ N×M vira N+M. Analogia com LSP. E o que você construiu com ele.\n\n## O treino\n\nGrave você respondendo cada uma em **até 2 minutos**. Assista.\n\nO que observar: você foi direto ao ponto? Usou exemplo concreto seu? Citou número? Falou de trade-off? Enrolou no começo?\n\n## O diferencial em cada resposta\n\nCite **o seu caso**. \"Eu implementei roteamento de modelos e cortei 62%\" vale dez vezes mais que a explicação teórica correta.\n\nÉ para isso que serviram os 11 projetos.",
+      "exercicio": "Grave as 8 respostas, uma por vez, em até 2 minutos cada. Assista todas. Refaça as 3 piores.",
+      "videos": [
+        {
+          "t": "Busca: AI engineer interview questions RAG agents",
+          "u": "https://www.youtube.com/results?search_query=ai+engineer+interview+questions+rag+agents",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Anthropic — Building Effective Agents",
+          "u": "https://www.anthropic.com/engineering/building-effective-agents"
+        }
+      ]
+    },
+    {
+      "titulo": "Negociação salarial e alavancas reais",
+      "tempo": 45,
+      "resumo": "Timing, âncora e a única alavanca que funciona de verdade.",
+      "conteudo": "## Timing\n\nNegocie **depois da oferta**, nunca antes. Antes da oferta, você está competindo. Depois, eles já escolheram você e o custo de recomeçar o processo é deles.\n\n## Âncora\n\nQuem fala o número primeiro ancora a conversa. Se possível, deixe eles falarem.\n\nQuando precisar falar, ancore em cima da sua faixa realista, não no meio — a negociação tende a puxar para baixo.\n\n## A alavanca que funciona\n\n**Múltiplas ofertas.** É a única com poder real, e é honesta quando verdadeira.\n\n> \"Estou com outro processo em fase final. Gosto mais daqui pelo escopo técnico, mas a diferença de valor é significativa. Existe espaço?\"\n\nNunca invente oferta que não existe. Além de desonesto, é fácil de desmontar e queima a relação.\n\n## Negocie o pacote\n\nSe o salário está travado por política, outros itens costumam ter flexibilidade: bônus de contratação, revisão antecipada em 6 meses, verba de estudo e certificação, dias de férias, flexibilidade de local, título.\n\nPeça a revisão antecipada por escrito. Promessa verbal de \"revisamos em seis meses\" costuma evaporar.\n\n## Como conduzir\n\n- Agradeça a oferta, sempre, e demonstre interesse genuíno\n- Peça tempo para avaliar (2 a 3 dias é normal e esperado)\n- Faça um pedido específico, não vago: \"consegue chegar em X?\" funciona melhor que \"dá para melhorar?\"\n- Justifique por impacto e por mercado, nunca por necessidade pessoal\n- **Nunca dê ultimato que você não cumpriria**\n\n## Se a resposta for não\n\nAceite com elegância e pergunte o que precisaria acontecer para chegar lá na próxima revisão. Isso vira um acordo concreto e te dá um alvo.\n\n## O contexto de IA aplicada\n\nDemanda alta e pouca gente com experiência real de produção. Isso é alavanca — desde que você consiga **provar** com projeto no ar e números medidos.\n\nÉ literalmente o que o curso inteiro construiu.",
+      "exercicio": "Escreva o roteiro da sua negociação: como você responde à expectativa, como pede tempo, e como faz o pedido específico. Ensaie com alguém fazendo o papel de recrutador.",
+      "videos": [
+        {
+          "t": "Busca: salary negotiation software engineer tactics",
+          "u": "https://www.youtube.com/results?search_query=salary+negotiation+software+engineer+tactics",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Ten Rules for Negotiating a Job Offer",
+          "u": "https://haseebq.com/my-ten-rules-for-negotiating-a-job-offer/"
+        }
+      ]
+    },
+    {
+      "titulo": "Pedido de aumento ou promoção",
+      "tempo": 45,
+      "resumo": "Documentar impacto o ano inteiro é o que transforma o pedido em constatação.",
+      "conteudo": "## Comece o arquivo hoje\n\nUm documento, atualizado toda sexta em 5 minutos:\n\n```md\n## 2026\n\n### Agosto\n- Corrigi o reenvio de recusados: eliminou ~4h/semana de trabalho manual\n- Implementei roteamento de modelos: custo de IA caiu de R$ 8,2k para R$ 3,1k/mês\n- Construí o MCP de operação, hoje usado por 3 automações internas\n- Conduzi o diagnóstico do incidente de 14/08 (webhook), resolvido em 2h\n```\n\nSem esse arquivo, na hora do pedido você lembra dos últimos dois meses e esquece nove. E a conversa vira impressão contra impressão.\n\n## Timing\n\n- Perto do ciclo de avaliação, não fora dele\n- Depois de uma entrega visível\n- Quando a empresa está bem, não no mês do corte\n- Nunca em momento de crise ou logo após um erro seu\n\n## Construa o caso\n\nA pergunta que a gestão precisa poder responder com \"sim\":\n\n> **O que você já faz hoje é o escopo do nível seguinte?**\n\nSe sim, o pedido é uma **constatação**, não um favor. Mostre com exemplos mapeados nos critérios do nível (aula de níveis).\n\n## A apresentação\n\nUm documento de uma página:\n\n1. O que eu entreguei no período, com números\n2. Como isso se compara ao escopo do nível seguinte\n3. O que eu proponho (nível, faixa)\n4. O que eu me comprometo a entregar\n\nMarque uma conversa específica para isso. Não jogue no meio de um 1:1 de rotina.\n\n## Se a resposta for não\n\nPergunte, sem defensividade: **o que exatamente precisaria acontecer, e em quanto tempo?** Peça isso por escrito.\n\nDuas coisas acontecem: ou você recebe um plano concreto e o cumpre, ou percebe que não existe plano — o que também é uma informação valiosa para decidir o próximo passo.\n\n## O que não fazer\n\nComparar com colega. Usar oferta externa como ameaça se você não aceitaria. Pedir por necessidade pessoal. Transformar em ultimato emocional.",
+      "exercicio": "Crie o arquivo de impacto hoje e preencha retroativamente os últimos 6 meses com o que você lembrar. Depois coloque um lembrete semanal de 5 minutos para atualizar.",
+      "videos": [
+        {
+          "t": "Busca: pedir aumento promoção tecnologia como fazer",
+          "u": "https://www.youtube.com/results?search_query=pedir+aumento+promo%C3%A7%C3%A3o+tecnologia",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "StaffEng — promoção e escopo",
+          "u": "https://staffeng.com/guides/"
+        }
+      ]
+    },
+    {
+      "titulo": "Técnicas de diferenciação",
+      "tempo": 45,
+      "resumo": "O que realmente separa candidatos em IA aplicada hoje.",
+      "conteudo": "## As cinco\n\n**1. Projeto ao vivo**\nUm link que o entrevistador abre e usa durante a conversa. Muda a dinâmica: deixa de ser uma entrevista sobre o que você diz que sabe e vira uma conversa sobre algo que existe.\n\n**2. Case com resultado medido**\n> \"Reduzi o custo de LLM em 62%. Medi assim, aqui está a metodologia e aqui está o gráfico.\"\n\nMetodologia junto do número é o que separa medição de alegação.\n\n**3. Contribuição open source**\nUm MCP server útil publicado já te coloca num grupo pequeno. Não precisa ser grande; precisa resolver algo real e ter documentação decente.\n\n**4. Presença técnica**\nEscrever, palestrar, ensinar. 32 posts ao longo do curso constroem isso sem esforço concentrado.\n\n**5. Saber dizer não à IA**\nO mais raro e o mais valioso hoje. Apresentar um caso em que você concluiu que IA era a escolha errada — com a análise que sustenta — demonstra critério que quase ninguém tem.\n\n## O que você tem ao terminar o curso\n\n- 11 projetos, sendo 3 de portfólio forte (MCP, agente autônomo, capstone)\n- Um micro-SaaS no ar com demo pública\n- Números medidos de custo, latência e qualidade\n- 32 posts publicados\n- Um documento decidindo **não** fazer fine-tuning, com a conta\n- Uma auditoria de segurança e governança de um sistema real\n\nEsse conjunto é incomum. A maioria dos candidatos tem cursos concluídos e um chatbot de tutorial.\n\n## A pergunta que fecha o curso\n\n> **O que você construiu que está no ar e que alguém usa?**\n\nSe você fez o curso de verdade, você tem várias respostas. Se você só leu, tem nenhuma.\n\nA diferença entre as duas situações não é conhecimento — é ter feito.\n\n## O que fazer agora\n\n1. Publique o capstone com o link no topo do LinkedIn e do GitHub\n2. Escreva o artigo denso sobre o aprendizado mais forte do curso\n3. Comece a conversar com pessoas antes de precisar de vaga\n4. Continue medindo tudo que você constrói — é o hábito que sustenta tudo isso",
+      "exercicio": "Liste, das 5 técnicas, quais você já tem e quais faltam. Para cada uma que falta, escreva a menor ação possível para começar nesta semana.",
+      "videos": [
+        {
+          "t": "Busca: como se destacar vaga engenheiro de IA",
+          "u": "https://www.youtube.com/results?search_query=como+se+destacar+vaga+engenheiro+de+ia",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "StaffEng — construir visibilidade técnica",
+          "u": "https://staffeng.com/guides/staff-projects/"
+        }
+      ]
+    }
+  ]
+}

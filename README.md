@@ -13,6 +13,7 @@ para estudo autônomo com **projetos reais** em vez de exercícios de brinquedo.
 | Ementa original | Aqui |
 |---|---|
 | 12 módulos temáticos | Os mesmos 12 módulos, com ordem de estudo e dependências explícitas |
+| Lista de tópicos | **163 aulas escritas**, com explicação, código, exercício e referências |
 | Exercícios genéricos | Projetos ancorados em sistemas que você já opera (disparo WhatsApp, painel, bots) |
 | Sem calendário | Plano de 32 semanas com carga semanal e entregas datadas |
 | Sem critério de "aprendi" | Checklist de domínio + perguntas de entrevista por módulo |
@@ -52,10 +53,21 @@ para estudo autônomo com **projetos reais** em vez de exercícios de brinquedo.
 
 ---
 
-## Site de acompanhamento
+## Site do curso
 
-O diretório [`site/`](site/) é um painel estático que lista todas as aulas, projetos e checklists com
-marcação de progresso salva no navegador (localStorage). É o que sobe no Coolify.
+**🔗 [curso-ia.31.97.42.252.sslip.io](http://curso-ia.31.97.42.252.sslip.io)**
+
+O diretório [`site/`](site/) é o curso navegável:
+
+- **163 aulas com conteúdo completo** — clique em qualquer aula para abrir a explicação,
+  exemplos de código, exercício, vídeos de referência e documentação oficial
+- Progresso marcável em 335 itens (aulas, critérios de projeto, checklists), salvo no navegador
+- Exportar e importar progresso para levar a outro dispositivo
+- Tema claro e escuro
+- **Deep link**: `#03` abre o módulo 3, `#03/7` abre a aula 7 desse módulo
+
+O conteúdo das aulas fica em [`site/aulas/NN.json`](site/aulas/) — um arquivo por módulo, que é a
+fonte única do que aparece no site.
 
 Rodar local:
 

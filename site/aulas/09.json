@@ -1,0 +1,177 @@
+{
+  "modulo": "09",
+  "titulo": "Processamento de Dados e Fine-Tuning",
+  "aulas": [
+    {
+      "titulo": "Framework de decisão: prompt → few-shot → RAG → fine-tuning",
+      "tempo": 50,
+      "resumo": "Quatro degraus. A maioria dos casos para no primeiro, e quase nenhum chega no quarto.",
+      "conteudo": "## Os quatro degraus\n\nPercorra **nesta ordem**. Só desça quando o anterior tiver sido tentado de verdade.\n\n| # | Abordagem | Custo | Prazo | Resolve |\n|---|---|---|---|---|\n| 1 | **Prompt melhor** | horas | imediato | ~60% dos casos |\n| 2 | **Few-shot** | horas + tokens | imediato | +20% |\n| 3 | **RAG** | dias | dias | falta de conhecimento |\n| 4 | **Fine-tuning** | semanas + dinheiro | semanas | comportamento consistente |\n\n## A pergunta que separa 3 de 4\n\n> O problema é **falta de conhecimento** ou **falta de comportamento**?\n\n- \"O modelo não sabe as regras da minha empresa\" → conhecimento → **RAG**\n- \"O modelo sabe, mas responde em formato errado, tom errado, com vocabulário errado\" → comportamento → **fine-tuning**\n\nQuase todo pedido de \"treinar uma IA com nossos dados\" é, na verdade, RAG.\n\n## Fine-tuning resolve\n\n- Formato de saída rígido e repetitivo\n- Tom e estilo de marca ou de área\n- Vocabulário de domínio muito fechado\n- **Custo**: modelo pequeno ajustado substituindo modelo grande em tarefa estreita\n- **Latência**, pelo mesmo motivo\n\n## Fine-tuning NÃO resolve\n\n- Adicionar conhecimento factual novo → RAG\n- Conhecimento que muda com frequência → você retreinaria toda semana\n- Falta de raciocínio → modelo pequeno ajustado não vira modelo grande\n- Prompt mal escrito → você vai ensinar o modelo a errar com consistência\n\n## O custo escondido\n\nModelo ajustado é um **ativo com manutenção**. Quando sair a próxima geração do modelo base, o seu fica para trás e você refaz o processo inteiro. Some isso na conta antes de começar.\n\nDois anos de manutenção costumam custar mais que o treino original.",
+      "exercicio": "Escreva o documento de decisão para um caso real seu: compare RAG, few-shot e fine-tuning com custo estimado, prazo e risco. A conclusão pode perfeitamente ser \"não fazer fine-tuning\" — e esse documento vale mais em entrevista que um modelo treinado à toa.",
+      "videos": [
+        { "t": "Busca: RAG vs fine-tuning when to use", "u": "https://www.youtube.com/results?search_query=rag+vs+fine+tuning+when+to+use", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — quando fazer fine-tuning", "u": "https://platform.openai.com/docs/guides/fine-tuning" }
+      ]
+    },
+    {
+      "titulo": "O que fine-tuning resolve e o que não resolve",
+      "tempo": 40,
+      "resumo": "Casos concretos dos dois lados, para você reconhecer o seu.",
+      "conteudo": "## Casos onde fine-tuning é a resposta certa\n\n**1. Formato rígido em alto volume**\nVocê processa 100 mil mensagens/mês e precisa sempre do mesmo JSON. Um modelo pequeno ajustado acerta o formato 99,5% das vezes, custa uma fração e responde em 200ms.\n\n**2. Tom de marca**\nO texto precisa soar como a sua empresa. Descrever isso em prompt consome centenas de tokens em toda chamada; ajustado, vem de graça.\n\n**3. Vocabulário fechado**\nDomínio com jargão que o modelo base confunde (siglas internas, códigos, nomenclatura setorial).\n\n**4. Substituição de modelo grande**\nA tarefa é estreita e o modelo grande está sendo subutilizado. Ajustar um pequeno corta 80% do custo.\n\n## Casos onde é a resposta errada\n\n**1. \"Treinar com nossa base de conhecimento\"**\nClássico. Isso é RAG. Fine-tuning não armazena fatos de forma recuperável nem citável — e não dá para atualizar sem retreinar.\n\n**2. Conhecimento volátil**\nPreço, estoque, status de pedido. Muda todo dia; retreinar todo dia é inviável.\n\n**3. \"O modelo não está entendendo\"**\nNa esmagadora maioria das vezes, o prompt está ruim. Ajustar em cima de prompt ruim ensina o modelo a errar de forma consistente — pior que antes, porque agora parece confiável.\n\n**4. Raciocínio complexo**\nAjustar um modelo pequeno não o torna capaz de raciocinar como um grande. Ele fica melhor no formato, não mais inteligente.\n\n## O teste de sanidade\n\nAntes de investir semanas:\n\n> Escreva o **melhor prompt possível**, com 5 exemplos few-shot bem escolhidos. Meça.\n> Se isso já resolve 90% do que você precisa, **não faça fine-tuning**.\n\nEsse teste custa uma tarde e evita meses de trabalho desnecessário. É também o baseline obrigatório do Projeto 9.",
+      "exercicio": "Faça o teste de sanidade no seu caso: melhor prompt possível + 5 exemplos, medido contra o conjunto de teste. Registre o resultado — ele é o baseline do projeto e o argumento da sua decisão.",
+      "videos": [
+        { "t": "Busca: fine tuning myths mistakes llm", "u": "https://www.youtube.com/results?search_query=fine+tuning+llm+mistakes+myths", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — prompt engineering antes de tudo", "u": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" }
+      ]
+    },
+    {
+      "titulo": "O custo escondido de manter um modelo ajustado",
+      "tempo": 40,
+      "resumo": "A conta que ninguém faz na hora de decidir — e que cobra depois.",
+      "conteudo": "## A conta completa\n\n| Item | Uma vez | Recorrente |\n|---|---|---|\n| Coleta e limpeza de dados | 40–80h | — |\n| Treino | R$ 200–2.000 | a cada retreino |\n| Avaliação | 16–24h | a cada versão |\n| **Inferência do modelo ajustado** | — | **costuma custar mais que o base** |\n| Monitoramento de qualidade | 8h | contínuo |\n| Retreino por nova geração do base | 40h | a cada 6–12 meses |\n| Documentação e model card | 8h | por versão |\n\nO item em negrito surpreende muita gente: modelo ajustado costuma ter preço de inferência maior que o modelo base equivalente. A economia vem de **usar um modelo menor**, não do ajuste em si.\n\n## O ciclo de obsolescência\n\n```\nvocê ajusta o modelo A          → funciona bem\n6 meses depois sai o modelo B   → o base novo é melhor que o seu ajustado\nvocê refaz tudo                 → ou aceita ficar para trás\n```\n\nEsse ciclo é real e rápido no ritmo atual. Um modelo ajustado é um compromisso de manutenção, não um ativo passivo.\n\n## Quando a conta fecha mesmo assim\n\n- Volume muito alto (o ganho por chamada multiplica)\n- Tarefa muito estreita e estável (o formato não muda)\n- Requisito de latência que o modelo grande não atende\n- Requisito de privacidade que exige modelo próprio\n\n## Quando não fecha\n\n- Volume baixo\n- Domínio em evolução\n- Time pequeno sem capacidade de manutenção\n- Ganho de qualidade marginal sobre um bom prompt\n\n## A conclusão profissional\n\nSaber **não** fazer fine-tuning, com a conta na mão, é uma competência mais valiosa do que saber fazer. A maior parte do valor do módulo 09 está em decidir bem, não em treinar.",
+      "exercicio": "Monte a planilha de custo total de 24 meses para o seu caso, incluindo retreino por nova geração. Compare com o custo de continuar com prompt + RAG. Registre a conclusão.",
+      "videos": [
+        { "t": "Busca: total cost of ownership fine tuned model", "u": "https://www.youtube.com/results?search_query=total+cost+of+ownership+fine+tuned+llm", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — preços (comparar base e fine-tuned)", "u": "https://openai.com/api/pricing/" }
+      ]
+    },
+    {
+      "titulo": "Coleta de dados, consentimento e anonimização",
+      "tempo": 60,
+      "resumo": "Onde estão os dados, o que você pode usar e o que precisa sair antes.",
+      "conteudo": "## Onde estão os seus dados\n\nHistórico de atendimento, mensagens, documentos processados, tickets resolvidos, logs de decisão, planilhas operacionais.\n\nO melhor dado de treino é aquele que já tem **entrada e saída pareadas**: mensagem do cliente + resposta que o humano deu, documento + campos extraídos conferidos.\n\n## Consentimento e base legal — antes de tudo\n\nAntes de usar dado de cliente para treinar:\n\n1. Existe **base legal**? (LGPD art. 7º — execução de contrato, legítimo interesse, consentimento)\n2. O **contrato ou a política de privacidade** cobre esse uso?\n3. O titular pode **se opor**?\n4. O dado vai sair do país? Para um provedor que **retém**?\n\nA pergunta 4 é a que mais derruba projeto: subir dado de cliente para uma API que treina com o conteúdo enviado pode violar contrato e LGPD ao mesmo tempo.\n\n## Anonimização — antes de sair do seu perímetro\n\n```ts\nfunction anonimizar(texto: string) {\n  return texto\n    .replace(/\\b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b/g, '[CPF]')\n    .replace(/\\b\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}\\b/g, '[TELEFONE]')\n    .replace(/[\\w.+-]+@[\\w-]+\\.[\\w.]+/g, '[EMAIL]')\n    .replace(/\\b[A-Z]{3}\\d[A-Z0-9]\\d{2}\\b/g, '[PLACA]')\n}\n```\n\n**Cuidado com regex sozinha:** ela erra. Nome próprio, endereço e apelido não são pegos. Combine com:\n- lista de nomes conhecidos do seu banco\n- NER (reconhecimento de entidade nomeada)\n- **revisão humana por amostragem** — sempre\n\n## Pseudonimização quando a identidade importa\n\nSe o modelo precisa aprender que \"o mesmo cliente aparece várias vezes\", substitua por identificador estável (`CLIENTE_A17`), não por `[NOME]`.\n\n## Registro obrigatório\n\nDe onde veio cada exemplo, quando, com qual base legal e o que foi removido. É o que responde a auditoria e o que permite eliminar um titular depois — inclusive do dataset.",
+      "exercicio": "Monte o pipeline de anonimização e rode em 100 registros reais. Revise manualmente e conte quantos PIIs escaparam. Ajuste até a taxa ficar aceitável e documente qual é a taxa.",
+      "videos": [
+        { "t": "Busca: PII anonymization dataset LGPD", "u": "https://www.youtube.com/results?search_query=pii+anonymization+dataset+machine+learning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LGPD — Lei 13.709/2018", "u": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm" }
+      ]
+    },
+    {
+      "titulo": "Limpeza: duplicata, contradição, ruído e outlier",
+      "tempo": 60,
+      "resumo": "Aqui está 80% do resultado. Dataset ruim com hiperparâmetro perfeito perde sempre.",
+      "conteudo": "## O que remover, e por quê\n\n**1. Duplicata exata** — infla o peso daquele exemplo sem adicionar informação.\n\n**2. Quase-duplicata** — mais perigosa, porque passa despercebida. Detecte por similaridade de embedding acima de ~0.97.\n\n**3. Contradição** — mesma entrada, saídas diferentes. **É veneno.** O modelo aprende a ser inconsistente.\n```ts\nconst porEntrada = agrupar(exemplos, e => normalizar(e.entrada))\nfor (const [entrada, grupo] of porEntrada) {\n  const saidas = new Set(grupo.map(g => normalizar(g.saida)))\n  if (saidas.size > 1) revisarManualmente(entrada, grupo)\n}\n```\nNão descarte automaticamente: pode ser que uma das saídas seja a certa e as outras sejam erro histórico. Revise.\n\n**4. Ruído** — HTML, assinatura de e-mail, encoding quebrado, mensagem truncada, \"ok\", \"obrigado\".\n\n**5. Outlier de tamanho** — exemplo absurdamente longo distorce o treino e estoura o limite de contexto.\n\n## O que NÃO remover\n\n- Caso difícil — é justamente o que você quer ensinar\n- Caso raro mas legítimo — se sumir, o modelo nunca vai saber lidar\n- Variação natural de linguagem\n\nA linha entre \"ruído\" e \"caso difícil\" é onde o julgamento humano importa. Automatize a detecção, decida manualmente.\n\n## Relatório de descarte — obrigatório\n\n```\nTotal coletado:        12.430\n  duplicatas exatas:      -890\n  quase-duplicatas:     -1.240\n  contradições:           -310  (revisadas: 84 recuperadas)\n  ruído:                -2.100\n  outliers de tamanho:     -95\n  sem PII removível:       -47  (descartados por segurança)\n= Dataset final:         7.832\n```\n\nEsse relatório é entregável do Projeto 9 e é o primeiro documento que um auditor pede.\n\n## Regra prática\n\nSe você descartou menos de 20% do que coletou, provavelmente não olhou direito.",
+      "exercicio": "Implemente as 5 detecções sobre dado real seu e produza o relatório de descarte. Revise manualmente 20 exemplos marcados como ruído: quantos eram na verdade casos difíceis?",
+      "videos": [
+        { "t": "Busca: data cleaning for llm fine tuning dataset", "u": "https://www.youtube.com/results?search_query=data+cleaning+llm+fine+tuning+dataset", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Hugging Face — curadoria de datasets", "u": "https://huggingface.co/docs/datasets/index" }
+      ]
+    },
+    {
+      "titulo": "Balanceamento, diversidade e viés do histórico",
+      "tempo": 50,
+      "resumo": "500 exemplos bons e variados batem 50 mil repetitivos.",
+      "conteudo": "## Diversidade importa mais que volume\n\nÉ o achado mais consistente em fine-tuning de LLM. Um dataset pequeno e bem distribuído supera um grande e repetitivo, porque o modelo aprende o **padrão**, não os exemplos.\n\n## Balanceamento por dimensão\n\nAnalise a distribuição em cada eixo relevante:\n\n```\nPor categoria:     cobrança 78% · dúvida 15% · reclamação 5% · outro 2%\nPor tamanho:       curto 60% · médio 35% · longo 5%\nPor canal:         WhatsApp 92% · e-mail 8%\nPor resultado:     resolvido 88% · escalado 12%\n```\n\nUma classe com 2% será ignorada pelo modelo. Ou você aumenta a representação, ou aceita que aquela classe não será aprendida — e trata por regra.\n\n## O viés do histórico\n\n> **Se o atendimento antigo era ruim, você está ensinando o modelo a ser ruim.**\n\nO dataset carrega as decisões que foram tomadas, incluindo as erradas. Se historicamente clientes de uma região foram tratados com menos atenção, o modelo aprende isso — e passa a fazê-lo com escala e consistência.\n\nComo mitigar:\n1. **Curadoria** — selecione os bons atendimentos, não todos\n2. **Rótulo de qualidade** — se houver avaliação (NPS, resolvido na primeira), use como filtro\n3. **Teste de viés** — casos pareados variando atributo sensível (módulo 10)\n4. **Revisão por amostragem** com alguém do domínio\n\n## Divisão treino / validação / teste\n\n```\n70% treino · 15% validação · 15% teste\n```\n\nTrês cuidados:\n- **Divida ANTES** de qualquer análise, para não vazar informação\n- **Estratifique** por classe, para manter a distribuição\n- Se houver agrupamento natural (mesmo cliente, mesma conversa), **divida por grupo** — senão o mesmo cliente aparece no treino e no teste, e o resultado é otimista e falso\n\n## O conjunto de teste\n\nSeparado no início e **não tocado** até a avaliação final. Se você olhar para ele durante o desenvolvimento, ele deixa de medir generalização.",
+      "exercicio": "Analise a distribuição do seu dataset em 4 dimensões. Identifique classes sub-representadas e decida: aumentar, aceitar ou tratar por regra. Faça a divisão estratificada e por grupo.",
+      "videos": [
+        { "t": "Busca: dataset balancing bias machine learning", "u": "https://www.youtube.com/results?search_query=dataset+balancing+bias+machine+learning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Datasheets for Datasets (paper)", "u": "https://arxiv.org/abs/1803.09010" }
+      ]
+    },
+    {
+      "titulo": "Formato JSONL e divisão treino/validação/teste",
+      "tempo": 45,
+      "resumo": "O formato padrão e os erros que fazem o job falhar depois de meia hora.",
+      "conteudo": "## O formato\n\nUm JSON por linha, sem vírgula entre linhas, sem colchete envolvendo:\n\n```jsonl\n{\"messages\":[{\"role\":\"system\",\"content\":\"Você extrai dados de mensagens de cobrança.\"},{\"role\":\"user\",\"content\":\"oi, o boleto do contrato 4471 venceu ontem?\"},{\"role\":\"assistant\",\"content\":\"{\\\"contrato\\\":\\\"4471\\\",\\\"intencao\\\":\\\"consulta_vencimento\\\"}\"}]}\n{\"messages\":[...]}\n```\n\n## Os erros que custam tempo\n\n| Erro | Sintoma |\n|---|---|\n| Vírgula no fim da linha | Job rejeitado |\n| Colchete envolvendo tudo | É JSON, não JSONL |\n| System prompt diferente do que será usado em produção | Modelo treina para outro contexto |\n| Exemplo maior que o contexto do modelo | Truncado silenciosamente |\n| Encoding não UTF-8 | Acentos corrompidos no treino |\n| JSON dentro do content sem escapar | Parse quebra |\n\nO terceiro é o mais insidioso: se você treina com um system prompt e usa outro em produção, o ganho evapora e você não entende por quê.\n\n## Validação antes de subir\n\n```ts\nfunction validarJSONL(caminho: string) {\n  const erros = []\n  const linhas = fs.readFileSync(caminho, 'utf8').split('\\n').filter(Boolean)\n\n  linhas.forEach((l, i) => {\n    try {\n      const o = JSON.parse(l)\n      if (!Array.isArray(o.messages)) erros.push(`linha ${i + 1}: sem messages`)\n      if (o.messages.at(-1)?.role !== 'assistant') erros.push(`linha ${i + 1}: última mensagem não é assistant`)\n      const tokens = estimarTokens(l)\n      if (tokens > LIMITE) erros.push(`linha ${i + 1}: ${tokens} tokens, acima do limite`)\n    } catch (e) {\n      erros.push(`linha ${i + 1}: JSON inválido`)\n    }\n  })\n\n  return { linhas: linhas.length, erros }\n}\n```\n\nRode isso antes de cada upload. Descobrir erro de formato depois de 30 minutos de fila é frustração evitável.\n\n## Estatísticas úteis do dataset\n\nAntes de treinar, gere: total de exemplos, tokens médios por exemplo, distribuição de tamanho, custo estimado do treino (tokens × preço × épocas), distribuição por classe.\n\nO custo estimado evita a surpresa mais comum: descobrir o valor só na fatura.",
+      "exercicio": "Escreva o validador de JSONL com as 6 verificações e o gerador de estatísticas. Rode no seu dataset e corrija tudo antes de qualquer upload.",
+      "videos": [
+        { "t": "Busca: jsonl dataset format fine tuning openai", "u": "https://www.youtube.com/results?search_query=jsonl+dataset+format+fine+tuning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — formato de dataset para fine-tuning", "u": "https://platform.openai.com/docs/guides/fine-tuning#preparing-your-dataset" }
+      ]
+    },
+    {
+      "titulo": "Versionamento de dataset",
+      "tempo": 40,
+      "resumo": "Responder 'com quais dados esse modelo foi treinado?' meses depois.",
+      "conteudo": "## Por que versionar\n\nTrês perguntas que você vai precisar responder:\n\n1. Com quais dados o modelo em produção foi treinado?\n2. O que mudou entre a versão 3 e a 4 do dataset?\n3. Este cliente pediu eliminação — ele estava no dataset?\n\nSem versionamento, nenhuma tem resposta.\n\n## O mínimo viável\n\n```\ndatasets/\n├── cobranca-v3/\n│   ├── treino.jsonl\n│   ├── validacao.jsonl\n│   ├── teste.jsonl\n│   ├── MANIFESTO.json\n│   └── CHANGELOG.md\n└── cobranca-v4/\n```\n\n```json\n// MANIFESTO.json\n{\n  \"versao\": 4,\n  \"data\": \"2026-08-16\",\n  \"hash\": { \"treino\": \"sha256:...\", \"validacao\": \"sha256:...\", \"teste\": \"sha256:...\" },\n  \"origem\": \"tickets resolvidos 2026-01 a 2026-07, avaliação >= 4\",\n  \"total\": 7832,\n  \"anonimizacao\": \"regex + NER + revisão por amostra de 5%\",\n  \"base_legal\": \"execução de contrato (LGPD art. 7º, V)\",\n  \"exclusoes\": [\"titulares que solicitaram eliminação até 2026-08-15\"],\n  \"distribuicao\": { \"cobranca\": 0.52, \"duvida\": 0.28, \"reclamacao\": 0.12, \"outro\": 0.08 }\n}\n```\n\n## Changelog que serve\n\n```md\n## v4 — 2026-08-16\n- +1.240 exemplos de julho\n- Removidos 47 exemplos de 3 titulares que pediram eliminação\n- Rebalanceado: reclamação subiu de 5% para 12% por sobreamostragem\n- ⚠ System prompt alterado — NÃO comparável diretamente com v3\n```\n\nO aviso final é o tipo de coisa que salva uma análise: comparar métricas entre datasets com prompts diferentes leva a conclusão errada.\n\n## Onde guardar\n\nArquivo grande não vai para o Git normal. Use Git LFS, DVC, ou um bucket versionado com o manifesto no repositório. O importante é que o **manifesto** esteja versionado junto do código.\n\n## Direito de eliminação\n\nQuando um titular pede eliminação, você precisa: remover do dataset, registrar a exclusão no manifesto, e decidir sobre o modelo já treinado. Retreinar por um titular raramente é proporcional — documente a decisão e a justificativa. Isso volta no módulo 10.",
+      "exercicio": "Crie o manifesto e o changelog do seu dataset. Depois responda, usando só esses arquivos: \"o titular X estava na v3?\" e \"o que mudou entre v3 e v4?\".",
+      "videos": [
+        { "t": "Busca: dataset versioning DVC machine learning", "u": "https://www.youtube.com/results?search_query=dataset+versioning+dvc+machine+learning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "DVC — versionamento de dados", "u": "https://dvc.org/doc" }
+      ]
+    },
+    {
+      "titulo": "Fine-tuning via API: upload, job, hiperparâmetros",
+      "tempo": 60,
+      "resumo": "O processo passo a passo e os poucos parâmetros que vale mexer.",
+      "conteudo": "## O fluxo\n\n```\nupload do arquivo → criar job → acompanhar → avaliar → publicar\n```\n\n```ts\n// 1. upload\nconst arquivo = await client.files.create({\n  file: fs.createReadStream('treino.jsonl'),\n  purpose: 'fine-tune',\n})\n\n// 2. job\nconst job = await client.fineTuning.jobs.create({\n  training_file: arquivo.id,\n  validation_file: arquivoValidacao.id,\n  model: 'modelo-base',\n  hyperparameters: { n_epochs: 3 },\n  suffix: 'cobranca-v4',           // aparece no nome do modelo\n})\n\n// 3. acompanhar\nlet estado = await client.fineTuning.jobs.retrieve(job.id)\n// consultar periodicamente até succeeded ou failed\n```\n\n## Hiperparâmetros — mexa pouco\n\n| Parâmetro | O que faz | Recomendação |\n|---|---|---|\n| **n_epochs** | Quantas vezes percorre o dataset | 3 é o padrão. 1–2 para dataset grande, 4–5 para pequeno |\n| **learning_rate_multiplier** | Tamanho do passo | Deixe automático na primeira vez |\n| **batch_size** | Exemplos por passo | Deixe automático |\n\nComece com tudo automático exceto épocas. Ajustar antes de ter um baseline é otimização cega.\n\n## A curva de perda — o que observar\n\n```\népoca  treino   validação\n  1     0.82      0.85\n  2     0.51      0.58\n  3     0.34      0.55     ← validação parou de cair\n  4     0.21      0.61     ← validação SUBINDO = overfitting\n```\n\n**Regra:** quando a perda de validação para de cair e começa a subir enquanto a de treino continua caindo, você passou do ponto. Use o checkpoint anterior ou reduza épocas.\n\n## Custo\n\nCobrado por token processado × épocas. Estime **antes**:\n```\ncusto ≈ tokens_do_dataset × n_epochs × preço_de_treino\n```\n\nE lembre: a inferência do modelo ajustado costuma custar mais que a do base.\n\n## Versionamento e documentação\n\nCada job gera um modelo com identificador próprio. Registre: dataset (versão e hash), hiperparâmetros, métricas finais, data, e quem aprovou a promoção para produção. Isso é o **model card** da última aula do módulo.",
+      "exercicio": "Escreva o script em TypeScript que faz upload, dispara o job, acompanha o status e registra o resultado. Rode um treino real com dataset pequeno e observe a curva de perda.",
+      "videos": [
+        { "t": "Busca: openai fine tuning api tutorial step by step", "u": "https://www.youtube.com/results?search_query=openai+fine+tuning+api+tutorial", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — API de fine-tuning", "u": "https://platform.openai.com/docs/api-reference/fine-tuning" },
+        { "t": "Google — tuning no Gemini", "u": "https://ai.google.dev/gemini-api/docs/model-tuning" }
+      ]
+    },
+    {
+      "titulo": "Curva de perda e detecção de overfitting",
+      "tempo": 45,
+      "resumo": "Ler o gráfico que diz se você treinou de menos, na medida, ou demais.",
+      "conteudo": "## Os três cenários\n\n**Underfitting** — as duas perdas altas e ainda caindo.\n> O modelo não aprendeu. Mais épocas, mais dados, ou a tarefa é complexa demais para esse modelo base.\n\n**Bom ajuste** — as duas caem juntas e estabilizam.\n> Pare aqui.\n\n**Overfitting** — treino continua caindo, validação sobe.\n> O modelo está decorando os exemplos. Menos épocas, mais dados, mais diversidade.\n\n## Os sintomas de overfitting fora do gráfico\n\n- Reproduz trechos literais do treino\n- Excelente nos exemplos conhecidos, ruim em variação simples\n- **Perde generalização**: fica bom na tarefa e pior em tudo o mais\n\n## Esquecimento catastrófico\n\nO efeito colateral mais subestimado: ao ajustar para uma tarefa estreita, o modelo pode perder capacidades gerais que você nem estava medindo.\n\nO modelo vira um excelente extrator de campo e um péssimo conversador. Se o seu produto usa as duas coisas, você quebrou metade dele sem perceber.\n\n**Como detectar:** inclua no conjunto de avaliação alguns casos **fora** da tarefa ajustada. Se a performance neles despencou, você tem esquecimento catastrófico.\n\n## Mitigações\n\n1. Menos épocas\n2. Learning rate menor\n3. Mais diversidade no dataset\n4. LoRA em vez de full fine-tuning (próxima aula) — altera menos o modelo\n5. Misturar exemplos gerais no dataset, para preservar capacidade ampla\n\n## O que fazer com um treino ruim\n\nNão insista ajustando hiperparâmetro. Na maioria esmagadora dos casos, treino ruim é **dataset ruim**. Volte para as aulas de limpeza e balanceamento — é lá que está o problema.",
+      "exercicio": "Treine de propósito com épocas demais (8 ou 10) num dataset pequeno e observe o overfitting na curva. Depois avalie o modelo em casos fora da tarefa e meça o esquecimento catastrófico.",
+      "videos": [
+        { "t": "Busca: overfitting underfitting loss curve explained", "u": "https://www.youtube.com/results?search_query=overfitting+underfitting+loss+curve+explained", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Google — Machine Learning Crash Course: generalização", "u": "https://developers.google.com/machine-learning/crash-course/overfitting/overfitting" }
+      ]
+    },
+    {
+      "titulo": "LoRA, PEFT e trade-offs de eficiência",
+      "tempo": 50,
+      "resumo": "Ajustar sem tocar no modelo inteiro — e o que muda na prática para quem usa JS.",
+      "conteudo": "## Full fine-tuning\n\nAtualiza **todos** os pesos. Caro, exige GPU pesada, e gera um modelo inteiro novo para armazenar.\n\n## LoRA — Low-Rank Adaptation\n\nCongela o modelo original e treina **matrizes pequenas de baixo posto** adicionadas às camadas de atenção.\n\n```\nW_final = W_original (congelado) + ΔW\nonde ΔW = A × B,  com A e B muito menores que W\n```\n\n**Resultado:** treina algo entre 0,1% e 1% dos parâmetros, com qualidade próxima do full na maioria das tarefas.\n\n## Vantagens práticas\n\n| Aspecto | Full | LoRA |\n|---|---|---|\n| Custo de treino | Alto | Fração |\n| Memória | Alta | Baixa |\n| Artefato gerado | Modelo inteiro (GB) | Adaptador (MB) |\n| Trocar de tarefa | Outro modelo | **Trocar o adaptador** |\n| Servir várias tarefas | Vários modelos | Um modelo + N adaptadores |\n\nA penúltima linha é o que muda arquitetura: você serve um modelo base e carrega adaptadores diferentes por cliente ou por tarefa.\n\n## PEFT — a família\n\nLoRA, QLoRA (LoRA sobre modelo quantizado, ainda mais barato), prefix tuning, adapters. LoRA e QLoRA dominam na prática.\n\n## Quando full ainda ganha\n\nMudança profunda de comportamento, domínio muito distante do treino original, ou quando você precisa alterar conhecimento de base — não só formato e estilo.\n\nPara a maioria dos casos de IA aplicada (formato, tom, vocabulário), **LoRA basta**.\n\n## O recado honesto para quem trabalha com JS\n\nTreino local sério é ecossistema Python: PyTorch, Hugging Face PEFT, bitsandbytes. Não finja o contrário.\n\nO caminho realista em JavaScript:\n- consumir APIs de fine-tuning gerenciado (que por baixo usam PEFT)\n- usar serviços como Together, Replicate e Fireworks, que expõem treino LoRA por API\n- orquestrar o pipeline (dados, upload, avaliação, deploy) em TypeScript, e deixar o treino no serviço\n\nSaber isso e dizer com clareza vale mais do que fingir domínio de um stack que você não usa.",
+      "exercicio": "Compare, na mesma tarefa: modelo base puro, base com few-shot, e um ajustado (via API ou serviço com LoRA). Tabela com qualidade, custo por chamada, latência e custo de treino.",
+      "videos": [
+        { "t": "Busca: LoRA QLoRA explained fine tuning", "u": "https://www.youtube.com/results?search_query=lora+qlora+explained+fine+tuning", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LoRA (paper)", "u": "https://arxiv.org/abs/2106.09685" },
+        { "t": "Hugging Face PEFT", "u": "https://huggingface.co/docs/peft" }
+      ]
+    },
+    {
+      "titulo": "Avaliação quantitativa e qualitativa",
+      "tempo": 60,
+      "resumo": "A métrica vem antes do treino. Escolhida depois, ela vira justificativa.",
+      "conteudo": "## A regra\n\n> **Defina a métrica antes de treinar.**\n\nMétrica escolhida depois de ver o resultado não é avaliação: é a busca por um número que sustente o que você já queria concluir.\n\n## Métricas quantitativas\n\n| Métrica | Quando |\n|---|---|\n| **Exact match** | Saída determinística curta |\n| **Conformidade de schema** | Extração estruturada — a mais útil aqui |\n| **F1 / precisão / recall** | Classificação |\n| **Acurácia por campo** | Extração de documento |\n| **Taxa de alucinação** | Conjunto controlado com resposta conhecida |\n| **Custo e latência** | Sempre |\n\nPara extração — o caso mais comum de fine-tuning — a combinação certa é: conformidade de schema + acurácia por campo + taxa de campo inventado.\n\n## Métricas qualitativas\n\nRubrica escrita, com nota por critério:\n\n```\nAvalie de 1 a 5 em cada critério:\n\nFIDELIDADE: a resposta contém apenas o que está no documento?\n  5 = tudo sustentado · 1 = inventou informação central\nFORMATO: obedece ao padrão exigido?\nTOM: adequado ao público?\nCOMPLETUDE: respondeu tudo que foi pedido?\n\nPara cada nota abaixo de 4, cite o trecho problemático.\n```\n\n**LLM-as-judge** funciona com rubrica explícita — e exige que você revise uma amostra manualmente para calibrar. Sem calibração, você está confiando em um avaliador que ninguém avaliou.\n\n## A/B contra o baseline\n\nNo **conjunto de teste intocado**:\n\n| | Baseline (base + prompt) | Ajustado |\n|---|---|---|\n| Conformidade de schema | 91% | 99% |\n| Acurácia por campo | 87% | 94% |\n| Custo por chamada | R$ 0,0084 | R$ 0,0011 |\n| Latência p95 | 2,4s | 0,6s |\n| Qualidade fora da tarefa | 4,2 | **3,1** ⚠ |\n\nA última linha é a que quase ninguém mede — e é a que revela esquecimento catastrófico.\n\n## Significância\n\nCom 30 exemplos, uma diferença de 3% é ruído. Precisa de amostra suficiente e, idealmente, de intervalo de confiança. Não celebre melhora que cabe dentro da margem de erro.",
+      "exercicio": "Escreva a rubrica e o script de avaliação automatizada. Rode contra baseline e ajustado no conjunto de teste, incluindo casos fora da tarefa. Reporte a tabela completa, com honestidade.",
+      "videos": [
+        { "t": "Busca: llm as judge evaluation rubric", "u": "https://www.youtube.com/results?search_query=llm+as+judge+evaluation+rubric", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — desenvolver testes e avaliações", "u": "https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests" }
+      ]
+    },
+    {
+      "titulo": "A/B contra baseline e riscos de generalização",
+      "tempo": 45,
+      "resumo": "Fechando o módulo: como reportar o resultado, inclusive quando ele é negativo.",
+      "conteudo": "## O experimento correto\n\n```\nMesmo conjunto de teste (intocado) → baseline e ajustado\nMesma rubrica → mesmo avaliador\nMesmas condições → mesmo prompt de sistema, mesmos parâmetros\n```\n\nSe você mudar o prompt do ajustado \"para aproveitar melhor o treino\", você comparou duas coisas diferentes e a conclusão não vale.\n\n## Os três resultados possíveis\n\n**1. O ajustado ganha em tudo** — promova, com plano de monitoramento.\n\n**2. Ganha em uns, perde em outros** — o caso mais comum. Decida pelo que importa: se o ganho é custo e latência com perda pequena de qualidade, pode valer. Documente o trade-off.\n\n**3. Não superou o baseline** — **resultado válido e excelente.** Você evitou um investimento recorrente com base em evidência.\n\n## Como reportar o caso 3\n\n> \"O fine-tuning não superou o baseline. A conformidade de schema subiu de 91% para 93% (dentro da margem de erro com n=200), mas o custo total de 24 meses seria R$ X contra R$ Y do baseline, e o modelo perdeu qualidade em tarefas adjacentes (4,2 → 3,1). **Recomendação: manter prompt + RAG e reavaliar se o volume triplicar.**\"\n\nEsse parágrafo demonstra mais competência do que um modelo treinado sem critério. Fingir ganho é o que desqualifica.\n\n## Riscos de generalização — o resumo\n\n| Risco | Como detectar |\n|---|---|\n| Overfitting | Curva de validação subindo |\n| Esquecimento catastrófico | Avaliar fora da tarefa |\n| Viés amplificado | Casos pareados (módulo 10) |\n| Dependência do formato de treino | Testar com entrada em formato levemente diferente |\n\n## Monitoramento pós-promoção\n\nModelo ajustado em produção precisa de: avaliação periódica com o mesmo conjunto, alerta de queda de conformidade, comparação regular com o modelo base atual (que evolui) e data de revisão agendada.\n\nSem a comparação periódica com o base, você não percebe o dia em que o base ficou melhor que o seu ajustado — e continua pagando manutenção por nada.",
+      "exercicio": "Complete o Projeto 9 com o A/B honesto e escreva o parágrafo de recomendação, seja ela qual for. Agende a data de revisão do modelo no seu calendário.",
+      "videos": [
+        { "t": "Busca: ab testing machine learning models production", "u": "https://www.youtube.com/results?search_query=ab+testing+machine+learning+models+production", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Model Cards for Model Reporting (paper)", "u": "https://arxiv.org/abs/1810.03993" }
+      ]
+    }
+  ]
+}

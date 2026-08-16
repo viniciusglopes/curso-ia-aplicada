@@ -1,0 +1,217 @@
+{
+  "modulo": "04",
+  "titulo": "Criação de Agentes Autônomos",
+  "aulas": [
+    {
+      "titulo": "Agent loop: percepção, raciocínio, ação, feedback",
+      "tempo": 50,
+      "resumo": "O ciclo que define um agente — e a única diferença real para um workflow.",
+      "conteudo": "## O ciclo\n\n```\npercepção → raciocínio → ação → observação → (repete até objetivo ou limite)\n```\n\nA diferença para um pipeline é uma só, e ela muda tudo:\n\n> **Quem decide o próximo passo é o modelo, não o seu código.**\n\n## Como isso se materializa em código\n\nO agente é, literalmente, um `while` em volta de uma conversa:\n\n```ts\nlet mensagens = [sistema, objetivo]\nfor (let passo = 0; passo < MAX; passo++) {\n  const r = await llm.chat({ mensagens, tools })\n\n  if (!r.toolCalls?.length) return r.texto     // terminou\n\n  for (const c of r.toolCalls) {\n    const saida = await executar(c.nome, c.args)\n    mensagens.push({ role: 'tool', id: c.id, content: saida })\n  }\n}\n```\n\nÉ isso. Todo framework de agente é uma variação disso com mais ergonomia.\n\n## Por que \"observação\" é uma etapa separada\n\nO resultado da ferramenta volta para a conversa e **vira contexto** da próxima decisão. É o que permite o agente se corrigir: se a tool falhou com mensagem clara, ele tenta outro caminho.\n\nÉ também de onde vêm os dois maiores problemas do módulo: o contexto cresce sem parar (aula de context pruning) e a saída da tool pode conter instrução maliciosa (módulo 03).\n\n## O limite obrigatório\n\nRepare no `for (let passo = 0; passo < MAX; passo++)`. Esse `MAX` não é detalhe: é o primeiro guardrail. Um agente sem teto de iterações é um loop infinito com cartão de crédito.",
+      "exercicio": "Escreva o agent loop acima em TypeScript, com uma tool falsa que retorna dado fixo. Rode e imprima cada passo. Você precisa enxergar o ciclo antes de usar qualquer framework.",
+      "videos": [
+        { "t": "Busca: AI agent loop tool use explained", "u": "https://www.youtube.com/results?search_query=ai+agent+loop+tool+use+explained", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Building Effective Agents — Anthropic", "u": "https://www.anthropic.com/engineering/building-effective-agents" }
+      ]
+    },
+    {
+      "titulo": "Planner, executor, memory store, toolbox",
+      "tempo": 45,
+      "resumo": "Os quatro componentes internos e por que separá-los facilita tudo depois.",
+      "conteudo": "## Os quatro componentes\n\n| Componente | Responsabilidade | Erro comum |\n|---|---|---|\n| **Planner** | Decidir o que fazer agora | Misturar com execução, virando espaguete |\n| **Executor** | Executar a ação escolhida | Não validar o que o planner pediu |\n| **Memory store** | O que lembrar entre passos e sessões | Guardar tudo, virando lixão |\n| **Toolbox** | O que ele pode fazer | Expor ferramenta perigosa sem confirmação |\n\n## Por que separar\n\nSeparado, você consegue:\n- **Testar o executor** sem chamar LLM nenhum\n- **Trocar o planner** (ReAct → Plan-and-Execute) sem mexer no resto\n- **Auditar** o que foi decidido versus o que foi executado — e essa distinção é o coração da trilha de auditoria\n- **Aplicar guardrail no executor**, o único lugar que realmente controla\n\n## O ponto crítico\n\n> O planner **sugere**. O executor **decide se executa**.\n\nSe o guardrail estiver no prompt do planner, ele é sugestão. Se estiver no executor, é regra. Um modelo convencido por prompt injection passa pelo planner; não passa pelo executor.\n\n```ts\nasync function executar(nome, args, ctx) {\n  if (!PERMITIDAS.has(nome)) throw new Error('ação fora do escopo')\n  if (ACOES_CRITICAS.has(nome) && !ctx.aprovado) return pedirAprovacao(nome, args)\n  if (ctx.custoAcumulado > ctx.tetoCusto) throw new Error('teto de custo atingido')\n  return await tools[nome](args, ctx)\n}\n```\n\nEssas quatro linhas valem mais que qualquer instrução de sistema.",
+      "exercicio": "Refatore o agente da aula anterior separando os 4 componentes. Escreva um teste do executor que NÃO usa LLM: passe uma ação fora da allowlist e prove que ela é bloqueada.",
+      "videos": [
+        { "t": "Busca: agent architecture planner executor memory", "u": "https://www.youtube.com/results?search_query=ai+agent+architecture+planner+executor+memory", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — conceitos de arquitetura de agente", "u": "https://langchain-ai.github.io/langgraphjs/concepts/agentic_concepts/" }
+      ]
+    },
+    {
+      "titulo": "Tipos de agente e o risco de cada um",
+      "tempo": 40,
+      "resumo": "Quatro tipos, risco crescente, e a quantidade de guardrail que cada um exige.",
+      "conteudo": "## Os quatro tipos\n\n| Tipo | Característica | Exemplo | Risco |\n|---|---|---|---|\n| **Task-based** | Tarefa definida, fim claro | \"Gere o relatório de ontem\" | Baixo |\n| **Interactive** | Humano no meio o tempo todo | Copiloto de código | Baixo-médio |\n| **Goal-oriented** | Objetivo dado, caminho livre | \"Reduza a fila de pendentes\" | Alto |\n| **Autonomous** | Roda sem supervisão | Monitor que corrige sozinho | Muito alto |\n\nO risco cresce na mesma ordem em que cresce a utilidade. Não existe almoço grátis.\n\n## O que muda em cada nível\n\n**Task-based** — você sabe o que ele vai tentar. Guardrail mínimo: teto de iterações e timeout.\n\n**Interactive** — o humano vê cada passo. O guardrail é a atenção da pessoa, o que já é frágil (ver \"excesso de confiança\", módulo 10).\n\n**Goal-oriented** — ele pode escolher um caminho que você não previu. Precisa de allowlist rígida e teto de custo.\n\n**Autonomous** — ninguém está olhando. Precisa de tudo: allowlist, teto de custo diário, detecção de repetição, kill switch, alerta em anomalia, e ação irreversível só com aprovação assíncrona.\n\n## A pergunta que define o tipo\n\n> Se ele fizer a coisa errada às 3h da manhã, **quem descobre e quando?**\n\nSe a resposta for \"ninguém, até alguém reclamar\", você está construindo um autônomo — mesmo que tenha começado querendo um task-based. Dimensione os guardrails pela resposta, não pela intenção.\n\n## Comece sempre no menor\n\nTask-based primeiro, com humano acionando. Suba de nível só quando as métricas de 10 execuções reais justificarem.",
+      "exercicio": "Classifique 3 automações que você quer construir nos 4 tipos. Para cada uma, responda a pergunta das 3h da manhã e liste os guardrails que ela exige.",
+      "videos": [
+        { "t": "Busca: types of AI agents autonomy levels", "u": "https://www.youtube.com/results?search_query=types+of+ai+agents+autonomy+levels", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — Building Effective Agents (seção de workflows vs agents)", "u": "https://www.anthropic.com/engineering/building-effective-agents" }
+      ]
+    },
+    {
+      "titulo": "Agent loop do zero, sem framework",
+      "tempo": 120,
+      "resumo": "A entrega da semana 10. Se você não faz isso na mão, framework nenhum te salva.",
+      "conteudo": "## Por que sem framework\n\nQuando o agente quebrar em produção — e vai — o stack trace do framework passa por oito camadas de abstração. Quem escreveu a versão crua sabe onde olhar em minutos.\n\n## O que implementar\n\n```ts\ntype Ctx = {\n  passos: number; custo: number; historico: string[];\n  tetoPassos: number; tetoCusto: number;\n}\n\nasync function agente(objetivo: string, ctx: Ctx) {\n  const msgs = [\n    { role: 'system', content: SISTEMA },\n    { role: 'user', content: objetivo },\n  ]\n\n  while (ctx.passos < ctx.tetoPassos) {\n    ctx.passos++\n\n    const r = await llm.chat({ messages: msgs, tools: TOOLS })\n    ctx.custo += r.custo\n    if (ctx.custo > ctx.tetoCusto) throw new Error('teto de custo')\n\n    msgs.push(r.mensagem)\n    registrar({ passo: ctx.passos, pensamento: r.texto, acoes: r.toolCalls })\n\n    if (!r.toolCalls?.length) return { resultado: r.texto, ctx }\n\n    for (const c of r.toolCalls) {\n      const assinatura = `${c.nome}:${JSON.stringify(c.args)}`\n      if (ctx.historico.includes(assinatura)) {\n        msgs.push(tool(c.id, 'Você já executou esta ação com estes argumentos e obteve o mesmo resultado. Mude de estratégia.'))\n        continue\n      }\n      ctx.historico.push(assinatura)\n      msgs.push(tool(c.id, await executar(c.nome, c.args, ctx)))\n    }\n  }\n  throw new Error('teto de passos atingido sem concluir')\n}\n```\n\n## Repare no que já está aqui\n\nTrês guardrails: teto de passos, teto de custo e **detecção de repetição**. O último é o mais subestimado — sem ele, o agente entra em ciclo tentando a mesma coisa, cada vez mais convicto.\n\n## Ferramentas sugeridas\n\nUse o MCP do Projeto 3. Mínimo de três, sendo todas de leitura nesta etapa.",
+      "exercicio": "Implemente o agent loop completo com 3 ferramentas reais, os 3 guardrails e log de cada passo. Rode contra uma tarefa que exija pelo menos 4 chamadas de ferramenta. Guarde o log: ele é a base da trilha de auditoria.",
+      "videos": [
+        { "t": "Busca: build ai agent from scratch typescript no framework", "u": "https://www.youtube.com/results?search_query=build+ai+agent+from+scratch+typescript", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — Tool use", "u": "https://docs.anthropic.com/en/docs/build-with-claude/tool-use" }
+      ]
+    },
+    {
+      "titulo": "ReAct: reasoning + acting",
+      "tempo": 60,
+      "resumo": "O padrão mais usado — alterna pensamento e ação a cada passo.",
+      "conteudo": "## O padrão\n\n```\nThought:      preciso saber o status da execução de ontem\nAction:       buscar_execucao(data=\"2026-08-15\", regional=17)\nObservation:  { status: \"erro\", codigo: 131042, enviados: 0 }\nThought:      131042 é billing. Vou checar a conta dessa WABA\nAction:       checar_billing(waba_id=\"...\")\nObservation:  { status: \"ACCOUNT_RESTRICTED\", motivo: \"payment_failed\" }\nThought:      causa encontrada. Vou concluir\nAnswer:       O bloco não saiu porque a conta está restrita por falha de pagamento...\n```\n\n## Por que funciona\n\nO raciocínio explícito melhora a escolha da próxima ação — o mesmo efeito do chain-of-thought, mas com o mundo real respondendo entre os passos.\n\nE dá de graça a **rastreabilidade**: você lê o `Thought` e entende por que ele fez aquilo. É a base da auditoria da unidade 7.\n\n## Onde ele é bom\n\n- Diagnóstico e investigação\n- Pesquisa exploratória\n- Qualquer tarefa cujo caminho depende do que se encontra\n\n## Onde ele é ruim\n\n- Tarefa longa e conhecida: ele repensa a cada passo e desperdiça token\n- Fluxo com muitos passos independentes: poderia paralelizar, e ele serializa\n\n## Armadilha importante\n\nO `Thought` que ele mostra **não é necessariamente o processo real** que gerou a ação. É uma narrativa plausível. Trate como indício útil, não como prova — isso volta em interpretabilidade, módulo 10.\n\n## Implementação hoje\n\nCom tool use nativo, você não precisa parsear texto no formato ReAct: o modelo já devolve raciocínio e chamadas estruturadas. O padrão continua o mesmo; a mecânica ficou mais limpa.",
+      "exercicio": "Faça seu agente diagnosticar um problema real da sua operação usando ReAct. Salve o traço completo. Depois leia o traço e responda: em qual passo ele foi mais eficiente? Em qual desperdiçou uma chamada?",
+      "videos": [
+        { "t": "Busca: ReAct prompting reasoning acting agents", "u": "https://www.youtube.com/results?search_query=react+prompting+reasoning+acting+agents", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "ReAct: Synergizing Reasoning and Acting (paper)", "u": "https://arxiv.org/abs/2210.03629" }
+      ]
+    },
+    {
+      "titulo": "Plan-and-Execute",
+      "tempo": 50,
+      "resumo": "Planeja tudo antes, executa depois. Mais barato e previsível — até a realidade discordar.",
+      "conteudo": "## O padrão\n\n```\n1. PLANEJAR   → modelo bom produz a lista de passos\n2. EXECUTAR   → modelo barato (ou código puro) executa cada passo\n3. REPLANEJAR → só se um passo falhar\n```\n\n## Vantagens sobre ReAct\n\n- **Mais barato** — o raciocínio caro acontece uma vez, não a cada passo\n- **Previsível** — você vê o plano antes de qualquer efeito colateral\n- **Aprovável** — dá para mostrar o plano ao humano e pedir OK. É o melhor ponto de human-in-the-loop que existe\n- **Paralelizável** — passos independentes rodam juntos\n\n## Desvantagem\n\nO plano é feito com informação incompleta. Quando o passo 3 revela algo que invalida o passo 5, um executor burro segue em frente e faz besteira.\n\n## A mitigação: replanejamento\n\n```ts\nlet plano = await planejar(objetivo)\nlet i = 0\n\nwhile (i < plano.length && ctx.passos < ctx.tetoPassos) {\n  const r = await executarPasso(plano[i], ctx)\n\n  if (r.falhou || r.contradizPlano) {\n    plano = await replanejar(objetivo, plano, i, r)   // com o que já se sabe\n    i = 0\n    if (++ctx.replanejamentos > 3) throw new Error('replanejou demais')\n    continue\n  }\n  i++\n}\n```\n\nO teto de replanejamentos é guardrail: sem ele, o agente pode replanejar eternamente sem nunca executar.\n\n## Quando escolher cada um\n\n| Situação | Padrão |\n|---|---|\n| Caminho imprevisível | ReAct |\n| Caminho conhecido, passos claros | Plan-and-Execute |\n| Precisa de aprovação humana antes de agir | Plan-and-Execute |\n| Orçamento apertado | Plan-and-Execute |\n| Tarefa curta (2-3 passos) | ReAct (planejar não compensa) |",
+      "exercicio": "Implemente a mesma tarefa nos dois padrões. Compare: número de chamadas, custo total, tempo e qualidade do resultado. Escreva em qual situação você usaria cada um.",
+      "videos": [
+        { "t": "Busca: plan and execute agent pattern langgraph", "u": "https://www.youtube.com/results?search_query=plan+and+execute+agent+pattern+langgraph", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — Plan-and-Execute", "u": "https://langchain-ai.github.io/langgraphjs/tutorials/plan-and-execute/plan-and-execute/" }
+      ]
+    },
+    {
+      "titulo": "Reflection e autoavaliação",
+      "tempo": 50,
+      "resumo": "O agente critica a própria saída antes de entregar — e o jeito errado de fazer isso.",
+      "conteudo": "## O padrão\n\n```\ngerar → criticar → revisar → (repetir até passar ou bater o limite)\n```\n\nGanho real e medido em geração de código, redação técnica e extração estruturada.\n\n## O jeito errado\n\n```\n\"Avalie se a resposta acima está boa.\"\n```\n\nO modelo responde \"sim, está ótima\" quase sempre. Reflection sem critério vira auto-elogio caro.\n\n## O jeito certo: checklist objetivo\n\n```\nAvalie a resposta contra CADA item abaixo. Para cada um, responda\nAPROVADO ou REPROVADO, com a evidência.\n\n1. Toda afirmação factual está sustentada pelo contexto fornecido?\n2. O formato obedece ao schema exigido?\n3. Algum campo foi inventado por não estar no contexto?\n4. O tom está adequado ao público declarado?\n5. Há alguma instrução do pedido original que ficou sem resposta?\n\nSe QUALQUER item for REPROVADO, liste as correções necessárias.\n```\n\nCritério objetivo transforma o crítico de bajulador em revisor.\n\n## Variações que funcionam melhor\n\n- **Crítico diferente do gerador** — outro modelo, ou o mesmo com papel e temperatura diferentes\n- **Crítico sem ver o raciocínio** do gerador — só a saída, como um leitor real veria\n- **Crítico com acesso à fonte** — para conferir citação de fato\n\n## O custo\n\nCada ciclo de reflection é ao menos uma chamada extra. Em tarefa barata e de baixo risco, não compensa. Use onde o custo do erro é alto: código que vai para produção, texto que vai para cliente, número que vai para relatório.\n\n## Limite de ciclos\n\nDois. O terceiro raramente melhora e frequentemente piora — o modelo começa a \"consertar\" o que já estava certo.",
+      "exercicio": "Adicione reflection com checklist objetivo à saída do seu agente. Rode 10 casos e conte: quantas vezes o crítico reprovou? Se reprovou zero, o seu checklist está frouxo — endureça e rode de novo.",
+      "videos": [
+        { "t": "Busca: reflection pattern llm self critique", "u": "https://www.youtube.com/results?search_query=reflection+pattern+llm+self+critique", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Reflexion (paper)", "u": "https://arxiv.org/abs/2303.11366" }
+      ]
+    },
+    {
+      "titulo": "Function calling e design de schemas",
+      "tempo": 60,
+      "resumo": "Como o modelo pede execução — e como projetar o schema para ele acertar.",
+      "conteudo": "## O que realmente acontece\n\nO modelo **não executa** nada. Ele devolve uma estrutura dizendo: *\"chame `buscar_pedido` com `{placa: 'ABC1D23'}`\"*. Quem executa é o seu código, que decide se vai executar.\n\nEssa separação é a base de toda a segurança do módulo.\n\n## Design de schema\n\n```ts\n{\n  name: 'reagendar_disparo',\n  description:\n    'Reagenda um bloco de disparo para outro horário do mesmo dia. ' +\n    'Use quando o bloco não pôde sair no horário previsto. ' +\n    'NÃO use para cancelar — use cancelar_disparo. ' +\n    'Requer confirmação do usuário antes de executar.',\n  parameters: {\n    blocoId: z.string().uuid(),\n    novoHorario: z.string().regex(/^\\d{2}:\\d{2}$/).describe('HH:MM, horário de Brasília'),\n    motivo: z.enum(['erro_tecnico', 'cota', 'pedido_do_cliente', 'outro']),\n  },\n}\n```\n\nQuatro decisões boas aí: descrição diz quando **não** usar; `uuid()` impede id inventado; `describe` resolve ambiguidade de fuso; `enum` no motivo impede texto livre inútil.\n\n## Chamadas paralelas\n\nModelos modernos pedem várias ferramentas de uma vez. Aproveite — mas cuidado: se duas ações têm efeito colateral e dependem uma da outra, execute em série e valide entre elas.\n\n## Erro como aprendizado\n\n```ts\nreturn 'Bloco não encontrado. IDs válidos hoje: use listar_blocos(data) primeiro.'\n```\n\nO modelo lê e corrige. Erro genérico faz ele repetir.\n\n## A regra de ouro deste módulo\n\n> Toda ferramenta com efeito colateral precisa de **uma** das três:\n> (a) confirmação humana, (b) dry-run, ou (c) reversibilidade.\n>\n> Sem nenhuma das três, ela não entra no toolbox de um agente autônomo.",
+      "exercicio": "Projete o schema de uma ferramenta de ESCRITA do seu domínio, aplicando a regra de ouro. Implemente o dry-run: ela devolve o que faria, sem fazer. Teste com o agente e observe se ele apresenta o plano antes de pedir confirmação.",
+      "videos": [
+        { "t": "Busca: function calling json schema design llm", "u": "https://www.youtube.com/results?search_query=function+calling+json+schema+design+llm", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — Function calling", "u": "https://platform.openai.com/docs/guides/function-calling" }
+      ]
+    },
+    {
+      "titulo": "Memória: curta, longa, episódica e contextual",
+      "tempo": 60,
+      "resumo": "Os quatro tipos, onde cada um vive e o que guardar em cada.",
+      "conteudo": "## Os quatro tipos\n\n| Tipo | Vive onde | Guarda | Exemplo |\n|---|---|---|---|\n| **Curta** | Janela de contexto | A conversa atual | O que foi dito nos últimos 10 passos |\n| **Longa** | Banco vetorial | Fatos duráveis | \"Este cliente prefere WhatsApp\" |\n| **Episódica** | Log estruturado | O que aconteceu antes | \"Ontem a tool X falhou com 429\" |\n| **Contextual** | Estado da sessão | Quem é e o que quer | tenant, permissões, objetivo corrente |\n\n## O que vale guardar na memória longa\n\n✅ Fato durável sobre uma entidade\n✅ Preferência declarada\n✅ Decisão tomada e o porquê\n✅ Correção que o usuário fez (\"não é assim, é assado\")\n\n❌ Cada mensagem da conversa\n❌ Resultado de consulta que muda toda hora\n❌ Raciocínio intermediário do agente\n\nA distinção é: **guarde conclusão, não transcrição.**\n\n## Recuperação\n\nCombine três sinais em vez de só similaridade:\n\n```ts\nscore = 0.6 * similaridade + 0.25 * recencia + 0.15 * importancia\n```\n\nSó similaridade traz fato antigo e irrelevante. Só recência esquece o que importa.\n\n## Memória episódica é subestimada\n\nÉ o que permite: \"da última vez que tentei isso, deu 429 depois de 40 chamadas — vou espaçar\". Guarde execução, ação, resultado e duração. Custa pouco e melhora muito.\n\n## LGPD desde já\n\nA memória precisa ser **listável e apagável por titular**. Se um cliente pede eliminação de dados, isso inclui o que o agente lembra dele. Projetar isso depois é retrabalho garantido — volta no módulo 10.",
+      "exercicio": "Implemente os 4 tipos de memória. Escreva a função `esquecer(entidadeId)` que apaga tudo sobre uma pessoa em todas as camadas, e prove com teste que nada sobrou.",
+      "videos": [
+        { "t": "Busca: agent memory types long term vector", "u": "https://www.youtube.com/results?search_query=ai+agent+memory+long+term+vector+store", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — memória", "u": "https://langchain-ai.github.io/langgraphjs/concepts/memory/" }
+      ]
+    },
+    {
+      "titulo": "Consolidação e conflito de memória",
+      "tempo": 45,
+      "resumo": "Sem política de consolidação, memória vira lixão e piora as respostas.",
+      "conteudo": "## O problema do crescimento\n\nMemória que só cresce fica pior com o tempo: a busca traz mais ruído, o custo sobe e fatos antigos contradizem os novos.\n\n## Consolidação\n\nPeriodicamente, transforme muitos episódios em poucos fatos:\n\n```\n50 interações com o cliente X\n        ↓ consolidar\n\"Cliente X: contato preferencial WhatsApp, costuma pagar com 3 dias de\n atraso, já reclamou 2× de mensagem duplicada (mar/26 e jul/26).\"\n```\n\nQuando rodar: por volume (a cada N episódios), por tempo (semanal), ou por evento (fim de uma conversa).\n\n## Conflito\n\nMemória antiga: *\"prefere ser contatado por e-mail\"*\nMemória nova: *\"pediu para receber só por WhatsApp\"*\n\nRegras que funcionam:\n1. **A mais recente vence**\n2. **Registre a mudança**, não sobrescreva em silêncio — \"mudou de e-mail para WhatsApp em 12/08\"\n3. **Preferência explícita** do usuário vence inferência do agente\n4. **Fato verificável** vence opinião do agente\n\n## Decaimento\n\nNem tudo envelhece igual:\n\n| Tipo de fato | Validade |\n|---|---|\n| Identidade, preferência declarada | Indefinida |\n| Estado operacional (\"a WABA está bloqueada\") | Horas |\n| Contexto de projeto | Meses |\n| Resultado de consulta | Nenhuma — não guarde |\n\nDê `validade` a cada memória e ignore as vencidas na recuperação. Fato operacional velho é pior que nenhum fato: leva o agente a decidir errado com confiança.\n\n## Auditabilidade\n\nToda memória guarda: quando foi criada, de onde veio (qual conversa, qual execução) e por quê. Sem isso, você não consegue explicar por que o agente \"acha\" alguma coisa.",
+      "exercicio": "Implemente consolidação e política de validade. Popule a memória com 50 episódios, rode a consolidação e compare a qualidade de recuperação antes e depois, com 10 perguntas.",
+      "videos": [
+        { "t": "Busca: memory consolidation ai agents", "u": "https://www.youtube.com/results?search_query=memory+consolidation+ai+agents", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Generative Agents (memória, reflexão e recuperação)", "u": "https://arxiv.org/abs/2304.03442" }
+      ]
+    },
+    {
+      "titulo": "Context pruning e context stitching",
+      "tempo": 50,
+      "resumo": "Por que o agente 'esquece' o objetivo depois de 20 passos — e como resolver.",
+      "conteudo": "## O sintoma clássico\n\nO agente começa bem e, por volta do passo 15 ou 20, passa a ignorar a instrução inicial ou a repetir trabalho já feito.\n\n**Causa:** o objetivo foi empurrado para longe pelo acúmulo de observações. Saída gigante de ferramenta ocupa espaço e dilui a instrução.\n\n## Context pruning\n\nO que remover, em ordem de segurança:\n\n1. **Saídas grandes de ferramenta já consumidas** — substitua por um resumo de uma linha\n2. **Raciocínio de passos antigos** — a conclusão basta\n3. **Mensagens do meio da conversa** — mantenha início e fim\n4. **Resultados duplicados**\n\n```ts\nfunction podar(msgs, tetoTokens) {\n  const fixas = [msgs[0], msgs[1]]            // sistema + objetivo\n  const recentes = msgs.slice(-8)             // janela recente completa\n  const meio = msgs.slice(2, -8)\n  const resumo = resumir(meio)                // 1 mensagem\n  return [...fixas, { role: 'system', content: `Resumo do que já foi feito: ${resumo}` }, ...recentes]\n}\n```\n\n## Reinjetar o objetivo\n\nA correção mais barata e mais eficaz: a cada N passos, repita o objetivo e o que falta.\n\n```\nLembrete do objetivo: {{objetivo}}\nJá concluído: {{feito}}\nPendente: {{pendente}}\n```\n\n## Context stitching\n\nCosturar pedaços de fontes diferentes (memória longa, RAG, estado, resultado de ferramenta) mantendo coerência. Duas regras:\n\n- **Marque a origem de cada bloco** — o modelo trata melhor o que sabe de onde veio\n- **Marque o nível de confiança** — dado do banco não vale o mesmo que texto de cliente (e isso é defesa contra injeção)\n\n## Sinal de alerta\n\nSe o contexto do seu agente passa de ~60% da janela nos passos finais, você tem um problema estrutural, não de ajuste fino.",
+      "exercicio": "Instrumente seu agente para registrar o tamanho do contexto a cada passo. Rode uma tarefa longa e faça o gráfico. Implemente pruning e reinjeção de objetivo, e compare o gráfico e a qualidade do resultado.",
+      "videos": [
+        { "t": "Busca: context window management llm agents", "u": "https://www.youtube.com/results?search_query=context+window+management+llm+agents", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — long context tips", "u": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips" }
+      ]
+    },
+    {
+      "titulo": "LangGraph: grafos, estado e checkpointing",
+      "tempo": 90,
+      "resumo": "Orquestração como grafo — e o recurso que muda o jogo: retomar de onde parou.",
+      "conteudo": "## O modelo mental\n\nEm vez de um `while`, você declara um **grafo**: nós (etapas), arestas (transições) e um estado compartilhado que atravessa tudo.\n\n```ts\nimport { StateGraph, START, END } from '@langchain/langgraph'\n\nconst g = new StateGraph(Estado)\n  .addNode('planejar', planejar)\n  .addNode('executar', executar)\n  .addNode('revisar', revisar)\n  .addEdge(START, 'planejar')\n  .addEdge('planejar', 'executar')\n  .addConditionalEdges('executar', (s) =>\n    s.falhou ? 'planejar' : s.precisaRevisao ? 'revisar' : END\n  )\n  .addEdge('revisar', END)\n\nconst app = g.compile({ checkpointer })\n```\n\n## O que você ganha\n\n**Arestas condicionais** — o roteamento fica explícito e legível, em vez de escondido em `if` dentro do loop.\n\n**Paralelismo** — nós independentes rodam juntos, com junção declarada.\n\n**Checkpointing** — o estado é persistido a cada nó. Se o processo morrer no passo 7, você retoma do 7, não do 1. Em tarefa longa e cara, isso é a diferença entre reprocessar e não reprocessar.\n\n**Human-in-the-loop como nó** — `interrupt` antes de um nó crítico; o grafo espera aprovação e continua. Deixa de ser gambiarra e vira parte do desenho.\n\n**Depuração** — dá para ver o estado em cada nó, o caminho percorrido e reexecutar a partir de um ponto.\n\n## O que você paga\n\nUma camada de abstração a mais e a curva de aprendizado do modelo de estado. Vale quando o fluxo tem ramificação, precisa retomar ou tem mais de um agente. Não vale para um agente linear simples.\n\n## Recomendação do curso\n\nEscreva na mão primeiro (aula 4), depois porte para LangGraph e **compare honestamente**. Se a sua conclusão for \"não valeu\", isso também é um resultado válido e defensável.",
+      "exercicio": "Porte seu agente para LangGraph com checkpointing. Mate o processo no meio de uma execução e prove que ele retoma do ponto certo. Compare linhas de código, legibilidade e custo com a versão crua.",
+      "videos": [
+        { "t": "Busca: LangGraph tutorial javascript agents", "u": "https://www.youtube.com/results?search_query=langgraph+javascript+tutorial+agents", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph JS — documentação", "u": "https://langchain-ai.github.io/langgraphjs/" },
+        { "t": "LangGraph — persistence e checkpointing", "u": "https://langchain-ai.github.io/langgraphjs/concepts/persistence/" }
+      ]
+    },
+    {
+      "titulo": "Métricas e trilha de auditoria",
+      "tempo": 60,
+      "resumo": "Como provar o que o agente fez e por quê — depois do fato.",
+      "conteudo": "## As métricas que importam\n\n| Métrica | O que revela |\n|---|---|\n| Passos por execução | Eficiência do planejamento |\n| Tokens e **custo por tarefa concluída** | Viabilidade econômica |\n| Taxa de sucesso | Se serve para alguma coisa |\n| Taxa de intervenção humana | Autonomia real |\n| Tempo até conclusão | Se é usável no fluxo real |\n| Taxa de repetição de ação | Sintoma de loop |\n| Distribuição de uso por ferramenta | Ferramenta nunca usada = descrição ruim ou inútil |\n\nA métrica-rainha é **custo por tarefa concluída**, não custo por chamada. Um agente que gasta mais por chamada e conclui mais é mais barato.\n\n## Trilha de auditoria\n\nPara **cada passo**, registre:\n\n```json\n{\n  \"execucao\": \"exec_8f2\",\n  \"passo\": 3,\n  \"ts\": \"2026-08-16T01:20:11Z\",\n  \"viu\": \"observação do passo anterior (resumida)\",\n  \"concluiu\": \"o raciocínio declarado pelo modelo\",\n  \"fez\": { \"tool\": \"checar_billing\", \"args\": { \"waba_id\": \"...\" } },\n  \"voltou\": { \"status\": \"ACCOUNT_RESTRICTED\" },\n  \"custo\": 0.0143,\n  \"modelo\": \"...\",\n  \"prompt_versao\": 4\n}\n```\n\nCom isso você responde, semanas depois: *por que o agente fez X naquele dia?*\n\n## O detalhe que importa\n\nGuarde **`concluiu` e `fez` separados**. Assim você distingue dois erros muito diferentes:\n- raciocinou errado e agiu coerente com o raciocínio errado\n- raciocinou certo e chamou a ferramenta errada\n\nA correção de cada um é em lugar diferente: prompt no primeiro caso, descrição de tool no segundo.\n\n## Onde guardar\n\nBanco próprio, retenção definida, com PII mascarada. Ferramenta de tracing de LLM (Langfuse) cobre boa parte, mas a trilha de decisão costuma valer uma tabela sua — é dela que sai o relatório para auditoria e para cliente.",
+      "exercicio": "Implemente a trilha de auditoria completa e uma consulta que responda: \"mostre todos os passos da execução X\" e \"todas as vezes que o agente chamou a ferramenta Y com argumento inválido\". Rode 10 execuções e analise.",
+      "videos": [
+        { "t": "Busca: agent observability tracing metrics", "u": "https://www.youtube.com/results?search_query=ai+agent+observability+tracing+metrics", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Langfuse — tracing de agentes", "u": "https://langfuse.com/docs/tracing" }
+      ]
+    },
+    {
+      "titulo": "Guardrails obrigatórios e kill switch",
+      "tempo": 60,
+      "resumo": "Os sete controles sem os quais um agente autônomo não vai para produção.",
+      "conteudo": "## Os sete\n\n**1. Teto de iterações** — o `MAX` do loop. Óbvio e frequentemente esquecido.\n\n**2. Teto de custo** — por execução **e por dia**. O diário é o que impede o desastre de madrugada:\n```ts\nif (await custoDoDia() > TETO_DIARIO) throw new Error('teto diário atingido')\n```\n\n**3. Allowlist de ações** — nunca blocklist. Blocklist esquece o caso que você não imaginou; allowlist falha fechada.\n\n**4. Detecção de repetição** — mesma ação com os mesmos argumentos duas vezes: pare e mude de estratégia. É o antídoto mais eficaz contra loop.\n\n**5. Timeout global** — a execução inteira tem prazo, não só cada chamada.\n\n**6. Kill switch** — uma flag em banco ou variável, consultada **a cada passo**, que interrompe tudo sem deploy:\n```ts\nif (await desligado(agenteId)) throw new Error('desligado por operador')\n```\n\n**7. Aprovação humana** para ação irreversível, cara ou com efeito externo.\n\n## O princípio por trás de todos\n\n> A defesa não é fazer o modelo se comportar. É **limitar o estrago possível** se ele não se comportar.\n\nÉ o mesmo princípio de prompt injection (módulo 03) e de auto-remediação (módulo 06).\n\n## Falhar fechado\n\nSe o serviço de guardrail estiver fora do ar, o agente **para**. Não continua \"porque não deu para checar\". Fail-open em controle de segurança é o mesmo que não ter controle.\n\n## Teste os guardrails\n\nCada um precisa de teste automatizado que **prova** o bloqueio. Guardrail não testado é guardrail que você acha que tem.",
+      "exercicio": "Implemente os 7 guardrails com um teste automatizado cada. Depois faça um exercício de red team no seu próprio agente: tente, de propósito, fazer ele estourar orçamento, entrar em loop e executar ação fora do escopo. Documente o que conseguiu.",
+      "videos": [
+        { "t": "Busca: ai agent guardrails safety production", "u": "https://www.youtube.com/results?search_query=ai+agent+guardrails+safety+production", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OWASP — Agentic AI threats and mitigations", "u": "https://owasp.org/www-project-top-10-for-large-language-model-applications/" }
+      ]
+    },
+    {
+      "titulo": "Human-in-the-loop e limites de autonomia",
+      "tempo": 50,
+      "resumo": "Onde colocar o humano para que a aprovação signifique alguma coisa.",
+      "conteudo": "## Os três pontos de entrada\n\n| Ponto | Quando | Custo para o humano |\n|---|---|---|\n| **Antes do plano** | Tarefa nova ou de alto risco | Alto — precisa entender o contexto |\n| **Antes de ação crítica** | Efeito irreversível ou externo | Baixo — decisão pontual |\n| **Depois, por amostragem** | Volume alto e risco baixo | Baixo — revisa uma fração |\n\nO segundo é o melhor custo-benefício na maioria dos casos.\n\n## O que faz a aprovação ser real\n\nMostre ao humano, sempre:\n1. **O que vai acontecer**, em linguagem clara\n2. **Sobre o quê** — quantos registros, quais\n3. **Por quê** — o raciocínio do agente\n4. **O que muda se ele não aprovar**\n5. **Como desfazer**, se der errado\n\n```\nO agente quer REAGENDAR 47 disparos da regional Piedade das 14h para 16h30.\n\nMotivo: cota de destinatários únicos em 24h será atingida às 14h20.\nEvidência: 203 de 250 já enviados na janela.\nSe não aprovar: os 47 saem às 14h e ~30 devem falhar com erro 131048.\nReversível: sim, até 16h25.\n\n[ Aprovar ]  [ Recusar ]  [ Ver os 47 ]\n```\n\n## O anti-padrão: aprovação teatral\n\nSe a pessoa aprova sem ler — porque são 200 pedidos por dia, ou porque a tela não dá informação suficiente — o human-in-the-loop virou carimbo. Você tem o custo do controle e nenhum benefício.\n\nSinais de que virou teatro: tempo médio de aprovação abaixo de 3 segundos, taxa de recusa perto de zero, sempre a mesma pessoa aprovando tudo.\n\n## Delimitação de escopo, por escrito\n\nAntes do agente existir, escreva o que ele **nunca** pode fazer. Exemplos: enviar mensagem para cliente sem aprovação, alterar dado financeiro, deletar qualquer coisa, contatar terceiro, gastar acima de X.\n\nEsse documento é o insumo da allowlist e o começo da política de IA do módulo 10.",
+      "exercicio": "Implemente aprovação com os 5 elementos da tela acima para uma ação crítica. Peça para outra pessoa aprovar 5 pedidos e cronometre. Se ela levar menos de 5 segundos em média, sua tela não está informando o suficiente.",
+      "videos": [
+        { "t": "Busca: human in the loop ai agent approval design", "u": "https://www.youtube.com/results?search_query=human+in+the+loop+ai+agent+approval", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — human-in-the-loop", "u": "https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/" }
+      ]
+    },
+    {
+      "titulo": "Multi-agent: Supervisor, Hierarchical, Group Chat, Handoff",
+      "tempo": 60,
+      "resumo": "Os padrões de colaboração — e por que a resposta certa costuma ser 'use um agente só'.",
+      "conteudo": "## Os padrões\n\n| Padrão | Como funciona | Bom para | Custo |\n|---|---|---|---|\n| **Sequential** | Pipeline: cada um faz sua parte | Etapas claras e distintas | Baixo |\n| **Supervisor** | Um distribui e cobra | Roteamento por especialidade | Médio |\n| **Hierarchical** | Supervisores de supervisores | Domínio muito grande | Alto |\n| **Group Chat** | Todos veem tudo | Debate, exploração | Muito alto |\n| **Handoff** | Passa a conversa com o contexto | Atendimento com especialistas | Médio |\n| **Consensus** | Vários resolvem, votam | Alta exigência de acerto | Muito alto |\n\n## Quando multi-agente compensa\n\n✅ Especialidades genuinamente diferentes, com prompts e ferramentas incompatíveis\n✅ Etapas que podem rodar em paralelo\n✅ Você quer opiniões independentes (consenso reduz erro)\n✅ Isolamento de contexto — cada um com sua janela\n\n## Quando NÃO compensa\n\n❌ Um agente com boas ferramentas resolveria\n❌ As \"especialidades\" são só prompts levemente diferentes\n❌ A tarefa é linear\n❌ Você quer multi-agente porque parece sofisticado\n\n> Se um agente bem construído resolve, **use um**. Multi-agente multiplica custo, latência e modos de falha.\n\n## O modo de falha característico\n\n**Propagação de erro.** O agente A conclui algo errado; para o agente B, aquilo é entrada confiável. O erro vira fato e ninguém questiona.\n\nMitigações: validação determinística entre etapas, exigir evidência junto da conclusão, e um agente crítico cuja função é discordar.\n\n## Comunicação\n\nFila de mensagens entre agentes, com esquema definido. Não passe \"a conversa inteira\": passe **resultado estruturado + evidência**. Passar histórico bruto é o que faz o custo explodir.",
+      "exercicio": "Implemente um mini sistema cooperativo (analista → planejador → executor) com supervisor. Meça quantos tokens custou a mais que a versão de agente único e se a qualidade compensou. Injete um erro no analista e observe a propagação; depois adicione validação entre etapas.",
+      "videos": [
+        { "t": "Busca: multi agent systems supervisor pattern langgraph", "u": "https://www.youtube.com/results?search_query=multi+agent+supervisor+pattern+langgraph", "k": "busca" },
+        { "t": "Busca: CrewAI AutoGen comparação multi agente", "u": "https://www.youtube.com/results?search_query=crewai+vs+autogen+multi+agent", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "LangGraph — multi-agent", "u": "https://langchain-ai.github.io/langgraphjs/concepts/multi_agent/" },
+        { "t": "CrewAI — documentação", "u": "https://docs.crewai.com" }
+      ]
+    }
+  ]
+}

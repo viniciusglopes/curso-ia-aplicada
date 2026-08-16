@@ -1,0 +1,228 @@
+{
+  "modulo": "05",
+  "titulo": "Ferramentas de IA para UX & UI",
+  "aulas": [
+    {
+      "titulo": "AI-driven UX/UI: o que a IA faz bem e o que não faz",
+      "tempo": 45,
+      "resumo": "Mapa honesto por etapa do processo de produto.",
+      "conteudo": "## Duas coisas diferentes\n\n1. **IA como ferramenta do processo** — ela ajuda você a projetar e construir\n2. **IA como material da interface** — a IA está dentro do produto\n\nEste módulo trata das duas, e elas exigem cuidados opostos.\n\n## Por etapa\n\n| Etapa | Faz bem | Não faz |\n|---|---|---|\n| **Pesquisa** | Sintetizar entrevista, agrupar dor, gerar persona | Descobrir o que o usuário não disse |\n| **Ideação** | Volume de alternativa, referência visual | Escolher com gosto e contexto de negócio |\n| **Protótipo** | Wireframe e mockup a partir de texto | Hierarquia visual sofisticada |\n| **Código** | Componente, estado, responsividade | Arquitetura de front de longo prazo |\n| **Teste** | Roteiro, dado sintético, E2E | Julgar se a experiência é boa |\n\n## O padrão que se repete\n\nA IA é excelente em **produzir volume** e fraca em **julgar valor**. Ela gera 20 variações e não sabe qual serve. Esse julgamento continua sendo o trabalho.\n\n## A dívida de design\n\nO custo escondido da geração rápida:\n\n- **Componente duplicado** — cada geração cria o seu botão\n- **Design system ignorado** — a IA não sabe que existe, se você não contar\n- **Acessibilidade quebrada em silêncio** — `div` clicável, contraste ruim, sem foco de teclado\n- **Inconsistência** — cinco telas, cinco espaçamentos diferentes\n\nMitigação: arquivo de regras com os tokens e componentes existentes, e revisão obrigatória com checklist (próxima aula).",
+      "exercicio": "Pegue 3 telas de um produto seu e classifique, para cada uma, quais etapas do processo teriam ganho real com IA. Estime o ganho em horas e o risco de dívida de design.",
+      "videos": [
+        {
+          "t": "Busca: AI in UX design process 2026",
+          "u": "https://www.youtube.com/results?search_query=ai+in+ux+design+process",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Nielsen Norman Group — artigos de UX",
+          "u": "https://www.nngroup.com/articles/"
+        }
+      ]
+    },
+    {
+      "titulo": "Text-to-UI: wireframes e mockups por linguagem natural",
+      "tempo": 50,
+      "resumo": "Da descrição ao layout — e o que sempre precisa de humano depois.",
+      "conteudo": "## As ferramentas\n\n| Ferramenta | Força |\n|---|---|\n| **v0** | Componentes React/Tailwind prontos para colar |\n| **Figma AI** | Dentro do fluxo de design existente |\n| **Firebase Studio** | Design → front-end integrado ao ecossistema Google |\n| **Uizard / Galileo** | Wireframe rápido a partir de texto |\n\n## Como pedir para vir bom\n\nUm prompt de UI ruim: *\"faça uma tela de listagem de clientes\"*.\n\nUm prompt bom traz cinco coisas:\n\n```\nTela de listagem de disparos de um painel operacional.\n\nUsuário: operador que acompanha 40 regionais e precisa achar rápido\n         o que falhou hoje.\nDados por linha: regional, horário, enviados/total, status, erro (quando houver).\nAções: filtrar por status, reenviar recusados, abrir detalhe.\nEstados obrigatórios: carregando, vazio, erro, e \"nenhum resultado no filtro\".\nDensidade: alta — o operador prefere ver 30 linhas a ver cartões grandes.\n```\n\nOs dois últimos itens são os que a IA mais esquece e os que mais definem se a tela presta.\n\n## O que sempre precisa de humano\n\n- **Hierarquia**: o que é primário nessa tela? A IA nivela tudo\n- **Densidade**: ela tende a cartões grandes e espaçosos, ruim para uso profissional\n- **Estados de erro e vazio**: quase sempre ausentes ou genéricos\n- **Microcopy**: mensagens que dizem o que fazer, não só o que houve\n- **Acessibilidade real**: além do contraste, foco, ordem de tabulação e rótulos\n\n## Checklist de crítica\n\nUse a cada tela gerada: semântica de HTML, contraste, foco de teclado, 3 breakpoints, uso do design system existente, componentes duplicados, tamanho do bundle, estados de carga/erro/vazio.",
+      "exercicio": "Gere uma tela real sua a partir de descrição. Rode o checklist de crítica e liste todos os problemas. Corrija à mão. Publique o diff comentado: o que a IA acertou, o que errou, quanto tempo economizou de fato.",
+      "videos": [
+        {
+          "t": "Busca: v0 vercel tutorial text to UI",
+          "u": "https://www.youtube.com/results?search_query=v0+vercel+text+to+ui+tutorial",
+          "k": "busca"
+        },
+        {
+          "t": "Busca: Figma AI design to code",
+          "u": "https://www.youtube.com/results?search_query=figma+ai+design+to+code",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "WCAG 2.2 — referência rápida",
+          "u": "https://www.w3.org/WAI/WCAG22/quickref/"
+        }
+      ]
+    },
+    {
+      "titulo": "Figma → código e a crítica obrigatória do resultado",
+      "tempo": 60,
+      "resumo": "O exercício não é aceitar o código gerado. É listar o que está errado nele.",
+      "conteudo": "## O que a conversão automática faz bem\n\n- Estrutura geral e espaçamento aproximado\n- Cores e tipografia, quando o design usa tokens\n- Componentes simples e isolados\n\n## O que ela costuma quebrar\n\n| Problema | Como aparece |\n|---|---|\n| **Semântica** | `<div onClick>` no lugar de `<button>` |\n| **Responsividade** | Valores fixos em px em vez de layout fluido |\n| **Design system** | Recria o botão em vez de importar o existente |\n| **Acessibilidade** | Sem rótulo, sem foco visível, ordem de leitura errada |\n| **Estados** | Só o estado feliz; sem hover, foco, desabilitado, carregando |\n| **Nomes** | `Frame27`, `Group3` virando nome de componente |\n\n## O método correto\n\n1. Converta\n2. **Não use ainda**\n3. Rode o checklist e anote cada problema\n4. Corrija, começando por semântica e acessibilidade\n5. Substitua o que existe no design system\n6. Só então integre\n\nSe o passo 3 tem menos de 5 itens, você não olhou direito.\n\n## Validação de usabilidade com IA\n\nDá para pedir revisão heurística (Nielsen) sobre um screenshot e gerar roteiro de teste com personas.\n\n**Limite honesto:** a IA simula reação *plausível*, não reação *real*. Serve para triagem barata antes de gastar tempo de usuário de verdade. Não substitui usuário — e apresentar como se substituísse é desonestidade profissional.",
+      "exercicio": "Converta um design do Figma em código. Antes de tocar, escreva a lista completa de problemas usando o checklist. Corrija e meça: quanto tempo levou converter + corrigir versus escrever do zero?",
+      "videos": [
+        {
+          "t": "Busca: figma to code AI review problems",
+          "u": "https://www.youtube.com/results?search_query=figma+to+code+ai+problems+review",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "10 heurísticas de Nielsen",
+          "u": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+        }
+      ]
+    },
+    {
+      "titulo": "Validação de usabilidade assistida por IA",
+      "tempo": 40,
+      "resumo": "Triagem barata antes do usuário real — e a fronteira que não se atravessa.",
+      "conteudo": "## O que dá para fazer\n\n**Revisão heurística automatizada** — envie o screenshot e peça avaliação contra as 10 heurísticas de Nielsen, com evidência visual por achado.\n\n**Geração de roteiro de teste** — a partir do fluxo, gerar tarefas para o usuário executar, incluindo casos de borda que você não pensou.\n\n**Persona simulada** — pedir que o modelo percorra a tela \"como\" um perfil e relate onde travaria.\n\n**Análise de sessão** — resumir gravações e transcrições de teste, agrupar dores recorrentes.\n\n## Prompt de revisão heurística que funciona\n\n```\nAvalie esta interface contra as 10 heurísticas de Nielsen.\n\nPara CADA heurística:\n- status: OK, ATENÇÃO ou PROBLEMA\n- evidência: aponte o elemento específico\n- impacto: alto, médio ou baixo\n- correção sugerida\n\nContexto: usuário é operador experiente, usa a tela 30× por dia,\nsob pressão de tempo. Densidade alta é desejável.\n\nSeja específico. \"Melhorar a hierarquia\" não é um achado.\n```\n\nO bloco de contexto muda completamente o resultado. Sem ele, a IA avalia como se fosse um site institucional.\n\n## A fronteira\n\n> A IA prevê **reação plausível**. O usuário produz **reação real**.\n\nUse para: cortar problemas óbvios antes do teste, escrever o roteiro, resumir resultados.\n\nNão use para: decidir que a tela está boa, substituir teste com usuário, justificar decisão de produto para stakeholder como se fosse pesquisa.\n\nApresentar simulação como pesquisa é o tipo de erro que destrói credibilidade de uma vez só.",
+      "exercicio": "Rode a revisão heurística com contexto numa tela sua. Depois mostre a mesma tela para uma pessoa real executando uma tarefa. Compare: quantos achados da IA se confirmaram? Quantos problemas reais ela não viu?",
+      "videos": [
+        {
+          "t": "Busca: AI usability testing heuristic evaluation",
+          "u": "https://www.youtube.com/results?search_query=ai+usability+testing+heuristic+evaluation",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "NN/g — heuristic evaluation",
+          "u": "https://www.nngroup.com/articles/how-to-conduct-a-heuristic-evaluation/"
+        }
+      ]
+    },
+    {
+      "titulo": "Agentes de codificação e CLIs no fluxo do dev",
+      "tempo": 60,
+      "resumo": "Como esses agentes operam no repositório e o que muda em relação ao autocomplete.",
+      "conteudo": "## A diferença\n\n| Geração | O que faz |\n|---|---|\n| **Autocomplete** (Copilot clássico) | Completa a linha, no contexto do arquivo |\n| **Chat no editor** | Responde sobre o código selecionado |\n| **Agente de codificação** | **Lê o repositório, edita vários arquivos, roda comando, lê o erro e corrige** |\n\nO terceiro é uma mudança de natureza, não de grau. Ele opera o ciclo inteiro.\n\n## Como ele opera\n\n1. Lê a estrutura do projeto e os arquivos relevantes\n2. Propõe ou aplica um diff em múltiplos arquivos\n3. Roda teste, build ou lint\n4. Lê a saída e corrige\n5. Repete até passar\n\nÉ o agent loop do módulo 04, com ferramentas de sistema de arquivos e shell.\n\n## As ferramentas\n\nClaude Code, Gemini CLI, Codex, Cursor Agent, Windsurf. Todas variam na ergonomia; o modelo mental é o mesmo.\n\n## Riscos específicos\n\n- **Escopo escorregando** — você pede um botão, ele refatora três módulos\n- **Teste ajustado ao código** — em vez de corrigir o código, ele afrouxa o teste. Erro clássico e perigoso\n- **Dependência nova sem necessidade**\n- **Comando destrutivo** — sempre revise o que vai ser executado\n- **Segredo em log** — atenção ao que ele imprime\n\n## Mitigações práticas\n\n- Trabalhe em branch, sempre\n- `git diff` antes de aceitar\n- Regra explícita: \"não altere testes existentes; se um teste falha, corrija o código\"\n- Regra explícita: \"não adicione dependência sem pedir\"\n- Escopo por tarefa: uma coisa por vez",
+      "exercicio": "Use um agente de codificação para implementar uma feature pequena em branch. Anote: quantas iterações precisou, quantas vezes ele saiu do escopo, e se em algum momento tentou mexer em teste. Escreva as regras que evitariam cada problema.",
+      "videos": [
+        {
+          "t": "Busca: Claude Code tutorial agentic coding",
+          "u": "https://www.youtube.com/results?search_query=claude+code+tutorial+agentic+coding",
+          "k": "busca"
+        },
+        {
+          "t": "Busca: Gemini CLI tutorial",
+          "u": "https://www.youtube.com/results?search_query=gemini+cli+tutorial",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Claude Code — documentação",
+          "u": "https://docs.anthropic.com/en/docs/claude-code/overview"
+        }
+      ]
+    },
+    {
+      "titulo": "Fluxo previsível com agente: da ideia ao componente testável",
+      "tempo": 60,
+      "resumo": "Seis passos que transformam tentativa e erro em processo repetível.",
+      "conteudo": "## O problema\n\nSem processo, trabalhar com agente vira: pede, não gosta, pede de novo, piora, desiste e escreve na mão. Você gastou token e tempo.\n\n## Os seis passos\n\n**1. Descreva o resultado, não os passos**\n> ❌ \"crie um arquivo X, importe Y, adicione um useState...\"\n> ✅ \"a tela precisa listar disparos com filtro por status, mostrando estado vazio e de erro\"\n\nVocê dita o *o quê*; ele resolve o *como*. Se você já sabe o como em detalhe, escreva você.\n\n**2. Aponte referências**\n> \"Siga o padrão de `components/TabelaExecucoes.tsx`. Use os tokens de `styles/tokens.css`. Não adicione biblioteca.\"\n\nEsse passo sozinho resolve metade dos problemas de consistência.\n\n**3. Exija teste junto**\n> \"Entregue o componente e o teste do caminho principal e do estado vazio.\"\n\n**4. Revise o diff antes de rodar** — olhe arquivos tocados, dependências e testes alterados.\n\n**5. Rode, veja quebrar, devolva o erro** — não descreva o erro: **cole a saída**. É o que fecha o ciclo de correção.\n\n**6. Só então peça polimento** — acessibilidade, estados, microcopy. Polir antes de funcionar é desperdício.\n\n## Prompt de código: o que sempre incluir\n\n- Tipos e interfaces existentes\n- Um exemplo de componente do projeto\n- Restrições explícitas (\"sem dependência nova\", \"sem alterar teste\")\n- Critério de pronto (\"passa no lint, no teste e no build\")\n\n## O sinal de que o processo está funcionando\n\nO número de iterações por tarefa cai ao longo das semanas. Se não cai, o problema está nas suas regras de projeto, não no modelo.",
+      "exercicio": "Aplique os 6 passos numa feature real e registre cada prompt e cada iteração. Depois repita o processo numa segunda feature usando as regras que você aprendeu. Compare o número de iterações.",
+      "videos": [
+        {
+          "t": "Busca: workflow agentic coding best practices",
+          "u": "https://www.youtube.com/results?search_query=agentic+coding+workflow+best+practices",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Anthropic — melhores práticas com Claude Code",
+          "u": "https://www.anthropic.com/engineering/claude-code-best-practices"
+        }
+      ]
+    },
+    {
+      "titulo": "Prompt para geração de código de front",
+      "tempo": 45,
+      "resumo": "O que faz diferença em HTML, CSS e TypeScript especificamente.",
+      "conteudo": "## Estrutura para front-end\n\n```\nContexto do projeto:\n- Next.js 15 App Router, TypeScript strict, Tailwind, tokens em styles/tokens.css\n- Componentes em components/, um por arquivo, PascalCase\n\nTarefa:\nCriar <ComponenteX> que [resultado desejado].\n\nContrato:\ninterface Props { ... }   // dê a interface pronta\n\nReferência de estilo: components/TabelaExecucoes.tsx\n\nObrigatório:\n- semântica correta (button é <button>, lista é <ul>)\n- foco de teclado visível e ordem de tabulação coerente\n- estados: carregando, vazio, erro\n- responsivo em 3 breakpoints, sem px fixo em largura\n- teste do caminho principal e do estado vazio\n\nProibido:\n- dependência nova\n- alterar arquivos fora de components/ e do teste correspondente\n- any\n```\n\n## Por que dar a interface pronta\n\nÉ o contrato. Sem ele, o modelo inventa nomes de prop, e você acaba adaptando o resto do sistema ao capricho dele.\n\n## HTML e CSS: os pedidos que mudam o resultado\n\n- \"use elementos semânticos\" — evita a sopa de `div`\n- \"sem largura fixa; use grid/flex com min/max\" — evita quebra em mobile\n- \"use os tokens existentes; não invente cor nem espaçamento\"\n- \"toda imagem com alt significativo, ou alt vazio se decorativa\"\n\n## TypeScript\n\n- \"strict, sem `any`, sem `as` para calar o compilador\"\n- \"trate o estado de erro no tipo, não com `try` genérico\"\n- \"exporte apenas o que for usado fora\"\n\n## O truque mais eficiente\n\nDê **um arquivo existente bom** como referência. O modelo imita padrão muito melhor do que segue descrição abstrata de padrão.",
+      "exercicio": "Escreva o seu template de prompt de front, com as seções acima preenchidas para o seu projeto real. Gere 3 componentes com ele e meça quantas correções manuais cada um precisou.",
+      "videos": [
+        {
+          "t": "Busca: prompt engineering para geração de código frontend",
+          "u": "https://www.youtube.com/results?search_query=prompt+engineering+frontend+code+generation",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "MDN — HTML semântico",
+          "u": "https://developer.mozilla.org/pt-BR/docs/Glossary/Semantics"
+        }
+      ]
+    },
+    {
+      "titulo": "Teste E2E com agentes autônomos via MCP",
+      "tempo": 60,
+      "resumo": "Teste que entende intenção em vez de depender de seletor — com o custo que isso traz.",
+      "conteudo": "## A promessa\n\n```ts\n// Playwright tradicional — quebra quando o markup muda\nawait page.click('[data-testid=\"btn-finalizar-compra\"]')\n\n// Agentivo — sobrevive à refatoração\nawait agente.executar('finalize a compra com o cartão salvo')\n```\n\nO agente lê a tela (ou o MCP da aplicação), entende o objetivo e navega.\n\n## O ganho real\n\nTeste que não quebra a cada refatoração de markup. Em produto que muda muito, a manutenção da suíte E2E costuma custar mais que escrevê-la.\n\n## O custo real\n\n| Aspecto | Playwright | Agentivo |\n|---|---|---|\n| Velocidade | Segundos | Dezenas de segundos |\n| Custo | ~zero | Tokens por execução |\n| Determinismo | Alto | **Não determinístico** |\n| Diagnóstico da falha | Preciso | \"Não consegui concluir\" |\n\nO não determinismo é o ponto crítico: um teste que às vezes passa e às vezes não vira ruído, e time que ignora teste vermelho é pior que time sem teste.\n\n## A recomendação equilibrada\n\n- **Playwright** para a maior parte da suíte, que roda a cada PR\n- **Agentivo** para 3 a 5 fluxos críticos, rodando em agendamento (noturno), com repetição em caso de falha e alerta só se falhar duas vezes\n\n## Agente testando via MCP\n\nSe a sua aplicação expõe MCP (módulo 03), o agente pode testar pelo **protocolo** em vez da tela: mais rápido, mais estável, e valida a mesma camada que outros agentes vão consumir.\n\nÉ também a validação exigida na Entrega 3 do capstone: provar que um agente externo opera o seu produto via MCP.\n\nFerramentas de inspeção (como mcpui.dev) ajudam a visualizar o que a aplicação expõe e depurar o que o agente enxerga.",
+      "exercicio": "Escreva um teste E2E agentivo de um fluxo crítico seu e o mesmo teste em Playwright. Rode 10 vezes cada um. Compare tempo, custo e quantas vezes cada um falhou sem motivo real.",
+      "videos": [
+        {
+          "t": "Busca: AI agent end to end testing browser",
+          "u": "https://www.youtube.com/results?search_query=ai+agent+end+to+end+testing+browser",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Playwright — documentação",
+          "u": "https://playwright.dev/docs/intro"
+        },
+        {
+          "t": "MCP — Inspector",
+          "u": "https://github.com/modelcontextprotocol/inspector"
+        }
+      ]
+    },
+    {
+      "titulo": "IA no cliente: casos de uso e riscos de segurança",
+      "tempo": 50,
+      "resumo": "O que pode rodar no navegador e o que nunca pode — sem meio-termo.",
+      "conteudo": "## Os riscos, em ordem de gravidade\n\n**1. Chave de API no cliente — nunca**\nQualquer chave que chega ao navegador é pública. Está no bundle, no DevTools, no HAR. Não existe ofuscação que resolva. **Proxy no servidor, sempre.**\n\n**2. Custo sem limite**\nSem rate limit no servidor, um usuário mal-intencionado gasta a sua conta em minutos. Limite por usuário, por IP e por dia.\n\n**3. Entrada não confiável**\nTudo que vem do cliente é potencialmente hostil, inclusive o que parece inofensivo. Validação e guardrails no servidor.\n\n**4. Vazamento por contexto**\nNunca coloque no contexto do modelo dado que aquele usuário não poderia ver. Se ele não pode ver, o modelo não pode receber.\n\n## O padrão correto\n\n```\nnavegador → sua rota (auth + permissão + rate limit + quota) → provedor\n```\n\nA rota é fina, mas as quatro checagens são obrigatórias. Streaming volta pelo mesmo caminho.\n\n## O que pode rodar no cliente de verdade\n\n**Modelo pequeno local** com transformers.js ou WebGPU:\n- classificação simples\n- busca semântica sobre dado que já está no cliente\n- transcrição curta\n- sugestão de autocompletar\n\nVantagens: sem custo por token, sem latência de rede, dado não sai do dispositivo (ótimo para privacidade). Custo: download do modelo e consumo de memória do usuário.\n\n## Regra de decisão\n\n> Se envolve **chave**, **dado de outro usuário** ou **custo por chamada**, é servidor.\n> Se é modelo local operando sobre dado que já está na tela, pode ser cliente.",
+      "exercicio": "Audite uma feature de IA sua no front: existe alguma chave no bundle? Existe rate limit por usuário no servidor? Escreva um teste que dispara 100 requisições e prova que o limite funciona.",
+      "videos": [
+        {
+          "t": "Busca: API key security frontend LLM proxy",
+          "u": "https://www.youtube.com/results?search_query=api+key+security+frontend+llm+proxy",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "transformers.js — documentação",
+          "u": "https://huggingface.co/docs/transformers.js"
+        },
+        {
+          "t": "OWASP — Top 10 for LLM Applications",
+          "u": "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+        }
+      ]
+    },
+    {
+      "titulo": "Backend com lógica de IA e features inteligentes",
+      "tempo": 60,
+      "resumo": "As três features que mais entregam valor percebido — e como não estragá-las.",
+      "conteudo": "## As três features de maior retorno\n\n### 1. Busca semântica\nO usuário digita o que quer, não o termo exato. Em painel operacional, é a diferença entre achar em 5 segundos e desistir.\n\n**Cuidado:** híbrida sempre (módulo 08). Buscar placa, CPF ou código de erro por embedding falha.\n\n### 2. Chatbot de suporte com RAG\nResponde a partir da base de conhecimento **com citação**. Escala para humano quando não sabe.\n\n**Cuidado:** o botão \"falar com atendente\" precisa estar sempre visível. Chatbot que aprisiona é a experiência mais odiada da internet.\n\n### 3. Personalização em tempo real\nOrdenar, destacar e resumir conforme o perfil de uso.\n\n**Cuidado:** personalização sem transparência incomoda. Mostre por que aquilo apareceu, e deixe desligar.\n\n## UX de IA — o que muda em relação a UI comum\n\n| Situação | O que fazer |\n|---|---|\n| Espera de segundos | **Streaming**, sempre. Ver o texto nascer muda a percepção |\n| Resposta incerta | Mostrar confiança e a fonte |\n| Resposta errada | Um jeito fácil de corrigir e de reportar |\n| Ação sugerida | Confirmar antes de executar |\n| Erro do provedor | Mensagem humana, nunca a exception |\n\n## Onde a lógica mora\n\nUse o seu `llm-core` (módulo 02) ou um SDK como o Vercel AI SDK / Firebase AI Logic. O importante é a arquitetura: rota fina → fila ou streaming → worker → observabilidade.\n\n## O erro mais comum\n\nColocar a chamada de LLM direto numa rota síncrona sem timeout e sem fila, porque \"é rápido em desenvolvimento\". Em produção, o primeiro pico de uso trava os workers e derruba a aplicação inteira — inclusive as partes que não usam IA.",
+      "exercicio": "Implemente busca semântica híbrida numa tela sua, com streaming e estado de erro tratado. Meça: tempo até o primeiro caractere e tempo até a resposta completa. O primeiro é o que o usuário percebe.",
+      "videos": [
+        {
+          "t": "Busca: Vercel AI SDK streaming tutorial",
+          "u": "https://www.youtube.com/results?search_query=vercel+ai+sdk+streaming+tutorial",
+          "k": "busca"
+        }
+      ],
+      "leitura": [
+        {
+          "t": "Vercel AI SDK — documentação",
+          "u": "https://sdk.vercel.ai/docs"
+        },
+        {
+          "t": "Firebase AI Logic",
+          "u": "https://firebase.google.com/docs/ai-logic"
+        }
+      ]
+    }
+  ]
+}
