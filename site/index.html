@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engenharia de IA Aplicada — Curso</title>
+<meta name="description" content="Curso autodidata de Engenharia de Software em IA Aplicada: 12 módulos, 32 semanas, 11 projetos.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <div class="marca">
+      <span class="glifo">◍</span>
+      <div>
+        <h1 id="titulo">Engenharia de Software em IA Aplicada</h1>
+        <p id="subtitulo" class="sub">Curso autodidata · 32 semanas · 11 projetos</p>
+      </div>
+    </div>
+    <button id="tema" class="btn-icone" title="Alternar tema" aria-label="Alternar tema">◐</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="painel" aria-label="Progresso geral">
+    <div class="painel-topo">
+      <div>
+        <h2>Seu progresso</h2>
+        <p class="sub" id="resumo">Carregando…</p>
+      </div>
+      <div class="pct" id="pct-geral">0%</div>
+    </div>
+    <div class="barra grande"><div class="preencher" id="barra-geral"></div></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="acoes">
+      <button class="btn" id="exportar">Exportar progresso</button>
+      <button class="btn" id="importar-btn">Importar</button>
+      <input type="file" id="importar" accept="application/json" hidden>
+      <button class="btn perigo" id="limpar">Zerar tudo</button>
+    </div>
+  </section>
+
+  <nav class="fases" id="fases" aria-label="Fases do curso"></nav>
+
+  <section id="modulos" class="modulos"></section>
+
+  <footer class="rodape">
+    <p>Progresso salvo apenas neste navegador (localStorage). Use <b>Exportar</b> para levar para outro dispositivo.</p>
+    <p id="link-repo"></p>
+  </footer>
+
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

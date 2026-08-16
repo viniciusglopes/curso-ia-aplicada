@@ -1,0 +1,565 @@
+{
+  "titulo": "Engenharia de Software em IA Aplicada",
+  "subtitulo": "Curso autodidata · 32 semanas · 11 projetos",
+  "repo": "https://github.com/viniciusglopes/curso-ia-aplicada",
+  "fases": [
+    { "nome": "Fundamentos", "semanas": "1–6", "modulos": ["01", "02"] },
+    { "nome": "Protocolos e Agentes", "semanas": "7–13", "modulos": ["03", "04"] },
+    { "nome": "Aplicação por domínio", "semanas": "14–20", "modulos": ["05", "06", "07"] },
+    { "nome": "Arquitetura e Governança", "semanas": "21–28", "modulos": ["08", "09", "10"] },
+    { "nome": "Capstone e Carreira", "semanas": "29–32", "modulos": ["11", "12"] }
+  ],
+  "modulos": [
+    {
+      "id": "01",
+      "titulo": "Fundamentos de IA e LLMs",
+      "semanas": "1–3",
+      "horas": 30,
+      "objetivo": "Parar de tratar LLM como caixa preta: treinar rede neural do zero, entender transformers e construir o primeiro RAG.",
+      "pasta": "modulos/01-fundamentos-llm",
+      "aulas": [
+        "História da IA: de Turing aos agentes",
+        "IA vs ML vs DL vs LLM — a distinção que quase todo mundo erra",
+        "Tensores, neurônios e backpropagation",
+        "Primeira rede neural do zero em JavaScript",
+        "Tokenização e por que português custa mais",
+        "Embeddings e similaridade do cosseno",
+        "Transformers e self-attention",
+        "Parâmetros de inferência: temperature, top_p, max_tokens",
+        "Prompt engineering na prática",
+        "Cursor, rules e o conceito de vibe coding",
+        "MCPs e automação — primeira visão",
+        "RAG, embeddings e busca semântica",
+        "Modelos abertos vs proprietários: Ollama e OpenRouter",
+        "Agentes — primeira visão"
+      ],
+      "projeto": {
+        "nome": "RAG sobre acervo próprio",
+        "arquivo": "projetos/01-rag-basico.md",
+        "criterios": [
+          "Ingestão idempotente",
+          "Chunking com sobreposição configurável",
+          "Busca top-k com filtro por metadados",
+          "Resposta sempre citando a fonte",
+          "Admite não saber quando falta contexto (com teste)",
+          "Custo por consulta medido"
+        ]
+      },
+      "checklist": [
+        "Explico a diferença entre IA, ML, DL e LLM com exemplos",
+        "Descrevo o ciclo de treino e o papel do conjunto de validação",
+        "Explico o que é um token e por que português custa mais",
+        "Explico embeddings e similaridade do cosseno",
+        "Descrevo self-attention em duas frases",
+        "Sei o que muda entre temperature e top_p",
+        "Desenho o pipeline de RAG de memória",
+        "Sei dizer quando NÃO usar RAG"
+      ]
+    },
+    {
+      "id": "02",
+      "titulo": "APIs de IA Generativa e Prompt Engineering",
+      "semanas": "4–6",
+      "horas": 30,
+      "objetivo": "Operar LLM em produção: escolher provedor, encadear prompts, cortar custo e instrumentar tudo.",
+      "pasta": "modulos/02-apis-generativas",
+      "aulas": [
+        "Panorama do mercado de IA como serviço",
+        "Provedores: Anthropic, OpenAI, Gemini, Hugging Face, OpenRouter",
+        "Modelos multimodais: texto, imagem, áudio, vídeo",
+        "Prompt chaining",
+        "Templates e versionamento de prompt",
+        "Seis técnicas de redução de alucinação",
+        "Custo, prompt caching e escolha de modelo por etapa",
+        "Previsibilidade e saída estruturada",
+        "RAG avançado e orquestração (LangChain e afins)",
+        "Erros, retry, backoff e circuit breaker",
+        "Logging e observabilidade de LLM",
+        "Integrando IA a um back-end existente",
+        "OCR inteligente e bots multimodais"
+      ],
+      "projeto": {
+        "nome": "llm-core — camada resiliente de LLM",
+        "arquivo": "projetos/02-llm-core.md",
+        "criterios": [
+          "Interface única para 4 provedores",
+          "Retry por tipo de erro, com teste de cada tipo",
+          "Fallback automático testado",
+          "Cache com hit medido",
+          "Saída estruturada com reprompt automático",
+          "Telemetria de tokens, custo e latência",
+          "Suíte de testes que não gasta token",
+          "Registro de prompts versionado"
+        ]
+      },
+      "checklist": [
+        "Escolho provedor justificando em 4 eixos técnicos",
+        "Desenho um prompt chain e digo por que não é um prompt só",
+        "Cito 5 técnicas de redução de alucinação em ordem",
+        "Explico prompt caching e onde posicionar conteúdo estável",
+        "Diferencio os erros de API e o tratamento de cada um",
+        "Listo o que registrar em log de uma chamada de LLM",
+        "Explico por que LLM em rota síncrona é arriscado",
+        "Estimo o custo mensal de uma feature antes de construir"
+      ]
+    },
+    {
+      "id": "03",
+      "titulo": "MCP — Model Context Protocol",
+      "semanas": "7–9",
+      "horas": 30,
+      "objetivo": "Dominar o protocolo que padroniza a conexão entre LLMs e sistemas — e colocar um no ar com segurança.",
+      "pasta": "modulos/03-mcp",
+      "aulas": [
+        "O problema N×M e como o MCP vira N+M",
+        "Anatomia: host, client, server, transport",
+        "Tools, resources e prompts — quem controla o quê",
+        "MCP vs function calling tradicional",
+        "SDK TypeScript e estrutura de projeto",
+        "Design de tools que o modelo usa direito",
+        "Resources, URIs e prompts como fluxo",
+        "Transformando sua empresa em um MCP",
+        "Autenticação e service tokens",
+        "Rate limiting e proteção contra abuso",
+        "Prompt injection via retorno de ferramenta",
+        "Casos de uso reais em empresas",
+        "Composição de múltiplos servers e custo de contexto",
+        "Teste, deploy e observabilidade"
+      ],
+      "projeto": {
+        "nome": "MCP em produção",
+        "arquivo": "projetos/03-mcp-producao.md",
+        "criterios": [
+          "5+ tools, sendo 1 de escrita com confirmação",
+          "2 resources e 1 prompt",
+          "Autenticação por token com escopo",
+          "Teste provando isolamento entre tenants",
+          "Rate limit por token e por tool",
+          "Log de auditoria de toda chamada",
+          "No ar, com healthcheck",
+          "Funciona em 2 clients diferentes"
+        ]
+      },
+      "checklist": [
+        "Explico N×M → N+M com exemplo próprio",
+        "Diferencio tools, resources e prompts",
+        "Justifico quando NÃO usar MCP",
+        "Escrevo descrição de tool que o modelo usa certo de primeira",
+        "Listo 5 riscos de segurança e a mitigação de cada",
+        "Explico prompt injection via retorno de ferramenta",
+        "Sei o custo de contexto de declarar tools demais"
+      ]
+    },
+    {
+      "id": "04",
+      "titulo": "Criação de Agentes Autônomos",
+      "semanas": "10–13",
+      "horas": 40,
+      "objetivo": "Construir autonomia real com memória, ferramentas, orquestração e guardrails que impedem dano.",
+      "pasta": "modulos/04-agentes-autonomos",
+      "aulas": [
+        "Agent loop: percepção, raciocínio, ação, feedback",
+        "Planner, executor, memory store, toolbox",
+        "Tipos de agente e o risco de cada um",
+        "Agent loop do zero, sem framework",
+        "ReAct: reasoning + acting",
+        "Plan-and-Execute",
+        "Reflection e autoavaliação",
+        "Function calling e design de schemas",
+        "Memória: curta, longa, episódica e contextual",
+        "Consolidação e conflito de memória",
+        "Context pruning e context stitching",
+        "LangGraph: grafos, estado e checkpointing",
+        "Métricas e trilha de auditoria",
+        "Guardrails obrigatórios e kill switch",
+        "Human-in-the-loop e limites de autonomia",
+        "Multi-agent: Supervisor, Hierarchical, Group Chat, Handoff"
+      ],
+      "projeto": {
+        "nome": "Agente autônomo completo",
+        "arquivo": "projetos/04-agente-autonomo.md",
+        "criterios": [
+          "Planejamento adaptativo com replanejamento",
+          "Execução via APIs externas reais",
+          "Memória persistente com consolidação",
+          "Trilha de auditoria consultável",
+          "Todos os 7 guardrails implementados e testados",
+          "Orquestração em LangGraph com checkpointing",
+          "10 execuções reais com métricas",
+          "Relatório dizendo onde ele falhou"
+        ]
+      },
+      "checklist": [
+        "Implemento um agent loop sem framework",
+        "Escolho entre ReAct e Plan-and-Execute justificando",
+        "Explico os 4 tipos de memória e onde cada uma vive",
+        "Descrevo context pruning e por que o agente esquece o objetivo",
+        "Listo 6 guardrails obrigatórios",
+        "Explico como auditar uma decisão autônoma depois do fato",
+        "Digo quando multi-agente NÃO vale a pena",
+        "Estimo custo por tarefa concluída"
+      ]
+    },
+    {
+      "id": "05",
+      "titulo": "Ferramentas de IA para UX & UI",
+      "semanas": "14–15",
+      "horas": 20,
+      "objetivo": "Usar IA em todo o processo de produto e automatizar teste E2E com agentes consumindo MCP.",
+      "pasta": "modulos/05-ux-ui",
+      "aulas": [
+        "AI-driven UX/UI: o que a IA faz bem e o que não faz",
+        "Text-to-UI: wireframes e mockups por linguagem natural",
+        "Figma → código e a crítica obrigatória do resultado",
+        "Validação de usabilidade assistida por IA",
+        "Agentes de codificação e CLIs no fluxo do dev",
+        "Fluxo previsível com agente: da ideia ao componente testável",
+        "Prompt para geração de código de front",
+        "Teste E2E com agentes autônomos via MCP",
+        "IA no cliente: casos de uso e riscos de segurança",
+        "Backend com lógica de IA e features inteligentes"
+      ],
+      "projeto": {
+        "nome": "Feature de front construída com agente",
+        "arquivo": "projetos/05-front-agentivo.md",
+        "criterios": [
+          "Feature real, integrada e usada",
+          "Registro do processo: prompts e correções",
+          "Nenhuma chave de API no cliente",
+          "Rate limit por usuário funcionando",
+          "Teste E2E agentivo passando",
+          "Acessibilidade verificada",
+          "Retrospectiva honesta com tempo real medido"
+        ]
+      },
+      "checklist": [
+        "Digo em que etapas do processo a IA ajuda e em quais atrapalha",
+        "Listo o que sempre revisar em UI gerada por IA",
+        "Descrevo um fluxo previsível com agente de codificação",
+        "Explico quando E2E agentivo vale mais que Playwright",
+        "Enumero os riscos de chamar IA direto do front",
+        "Sei como um agente testa uma aplicação via MCP"
+      ]
+    },
+    {
+      "id": "06",
+      "titulo": "Ferramentas de IA para DevOps",
+      "semanas": "16–18",
+      "horas": 30,
+      "objetivo": "Aplicar IA a infraestrutura: IaC validada, diagnóstico ReAct, AIOps, ChatOps com aprovação e auto-remediação segura.",
+      "pasta": "modulos/06-devops",
+      "aulas": [
+        "IA generativa aplicada a infraestrutura e suas limitações",
+        "RAG sobre documentação técnica interna",
+        "IaC Copilot: Terraform, Pulumi, Helm",
+        "Validação automatizada e Policy-as-Code com OPA",
+        "Workflow PR-first e detecção de drift",
+        "Agentes para Kubernetes: manifests, HPA/VPA, rollout",
+        "GitOps com Argo CD e Flux como guardrail",
+        "Troubleshooting ReAct: CrashLoopBackOff, OOMKilled e cia",
+        "Análise de logs distribuídos e correlação de traces",
+        "AIOps: PromQL e LogQL por linguagem natural",
+        "Detecção de anomalia com ML clássico",
+        "ChatOps com aprovação humana e RBAC",
+        "Segurança: Snyk, Trivy, Checkov e vazamento de secrets",
+        "CI/CD copilot e gates inteligentes",
+        "FinOps: Infracost, rightsizing e zombie resources",
+        "RAG de runbooks e post-mortem automático",
+        "Auto-remediação segura com dry-run e circuit breaker"
+      ],
+      "projeto": {
+        "nome": "Copiloto de operação",
+        "arquivo": "projetos/06-copiloto-devops.md",
+        "criterios": [
+          "Integra 2+ frentes (IaC, K8s, observabilidade)",
+          "RAG sobre runbooks reais",
+          "ChatOps com aprovação humana em produção",
+          "Diagnóstico com evidência rastreável",
+          "Guardrails: dry-run, circuit breaker, allowlist, kill switch",
+          "Testado contra 5 cenários com relatório",
+          "Análise de ROI"
+        ]
+      },
+      "checklist": [
+        "Explico por que IaC gerada por IA passa por validador determinístico",
+        "Descrevo o loop ReAct aplicado a um CrashLoopBackOff",
+        "Traduzo uma pergunta de negócio em PromQL",
+        "Sei quando usar ML clássico em vez de LLM",
+        "Desenho um fluxo de ChatOps com aprovação e RBAC",
+        "Listo os guardrails de auto-remediação segura",
+        "Calculo o custo de IA da minha automação"
+      ]
+    },
+    {
+      "id": "07",
+      "titulo": "Ferramentas de IA para Gestão de Projetos",
+      "semanas": "19–20",
+      "horas": 20,
+      "objetivo": "Transformar IA em resultado de gestão: requisitos, priorização, estimativa probabilística e relatórios automáticos.",
+      "pasta": "modulos/07-gestao-projetos",
+      "aulas": [
+        "Requirements copilot: de conversa a critério de aceite",
+        "Priorização com RICE, WSJF e MoSCoW assistidos",
+        "Auditabilidade da pontuação gerada por IA",
+        "Cronograma, capacidade e análise what-if",
+        "Estimativas com histórico e simulação de Monte Carlo",
+        "AIOps de projeto: detecção automática de risco",
+        "Reuniões: transcrição, decisões e follow-ups",
+        "Status report adaptado a 3 públicos",
+        "Governança, compliance e trilha de auditoria",
+        "Automação em Jira, Notion, Trello e Slack",
+        "Portfólio e OKRs: outcome vs output"
+      ],
+      "projeto": {
+        "nome": "Copiloto de gestão",
+        "arquivo": "projetos/07-copiloto-gestao.md",
+        "criterios": [
+          "Lê fonte real (repositório e/ou board)",
+          "Status report nas 3 versões de público",
+          "Priorização com justificativa auditável",
+          "Detecta 3+ tipos de risco",
+          "Roda agendado, sem acionamento manual",
+          "Entrega onde a equipe já está",
+          "3 semanas rodando com relatório de acerto e erro"
+        ]
+      },
+      "checklist": [
+        "Escrevo critério de aceite bom e reconheço um ruim",
+        "Explico RICE, WSJF e MoSCoW e quando usar cada um",
+        "Justifico por que pontuação de IA precisa de justificativa",
+        "Explico Monte Carlo aplicado a prazo, para não técnico",
+        "Listo sinais de risco detectáveis automaticamente",
+        "Diferencio outcome de output com exemplo"
+      ]
+    },
+    {
+      "id": "08",
+      "titulo": "Arquitetura de Sistemas com IA",
+      "semanas": "21–23",
+      "horas": 30,
+      "objetivo": "Decidir e defender arquitetura AI-first: IA vs regra, single vs multi-agent, RAG avançado, roteamento e cache.",
+      "pasta": "modulos/08-arquitetura",
+      "aulas": [
+        "Arquitetura tradicional vs AI-driven",
+        "Os cinco padrões: Prompting, Responsible AI, UX, AI-Ops, Optimization",
+        "Decision framework: IA, regra determinística ou híbrido",
+        "Single-agent: Reactive, Memory-Enhanced, Tool-Using, ReAct, Self-Reflection",
+        "Multi-agent: Sequential, Parallel, Supervisor, Hierarchical, Group Chat, Handoff",
+        "Desafios distribuídos e propagação de erro entre agentes",
+        "RAG avançado: Basic, Hybrid, Multi-Index, Agentic",
+        "Model Router e Intent-Based Routing",
+        "Semantic Cache, Prompt Cache e o risco de vazamento",
+        "Human-in-the-loop: approval gates e confidence thresholds",
+        "Stack enterprise: gateway, orquestração, serviços, observabilidade",
+        "Loose coupling, clear interfaces e policy-driven control",
+        "Avaliação contínua e versionamento de comportamento",
+        "Model tiering e implantação híbrida"
+      ],
+      "projeto": {
+        "nome": "Roteador de modelos com cache semântico",
+        "arquivo": "projetos/08-model-router.md",
+        "criterios": [
+          "Roteamento entre 3+ modelos com regra explicável",
+          "Cache semântico com teste de isolamento entre usuários",
+          "Fallback entre provedores testado",
+          "Métricas antes/depois de custo, latência e qualidade",
+          "Redução de custo comprovada de 40%+",
+          "Documento de arquitetura com trade-offs"
+        ]
+      },
+      "checklist": [
+        "Aplico o decision framework IA vs regra em qualquer feature",
+        "Listo os 5 padrões de single-agent e o contexto de cada",
+        "Explico 4 padrões multi-agente e o custo de cada",
+        "Diferencio Basic, Hybrid, Multi-Index e Agentic RAG",
+        "Explico o risco de cache semântico com dado por usuário",
+        "Desenho o stack enterprise de memória",
+        "Explico model tiering e calculo a economia"
+      ]
+    },
+    {
+      "id": "09",
+      "titulo": "Processamento de Dados e Fine-Tuning",
+      "semanas": "24–26",
+      "horas": 30,
+      "objetivo": "Saber quando fine-tuning é a resposta (quase nunca) e executar o ciclo completo com rigor de avaliação.",
+      "pasta": "modulos/09-fine-tuning",
+      "aulas": [
+        "Framework de decisão: prompt → few-shot → RAG → fine-tuning",
+        "O que fine-tuning resolve e o que não resolve",
+        "O custo escondido de manter um modelo ajustado",
+        "Coleta de dados, consentimento e anonimização",
+        "Limpeza: duplicata, contradição, ruído e outlier",
+        "Balanceamento, diversidade e viés do histórico",
+        "Formato JSONL e divisão treino/validação/teste",
+        "Versionamento de dataset",
+        "Fine-tuning via API: upload, job, hiperparâmetros",
+        "Curva de perda e detecção de overfitting",
+        "LoRA, PEFT e trade-offs de eficiência",
+        "Avaliação quantitativa e qualitativa",
+        "A/B contra baseline e riscos de generalização"
+      ],
+      "projeto": {
+        "nome": "Modelo customizado para domínio específico",
+        "arquivo": "projetos/09-fine-tuning.md",
+        "criterios": [
+          "Documento de decisão justificando fine-tuning",
+          "Baseline medido antes do treino",
+          "Métrica declarada antes do treino",
+          "Dataset limpo, anonimizado, balanceado e versionado",
+          "Treino documentado com curva de perda",
+          "A/B no conjunto de teste intocado",
+          "Protótipo em TypeScript consumindo o modelo",
+          "Model card interno completo"
+        ]
+      },
+      "checklist": [
+        "Percorro o framework de decisão e sei o custo de cada degrau",
+        "Digo 3 coisas que fine-tuning resolve e 3 que não",
+        "Listo as etapas de preparação de dataset",
+        "Explico por que diversidade importa mais que volume",
+        "Explico LoRA em duas frases",
+        "Detecto overfitting pela curva de perda",
+        "Explico por que a métrica vem antes do treino"
+      ]
+    },
+    {
+      "id": "10",
+      "titulo": "Segurança e Governança em IA",
+      "semanas": "27–28",
+      "horas": 20,
+      "objetivo": "Escrever política aplicável, mapear risco, testar ataque e auditar um sistema de IA em produção.",
+      "pasta": "modulos/10-seguranca-governanca",
+      "aulas": [
+        "As 4 perguntas da governança em IA",
+        "Inventário de IA e papéis de responsabilidade",
+        "Interpretabilidade vs explicabilidade",
+        "Por que o raciocínio exibido não é prova do processo",
+        "Vieses: origem, tipos e teste com casos pareados",
+        "Riscos humanos e éticos; human-in-the-loop de verdade",
+        "Prompt injection, jailbreak e exfiltração de dados",
+        "Model DoS, supply chain e envenenamento",
+        "Minimização, anonimização e residência de dados",
+        "LGPD: base legal, art. 20 e direito de eliminação",
+        "EU AI Act e classificação por risco",
+        "Guardrails de entrada e de saída",
+        "Custos financeiros, orçamento e ROI honesto"
+      ],
+      "projeto": {
+        "nome": "Auditoria de IA",
+        "arquivo": "projetos/10-auditoria-ia.md",
+        "criterios": [
+          "Inventário completo de IA",
+          "Mapa de risco nas 4 dimensões",
+          "Teste de prompt injection e vazamento entre tenants",
+          "Teste de viés com casos pareados",
+          "Análise de custo com projeção de 12 meses",
+          "Conformidade LGPD verificada",
+          "Plano de correção priorizado por risco × esforço",
+          "Política de uso de IA em uma página"
+        ]
+      },
+      "checklist": [
+        "Respondo as 4 perguntas da governança para qualquer sistema",
+        "Diferencio interpretabilidade de explicabilidade",
+        "Explico por que o raciocínio exibido não é prova",
+        "Desenho um teste de viés com casos pareados",
+        "Listo 6 ameaças específicas de IA e a mitigação",
+        "Explico as obrigações de LGPD em decisão automatizada",
+        "Calculo custo por unidade de negócio"
+      ]
+    },
+    {
+      "id": "11",
+      "titulo": "Capstone — Micro-SaaS de IA",
+      "semanas": "29–32",
+      "horas": 50,
+      "objetivo": "Colocar no ar um micro-SaaS com RAG, agentes, MCP e CI/CD — o projeto que você mostra em entrevista.",
+      "pasta": "modulos/11-capstone",
+      "aulas": [
+        "Definição do problema, público-alvo e proposta de valor",
+        "Desenho da arquitetura e escolha de stack",
+        "Milestones e backlog inicial priorizado",
+        "Implementação do RAG e escolha do vector database",
+        "Agente principal consumindo o RAG",
+        "Conjunto de avaliação com 20+ perguntas",
+        "API do back-end: auth, tenant, rate limit, quota",
+        "Habilitando MCP na aplicação",
+        "Orquestração de múltiplos agentes",
+        "Front-end e integração com as APIs",
+        "Validação do MCP por client externo",
+        "CI/CD e deploy",
+        "Apresentação, demo ao vivo e defesa técnica",
+        "Documentação final: README, diagrama e ADRs"
+      ],
+      "projeto": {
+        "nome": "Micro-SaaS de IA no ar",
+        "arquivo": "modulos/11-capstone/README.md",
+        "criterios": [
+          "Entrega 1: RAG + agente validados por CLI",
+          "Entrega 2: API documentada + MCP validado por client externo",
+          "Entrega 3: solução completa no ar com CI/CD",
+          "URL pública acessível",
+          "Isolamento por tenant com teste",
+          "Observabilidade: custo, latência e trace",
+          "Vídeo de demonstração de 2 minutos",
+          "Apresentação de 10 minutos ensaiada"
+        ]
+      },
+      "checklist": [
+        "Problema real com público-alvo específico",
+        "RAG com avaliação medida",
+        "Agente com ferramentas e guardrails",
+        "MCP exposto e validado externamente",
+        "Front no ar com URL pública",
+        "CI/CD ativo",
+        "Segredos protegidos e rate limit funcionando",
+        "README, diagrama e ADRs escritos"
+      ]
+    },
+    {
+      "id": "12",
+      "titulo": "Carreira e Entrevistas",
+      "semanas": "contínuo",
+      "horas": 16,
+      "objetivo": "30 minutos por semana, da semana 1 à 32: portfólio, presença, simulados e negociação.",
+      "pasta": "modulos/12-carreira",
+      "aulas": [
+        "LinkedIn otimizado para recrutador",
+        "Networking estratégico: 5 conexões relevantes por semana",
+        "Marca pessoal: publicar aprendizado, não conquista",
+        "Portfólio GitHub profissional e auditoria de segredos",
+        "Expectativas por nível: júnior a principal",
+        "Entrevista de RH e método STAR",
+        "Expectativa salarial e proposta de valor",
+        "Live coding e problem solving",
+        "System design para sistemas de IA",
+        "Explicar decisões técnicas com trade-offs",
+        "As 8 perguntas técnicas recorrentes de IA",
+        "Negociação salarial e alavancas reais",
+        "Pedido de aumento ou promoção",
+        "Técnicas de diferenciação"
+      ],
+      "projeto": {
+        "nome": "Portfólio e presença profissional",
+        "arquivo": "modulos/12-carreira/README.md",
+        "criterios": [
+          "LinkedIn com resultados numéricos",
+          "GitHub auditado, sem segredos, projetos fixados",
+          "20+ posts publicados ao longo do curso",
+          "100+ conexões novas relevantes",
+          "6 histórias STAR prontas",
+          "4 system designs de IA praticados",
+          "8 perguntas técnicas respondidas em vídeo",
+          "Currículo de 1 página focado em IA aplicada"
+        ]
+      },
+      "checklist": [
+        "Headline e Sobre reescritos com foco em IA aplicada",
+        "Todos os projetos do curso publicados com README bom",
+        "Pesquisa salarial feita, com faixa definida",
+        "Consigo explicar qualquer decisão do capstone em 2 minutos"
+      ]
+    }
+  ]
+}

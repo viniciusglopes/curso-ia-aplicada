@@ -1,0 +1,157 @@
+:root {
+  --bg: #f7f7f5;
+  --sup: #ffffff;
+  --sup2: #f0f0ed;
+  --txt: #1b1b19;
+  --txt2: #66665f;
+  --borda: #e2e2dc;
+  --ac: #b35a20;
+  --ac-suave: #f3e4d8;
+  --ok: #3f7d45;
+  --perigo: #a63d2f;
+  --raio: 12px;
+  --sombra: 0 1px 2px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.04);
+}
+
+:root[data-tema="escuro"] {
+  --bg: #16161a;
+  --sup: #1e1e23;
+  --sup2: #26262c;
+  --txt: #ececea;
+  --txt2: #9a9a94;
+  --borda: #32323a;
+  --ac: #e08b4d;
+  --ac-suave: #3a2a1c;
+  --ok: #6fb377;
+  --perigo: #e07a68;
+  --sombra: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 20px; }
+
+/* topo */
+.topo {
+  background: var(--sup);
+  border-bottom: 1px solid var(--borda);
+  position: sticky; top: 0; z-index: 10;
+}
+.topo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px; }
+.marca { display: flex; align-items: center; gap: 14px; }
+.glifo { font-size: 30px; color: var(--ac); line-height: 1; }
+h1 { font-size: 19px; margin: 0; letter-spacing: -.01em; }
+.sub { margin: 2px 0 0; color: var(--txt2); font-size: 13.5px; }
+
+.btn-icone {
+  background: var(--sup2); border: 1px solid var(--borda); color: var(--txt);
+  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 17px;
+}
+.btn-icone:hover { border-color: var(--ac); }
+
+/* painel */
+.painel {
+  background: var(--sup); border: 1px solid var(--borda); border-radius: var(--raio);
+  padding: 22px; margin: 26px 0; box-shadow: var(--sombra);
+}
+.painel-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.painel h2 { margin: 0; font-size: 16px; }
+.pct { font-size: 34px; font-weight: 650; color: var(--ac); line-height: 1; letter-spacing: -.02em; }
+
+.barra { background: var(--sup2); border-radius: 99px; overflow: hidden; height: 7px; margin-top: 14px; }
+.barra.grande { height: 10px; }
+.preencher { background: var(--ac); height: 100%; width: 0; border-radius: 99px; transition: width .35s ease; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 20px; }
+.stat { background: var(--sup2); border-radius: 10px; padding: 12px 14px; }
+.stat b { display: block; font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+.stat span { font-size: 12px; color: var(--txt2); text-transform: uppercase; letter-spacing: .05em; }
+
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.btn {
+  background: var(--sup2); border: 1px solid var(--borda); color: var(--txt);
+  padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13.5px; font-family: inherit;
+}
+.btn:hover { border-color: var(--ac); color: var(--ac); }
+.btn.perigo:hover { border-color: var(--perigo); color: var(--perigo); }
+
+/* fases */
+.fases { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.fase {
+  background: var(--sup); border: 1px solid var(--borda); border-radius: 99px;
+  padding: 6px 14px; font-size: 13px; color: var(--txt2);
+}
+.fase b { color: var(--txt); font-weight: 600; }
+
+/* módulos */
+.modulos { display: flex; flex-direction: column; gap: 14px; padding-bottom: 40px; }
+
+.mod {
+  background: var(--sup); border: 1px solid var(--borda); border-radius: var(--raio);
+  overflow: hidden; box-shadow: var(--sombra);
+}
+.mod.completo { border-color: var(--ok); }
+
+.mod-cab {
+  display: flex; align-items: center; gap: 16px; padding: 18px 20px; cursor: pointer;
+  user-select: none; background: none; border: 0; width: 100%; text-align: left;
+  color: inherit; font: inherit;
+}
+.mod-cab:hover { background: var(--sup2); }
+.num {
+  font-size: 13px; font-weight: 650; color: var(--ac); background: var(--ac-suave);
+  width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; flex: none;
+}
+.mod.completo .num { color: var(--ok); background: transparent; border: 1px solid var(--ok); }
+.mod-info { flex: 1; min-width: 0; }
+.mod-info h3 { margin: 0; font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
+.meta { font-size: 12.5px; color: var(--txt2); margin-top: 2px; }
+.mod-prog { text-align: right; flex: none; min-width: 88px; }
+.mod-prog .n { font-size: 13px; color: var(--txt2); font-variant-numeric: tabular-nums; }
+.mod-prog .barra { width: 88px; margin-top: 6px; }
+.seta { color: var(--txt2); transition: transform .2s; flex: none; }
+.mod.aberto .seta { transform: rotate(90deg); }
+
+.mod-corpo { display: none; padding: 0 20px 20px; border-top: 1px solid var(--borda); }
+.mod.aberto .mod-corpo { display: block; }
+.obj { color: var(--txt2); font-size: 14px; margin: 16px 0 20px; }
+
+.grupo { margin-bottom: 22px; }
+.grupo > h4 {
+  margin: 0 0 10px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--txt2); font-weight: 650;
+}
+.grupo.projeto > h4 { color: var(--ac); }
+
+ul.itens { list-style: none; margin: 0; padding: 0; }
+ul.itens li { margin: 0; }
+label.item {
+  display: flex; gap: 10px; align-items: flex-start; padding: 6px 8px;
+  border-radius: 7px; cursor: pointer; font-size: 14.5px; line-height: 1.5;
+}
+label.item:hover { background: var(--sup2); }
+label.item input { margin: 5px 0 0; accent-color: var(--ac); flex: none; width: 15px; height: 15px; cursor: pointer; }
+label.item.feito span { color: var(--txt2); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+.link-mod { display: inline-block; margin-top: 6px; font-size: 13.5px; color: var(--ac); text-decoration: none; }
+.link-mod:hover { text-decoration: underline; }
+
+.rodape { border-top: 1px solid var(--borda); padding: 24px 0 40px; color: var(--txt2); font-size: 13px; }
+.rodape p { margin: 4px 0; }
+.rodape a { color: var(--ac); }
+
+@media (max-width: 640px) {
+  .mod-prog .barra { width: 60px; }
+  .mod-prog { min-width: 60px; }
+  .pct { font-size: 28px; }
+  .mod-cab { gap: 12px; padding: 14px 16px; }
+  .mod-corpo { padding: 0 16px 16px; }
+}
