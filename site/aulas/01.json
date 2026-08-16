@@ -1,0 +1,212 @@
+{
+  "modulo": "01",
+  "titulo": "Fundamentos de IA e LLMs",
+  "aulas": [
+    {
+      "titulo": "História da IA: de Turing aos agentes",
+      "tempo": 60,
+      "resumo": "A linha do tempo que explica por que a IA explodiu agora e não em 1970.",
+      "conteudo": "## Por que estudar história aqui\n\nNão é nostalgia. Cada salto da IA aconteceu quando **um dos três recursos** destravou: dado, poder computacional ou arquitetura. Saber qual recurso destravou cada época é o que te permite julgar hype hoje.\n\n## A linha do tempo que importa\n\n| Ano | Marco | O que destravou |\n|---|---|---|\n| 1950 | Turing, *Computing Machinery and Intelligence* | A pergunta: máquina pode pensar? |\n| 1956 | Conferência de Dartmouth | Nasce o termo \"Inteligência Artificial\" |\n| 1958 | Perceptron (Rosenblatt) | Primeiro modelo que aprende com dados |\n| 1969 | *Perceptrons* (Minsky e Papert) | Mostra que uma camada não resolve XOR → 1º inverno |\n| 1986 | Backpropagation popularizada | Arquitetura: treinar redes profundas |\n| 1990s | SVM e métodos estatísticos | Dado escasso favorecia modelos menores |\n| 2012 | AlexNet vence a ImageNet | **Compute** (GPU) + **dado** (ImageNet) |\n| 2017 | *Attention Is All You Need* | **Arquitetura**: transformer, paralelizável |\n| 2020 | GPT-3 | **Escala**: 175B de parâmetros |\n| 2022 | ChatGPT | Interface: o produto, não o modelo |\n| 2024+ | Agentes e tool use | O modelo passa a **agir**, não só responder |\n\n## Os dois invernos\n\nAconteceram pelo mesmo motivo: **promessa muito acima da capacidade computacional da época**. Prometeram tradução automática nos anos 60 com hardware que não rodava nem um perceptron decente.\n\nGuarde o padrão. Ele se repete: sempre que a promessa depende de um recurso que ainda não existe, vem a decepção.\n\n## O que aprender daqui\n\nA pergunta \"por que agora?\" tem resposta técnica, não mística: transformer (2017) + GPU barata + internet inteira como dado de treino. Se te perguntarem isso em entrevista, essa é a resposta.",
+      "exercicio": "Escreva uma página conectando cada salto da tabela ao recurso que o habilitou (dado, compute ou arquitetura). Guarde: é a sua resposta para \"por que agora?\" em entrevista.",
+      "videos": [
+        { "t": "But what is a neural network? — 3Blue1Brown (playlist completa)", "u": "https://www.youtube.com/playlist?list=PLZZWrBYkx7Otcjr3eCLZDCgfpqnxMY29s", "k": "video" },
+        { "t": "Intro to Large Language Models — Andrej Karpathy", "u": "https://youtu.be/zjkBMFhNj_g", "k": "video" },
+        { "t": "Busca: história da inteligência artificial linha do tempo", "u": "https://www.youtube.com/results?search_query=hist%C3%B3ria+da+intelig%C3%AAncia+artificial+linha+do+tempo", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Turing (1950) — Computing Machinery and Intelligence", "u": "https://academic.oup.com/mind/article/LIX/236/433/986238" },
+        { "t": "The Bitter Lesson — Rich Sutton", "u": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html" }
+      ]
+    },
+    {
+      "titulo": "IA vs ML vs DL vs LLM — a distinção que quase todo mundo erra",
+      "tempo": 40,
+      "resumo": "Quatro círculos concêntricos, e o critério prático para saber quando não usar nada disso.",
+      "conteudo": "## Os quatro círculos\n\n```\nIA  ⊃  Machine Learning  ⊃  Deep Learning  ⊃  LLM\n```\n\n**IA** — o campo inteiro. Inclui sistema de regras, busca, planejamento. Um motor de xadrez dos anos 90 é IA e **não aprende nada**.\n\n**Machine Learning** — o comportamento vem de dados, não de regras escritas à mão. Você mostra exemplos, o sistema encontra o padrão. Regressão, árvore de decisão, random forest.\n\n**Deep Learning** — ML com redes neurais profundas. A diferença crucial: ele **aprende as features sozinho**. Em ML clássico você diz \"olhe o comprimento da pétala\"; em DL a rede descobre o que olhar.\n\n**LLM** — um modelo de DL, arquitetura transformer, treinado com um objetivo específico: prever o próximo token.\n\n## O critério prático (guarde este)\n\n> **Se você consegue escrever a regra, não use ML.**\n\nValidar CPF é regra. Detectar sentimento em texto livre não é. Calcular juros é regra. Resumir uma reunião não é.\n\nEsse critério volta como *decision framework* no módulo 08, e é uma das perguntas mais frequentes em entrevista sênior — porque a maioria erra para o lado de usar IA onde um `if` resolvia.\n\n## Erro comum de vocabulário\n\nDizer \"vamos treinar uma IA\" quando se quer dizer \"vamos usar uma API de LLM com RAG\". São coisas com custo, prazo e risco completamente diferentes. No módulo 09 isso vira um framework de decisão inteiro.",
+      "exercicio": "Liste 8 funcionalidades de sistemas que você conhece. Para cada uma, classifique: regra determinística, ML clássico ou LLM. Justifique em uma linha. Pelo menos 3 devem ser \"regra\".",
+      "videos": [
+        { "t": "Busca: diferença entre IA, machine learning e deep learning", "u": "https://www.youtube.com/results?search_query=diferen%C3%A7a+entre+intelig%C3%AAncia+artificial+machine+learning+deep+learning", "k": "busca" },
+        { "t": "Neural Networks: Zero to Hero — Karpathy (curso completo)", "u": "https://karpathy.ai/zero-to-hero.html", "k": "curso" }
+      ],
+      "leitura": [
+        { "t": "Google — Introduction to Machine Learning", "u": "https://developers.google.com/machine-learning/intro-to-ml" }
+      ]
+    },
+    {
+      "titulo": "Tensores, neurônios e backpropagation",
+      "tempo": 90,
+      "resumo": "A matemática mínima: soma ponderada, função de perda, gradiente. Sem isso, tudo vira mágica.",
+      "conteudo": "## Tensor\n\nEscalar → vetor → matriz → **tensor** (n dimensões). É a estrutura de dados de todo modelo.\n\nPor que GPU: treinar é multiplicar matrizes gigantes milhões de vezes. GPU faz milhares de multiplicações em paralelo; CPU faz poucas, rápido. Por isso a NVIDIA vale o que vale.\n\n## Neurônio\n\n```\nsaída = ativação( (entrada₁ × peso₁) + (entrada₂ × peso₂) + ... + bias )\n```\n\nSó isso. A **função de ativação** (ReLU, sigmoid, tanh) introduz não linearidade — sem ela, empilhar mil camadas equivale a uma só, porque composição de funções lineares é linear.\n\n## O ciclo de treino\n\n1. **Forward pass** — os dados atravessam a rede e sai uma previsão\n2. **Loss** — mede o quanto a previsão errou (ex.: erro quadrático médio)\n3. **Backpropagation** — calcula, via regra da cadeia, quanto cada peso contribuiu para o erro\n4. **Gradient descent** — ajusta cada peso na direção que reduz o erro\n5. Repete milhares de vezes\n\n**Learning rate** é o tamanho do passo. Grande demais: a rede oscila e nunca converge. Pequeno demais: leva uma eternidade. É o hiperparâmetro que mais quebra treino de iniciante.\n\n## Overfitting e underfitting\n\n- **Underfitting** — o modelo é simples demais, erra até no treino\n- **Overfitting** — decora o treino e falha no que nunca viu\n\nPor isso existe o **conjunto de validação**: dados que o modelo nunca vê durante o treino. Se a perda de treino cai e a de validação sobe, você está com overfitting. Esse gráfico volta no módulo 09, em fine-tuning.",
+      "exercicio": "Implemente um neurônio em JS puro que aprenda a função lógica AND. Depois OR. Depois tente XOR — vai falhar. Descubra por quê antes de ler a resposta: é o problema que causou o primeiro inverno da IA.",
+      "videos": [
+        { "t": "Gradient descent, how neural networks learn — 3Blue1Brown cap. 2", "u": "https://www.youtube.com/watch?v=IHZwWFHWa-w", "k": "video" },
+        { "t": "Neural Networks — playlist completa 3Blue1Brown", "u": "https://www.youtube.com/playlist?list=PLZZWrBYkx7Otcjr3eCLZDCgfpqnxMY29s", "k": "video" },
+        { "t": "Busca: backpropagation explicado em português", "u": "https://www.youtube.com/results?search_query=backpropagation+explicado+portugu%C3%AAs", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "TensorFlow.js — guia de tensores", "u": "https://www.tensorflow.org/js/guide/tensors_operations" }
+      ]
+    },
+    {
+      "titulo": "Primeira rede neural do zero em JavaScript",
+      "tempo": 120,
+      "resumo": "Ciclo completo: dados → treino → validação → inferência, com TensorFlow.js.",
+      "conteudo": "## Setup\n\n```bash\npnpm add @tensorflow/tfjs-node\n```\n\n## O ciclo completo\n\n```js\nimport * as tf from '@tensorflow/tfjs-node'\n\n// 1. Dados (já normalizados entre 0 e 1)\nconst xs = tf.tensor2d(entradas)      // [amostras, features]\nconst ys = tf.tensor2d(saidas)        // [amostras, classes]\n\n// 2. Arquitetura\nconst modelo = tf.sequential()\nmodelo.add(tf.layers.dense({ units: 16, activation: 'relu', inputShape: [nFeatures] }))\nmodelo.add(tf.layers.dense({ units: 8, activation: 'relu' }))\nmodelo.add(tf.layers.dense({ units: nClasses, activation: 'softmax' }))\n\n// 3. Compilação\nmodelo.compile({\n  optimizer: tf.train.adam(0.01),\n  loss: 'categoricalCrossentropy',\n  metrics: ['accuracy'],\n})\n\n// 4. Treino com validação separada\nawait modelo.fit(xs, ys, {\n  epochs: 100,\n  validationSplit: 0.2,\n  callbacks: { onEpochEnd: (e, log) => console.log(e, log.loss, log.val_loss) },\n})\n\n// 5. Inferência\nconst previsao = modelo.predict(tf.tensor2d([novaAmostra]))\n```\n\n## Os erros que você vai cometer\n\n- **Não normalizar** os dados. Feature de 0 a 1 misturada com feature de 0 a 100000 destrói o treino\n- **Vazar o conjunto de validação** — normalizar usando a média de *todos* os dados, incluindo validação\n- **Olhar só `loss`** e ignorar `val_loss`. É o `val_loss` que diz a verdade\n- **Classes desbalanceadas** — 95% de uma classe dá 95% de acurácia prevendo sempre a mesma coisa\n\n## O que observar\n\nAcompanhe as duas curvas. Enquanto as duas caem, está aprendendo. Quando `val_loss` começa a subir e `loss` continua caindo, pare: começou a decorar.",
+      "exercicio": "Treine uma rede que classifique algo SEU de verdade. Sugestões com dados que você já tem: classificar mensagens recebidas em categorias, ou prever se um registro de disparo vai falhar a partir de regional, horário e tipo de fluxo. Entregue com acurácia de validação e uma análise de onde erra.",
+      "videos": [
+        { "t": "Busca: TensorFlow.js tutorial rede neural do zero", "u": "https://www.youtube.com/results?search_query=tensorflow.js+tutorial+rede+neural", "k": "busca" },
+        { "t": "The spelled-out intro to neural networks (micrograd) — Karpathy", "u": "https://www.youtube.com/watch?v=VMj-3S1tku0", "k": "video" }
+      ],
+      "leitura": [
+        { "t": "TensorFlow.js — tutoriais oficiais", "u": "https://www.tensorflow.org/js/tutorials" }
+      ]
+    },
+    {
+      "titulo": "Tokenização e por que português custa mais",
+      "tempo": 45,
+      "resumo": "O modelo não vê letras. Vê tokens. E isso aparece direto na sua fatura.",
+      "conteudo": "## O que é um token\n\nO modelo não processa caracteres nem palavras: processa **tokens**, pedaços de texto criados por um algoritmo de compressão chamado **BPE (Byte Pair Encoding)**.\n\nRegra prática: **1 token ≈ 4 caracteres em inglês** ≈ 0,75 palavra.\n\n## Por que português custa mais\n\nOs tokenizadores foram treinados majoritariamente em inglês. Palavras comuns em inglês viram 1 token; em português, a mesma ideia costuma virar 2 ou 3.\n\n```\n\"understanding\"        → 1 token\n\"entendimento\"         → 3 tokens\n\"desenvolvimento\"      → 4 tokens\n```\n\nNa prática, o mesmo texto em português consome de **30% a 60% mais tokens**. Como você paga por token, isso é sobrecusto direto — e é uma das primeiras alavancas de FinOps de IA.\n\n## Por que o modelo erra contar letras\n\nA pergunta clássica: \"quantos R tem em morango?\". O modelo erra porque **ele nunca viu as letras**. Viu os tokens `mor` + `ango`. Pedir para contar caractere é pedir para ele raciocinar sobre algo que não está na representação dele.\n\nMesma raiz: dificuldade com anagrama, com rima em alguns idiomas, e com aritmética de números longos.\n\n## Implicação prática\n\n- Estime custo **em tokens**, nunca em caracteres\n- Prompt em inglês custa menos; se a saída precisa ser em português, avalie instruir em inglês e pedir resposta em português\n- Meça antes de escalar: 1 milhão de mensagens amplifica qualquer desperdício",
+      "exercicio": "Use tiktoken (ou o tokenizer do provedor) para tokenizar o mesmo texto em português e em inglês. Meça a diferença percentual. Calcule o sobrecusto anual se você processasse 1 milhão de mensagens por mês.",
+      "videos": [
+        { "t": "Let's build the GPT Tokenizer — Andrej Karpathy", "u": "https://www.youtube.com/watch?v=zduSFxRajkE", "k": "video" },
+        { "t": "Busca: tokenização LLM explicada", "u": "https://www.youtube.com/results?search_query=tokeniza%C3%A7%C3%A3o+LLM+explicada", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI Tokenizer (ferramenta interativa)", "u": "https://platform.openai.com/tokenizer" },
+        { "t": "tiktoken — repositório", "u": "https://github.com/openai/tiktoken" }
+      ]
+    },
+    {
+      "titulo": "Embeddings e similaridade do cosseno",
+      "tempo": 60,
+      "resumo": "Como transformar significado em número — a base de todo RAG.",
+      "conteudo": "## O que é um embedding\n\nUm vetor de números que representa o **significado** de um texto. Textos com sentido parecido ficam próximos nesse espaço.\n\n```\n\"boleto vencido\"     → [0.21, -0.44, 0.87, ...]   (768 ou 1536 dimensões)\n\"fatura em atraso\"   → [0.19, -0.41, 0.85, ...]   ← muito próximo\n\"receita de bolo\"    → [-0.62, 0.11, -0.30, ...]  ← longe\n```\n\nO modelo de embedding é diferente do modelo de chat. É menor, mais barato e faz uma coisa só.\n\n## Similaridade do cosseno\n\nMede o **ângulo** entre dois vetores, ignorando o tamanho:\n\n```js\nfunction cosseno(a, b) {\n  let prod = 0, na = 0, nb = 0\n  for (let i = 0; i < a.length; i++) {\n    prod += a[i] * b[i]\n    na += a[i] * a[i]\n    nb += b[i] * b[i]\n  }\n  return prod / (Math.sqrt(na) * Math.sqrt(nb))\n}\n// 1 = idêntico · 0 = sem relação · -1 = oposto\n```\n\nPor que cosseno e não distância euclidiana: o comprimento do vetor costuma refletir o tamanho do texto, não o significado. O ângulo isola o significado.\n\n## Onde isso quebra\n\nEmbedding captura **semântica**, não identidade literal. Ele não distingue bem:\n\n- placa `ABC1D23` de `ABC1D24`\n- SKU, CPF, número de contrato\n- nome próprio raro\n\nPor isso existe **busca híbrida** (vetorial + full-text), tema do módulo 08. Se o seu domínio tem identificador, você **vai** precisar dela.\n\n## Dimensionalidade\n\nMais dimensões = mais nuance e mais custo de armazenamento e busca. `text-embedding-3-small` (1536) e `nomic-embed-text` (768) são bons padrões. **Nunca misture embeddings de modelos diferentes no mesmo índice** — os espaços não são compatíveis.",
+      "exercicio": "Gere embeddings de 20 frases suas. Calcule a matriz de similaridade e mostre os 3 pares mais próximos e os 3 mais distantes. Onde não bater com sua intuição, investigue: normalmente é caso de busca híbrida.",
+      "videos": [
+        { "t": "Busca: embeddings e busca semântica explicados", "u": "https://www.youtube.com/results?search_query=embeddings+busca+sem%C3%A2ntica+explicado", "k": "busca" },
+        { "t": "Busca: vector database e similaridade do cosseno", "u": "https://www.youtube.com/results?search_query=vector+database+cosine+similarity+explained", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — guia de embeddings", "u": "https://platform.openai.com/docs/guides/embeddings" },
+        { "t": "pgvector — README (operadores e índices)", "u": "https://github.com/pgvector/pgvector" }
+      ]
+    },
+    {
+      "titulo": "Transformers e self-attention",
+      "tempo": 90,
+      "resumo": "A arquitetura de 2017 que sustenta absolutamente tudo que veio depois.",
+      "conteudo": "## O problema que ele resolveu\n\nAntes, texto era processado por RNN e LSTM: **sequencialmente**, uma palavra por vez. Isso impedia paralelizar o treino e fazia o modelo esquecer o começo de textos longos.\n\nO transformer processa **todos os tokens ao mesmo tempo**. Foi isso que permitiu treinar em escala.\n\n## Self-attention\n\nCada token olha para todos os outros e decide **quanto cada um importa para ele**.\n\nNa frase *\"o boleto que o cliente pediu ontem venceu\"*, ao processar \"venceu\", a attention dá peso alto a \"boleto\" (o que venceu) e baixo a \"ontem\".\n\nMecanicamente, cada token gera três vetores:\n- **Query** — o que eu procuro\n- **Key** — o que eu ofereço\n- **Value** — o que eu carrego\n\nA relevância é o produto escalar entre Query e Key; o resultado pondera os Values.\n\n**Multi-head attention**: várias attentions em paralelo, cada uma aprendendo um tipo de relação (sintática, semântica, correferência).\n\n## Positional encoding\n\nComo tudo é processado ao mesmo tempo, o modelo não saberia a ordem das palavras. O positional encoding injeta a posição de cada token. Sem ele, \"o cão mordeu o homem\" e \"o homem mordeu o cão\" seriam idênticos.\n\n## As três famílias\n\n| Tipo | Exemplos | Serve para |\n|---|---|---|\n| Encoder-only | BERT | Classificar, embeddar, entender |\n| Decoder-only | GPT, Claude, Gemini | **Gerar** — todos os LLMs de chat |\n| Encoder-decoder | T5, BART | Tradução, transformação estruturada |\n\n## Janela de contexto\n\nO custo da attention cresce com o **quadrado** do número de tokens: dobrar o contexto quadruplica o custo computacional. Por isso contexto longo é caro, e por isso context pruning (módulo 04) importa tanto.",
+      "exercicio": "Leia o abstract e a Figura 1 do paper \"Attention Is All You Need\". Depois escreva, com suas palavras e sem consultar, o que self-attention faz em duas frases. Compare com o paper.",
+      "videos": [
+        { "t": "Let's build GPT: from scratch, in code, spelled out — Karpathy", "u": "https://www.youtube.com/watch?v=kCc8FmEb1nY", "k": "video" },
+        { "t": "But what is a GPT? Transformers explained visually — 3Blue1Brown", "u": "https://www.youtube.com/watch?v=wjZofJX0v4M", "k": "video" },
+        { "t": "Attention in transformers, visually explained — 3Blue1Brown", "u": "https://www.youtube.com/watch?v=eMlx5fFNoYc", "k": "video" }
+      ],
+      "leitura": [
+        { "t": "Attention Is All You Need (2017)", "u": "https://arxiv.org/abs/1706.03762" },
+        { "t": "The Illustrated Transformer — Jay Alammar", "u": "https://jalammar.github.io/illustrated-transformer/" }
+      ]
+    },
+    {
+      "titulo": "Parâmetros de inferência: temperature, top_p, max_tokens",
+      "tempo": 45,
+      "resumo": "Os botões que mudam o comportamento do modelo — e o mito do determinismo.",
+      "conteudo": "## Como o modelo escolhe a próxima palavra\n\nA cada passo, o modelo produz uma **distribuição de probabilidade** sobre todos os tokens possíveis. Os parâmetros de amostragem controlam como escolher dentro dessa distribuição.\n\n## temperature\n\nAchata ou acentua a distribuição.\n\n| Valor | Efeito | Quando usar |\n|---|---|---|\n| 0 | Sempre o token mais provável | Extração, classificação, JSON |\n| 0.3–0.7 | Equilíbrio | Resposta a usuário, redação técnica |\n| 1.0+ | Criativo e imprevisível | Brainstorm, variação de copy |\n\n## top_p (nucleus sampling)\n\nConsidera apenas os tokens que somam `p` de probabilidade acumulada. `top_p: 0.1` = só o núcleo mais provável.\n\n**Ajuste um ou outro, não os dois.** Mexer nos dois ao mesmo tempo torna o comportamento difícil de raciocinar. A recomendação padrão dos provedores é fixar `top_p` em 1 e mexer só na temperature.\n\n## max_tokens\n\nTeto de tokens da **resposta**. Se estourar, o texto é cortado no meio — inclusive JSON, que chega quebrado. Dois efeitos práticos: é o seu limite de custo por chamada, e é causa comum de \"a IA parou no meio\".\n\n## O mito do determinismo\n\n`temperature: 0` **não garante** saída idêntica em API. Causas: batching no servidor, hardware diferente, não determinismo de ponto flutuante em GPU, e mudanças silenciosas de versão do modelo.\n\nConsequência de engenharia: **nunca escreva teste que compara a saída do LLM por igualdade exata.** Teste propriedades — obedece ao schema, contém o campo, está na faixa esperada. Isso vira a base de avaliação contínua no módulo 08.",
+      "exercicio": "Rode o mesmo prompt 10× em temperature 0, 0.7 e 1.2. Documente variação de saída, latência e custo. Escreva a regra que você vai seguir para escolher temperature em produção.",
+      "videos": [
+        { "t": "Busca: temperature top_p LLM explicado", "u": "https://www.youtube.com/results?search_query=LLM+temperature+top_p+explained", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "OpenAI — referência da API de chat", "u": "https://platform.openai.com/docs/api-reference/chat" },
+        { "t": "Anthropic — parâmetros da Messages API", "u": "https://docs.anthropic.com/en/api/messages" }
+      ]
+    },
+    {
+      "titulo": "Prompt engineering na prática",
+      "tempo": 90,
+      "resumo": "A estrutura de 6 partes que funciona, e os anti-padrões que sabotam silenciosamente.",
+      "conteudo": "## A estrutura que funciona\n\n1. **Papel e objetivo** — quem o modelo é e o que precisa entregar\n2. **Contexto** — dados relevantes, **delimitados** (tags XML ou markdown)\n3. **Instruções** — passo a passo, em ordem\n4. **Formato de saída** — explícito; schema quando aplicável\n5. **Exemplos** (few-shot) — 2 a 5, incluindo ao menos um caso difícil\n6. **Restrições** — o que não fazer e o que fazer quando não souber\n\n```xml\nVocê é um analista de cobrança. Extraia os dados do documento abaixo.\n\n<documento>\n{{conteudo}}\n</documento>\n\nInstruções:\n1. Identifique valor, vencimento e beneficiário\n2. Valide se a data é plausível (não pode ser anterior à emissão)\n3. Se algum campo estiver ilegível, marque como null\n\nResponda apenas com JSON no formato:\n{\"valor\": number, \"vencimento\": \"YYYY-MM-DD\", \"beneficiario\": string}\n\nNunca invente valor. Campo ilegível é null.\n```\n\n## Por que delimitar o contexto\n\nSem delimitador, o modelo não distingue **sua instrução** do **dado do usuário**. É exatamente por aí que entra prompt injection (módulos 03 e 10). Delimitar não é estética: é segurança.\n\n## Padrões para dev\n\n| Tarefa | Padrão de prompt |\n|---|---|\n| Gerar teste | Dê a implementação e peça casos de borda explicitamente |\n| Debugar | Dê erro + o que já testou + sua hipótese |\n| Revisar PR | Dê o diff e uma lista de critérios; peça severidade por achado |\n| Documentar | Dê a função e o público-alvo da documentação |\n\n## Anti-padrões\n\n- **Vago**: \"melhore isso\" — melhorar segundo qual critério?\n- **Negativa sem alternativa**: \"não invente\" sem dizer o que fazer quando não souber\n- **Contexto colado sem delimitador**\n- **Pedir raciocínio e resposta no mesmo campo** — depois você não consegue parsear\n- **Prompt gigante que faz cinco coisas** — quebre em cadeia (módulo 02)",
+      "exercicio": "Pegue um prompt que você já usa e reescreva nas 6 partes. Rode os dois lado a lado em 10 entradas. Meça: quantas saídas precisaram de correção manual em cada versão?",
+      "videos": [
+        { "t": "Busca: prompt engineering avançado para desenvolvedores", "u": "https://www.youtube.com/results?search_query=prompt+engineering+avan%C3%A7ado+desenvolvedores", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Anthropic — Prompt engineering (documentação oficial)", "u": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" },
+        { "t": "OpenAI — Prompt engineering guide", "u": "https://platform.openai.com/docs/guides/prompt-engineering" }
+      ]
+    },
+    {
+      "titulo": "Cursor, rules e o conceito de vibe coding",
+      "tempo": 60,
+      "resumo": "Ferramentas de IA no editor, como configurar convenções e onde o vibe coding destrói projeto.",
+      "conteudo": "## O cenário\n\n| Ferramenta | Proposta |\n|---|---|\n| **Cursor** | Fork do VS Code com IA nativa: contexto do repositório, edição multiarquivo |\n| **VS Code + extensões** | Mais leve, você monta seu setup |\n| **Windsurf** | Concorrente do Cursor, com foco em fluxo agentivo |\n| **CLIs agentivos** | Claude Code, Gemini CLI, Codex — rodam no terminal, editam e executam |\n\nA escolha importa menos do que o item seguinte.\n\n## Arquivos de regras — o que realmente muda o resultado\n\n`.cursor/rules`, `CLAUDE.md`, `AGENTS.md`. Servem para a IA não reinventar convenção a cada sessão.\n\nO que colocar:\n\n```md\n# Stack\nNext.js 15 (App Router), TypeScript strict, Tailwind, Supabase.\n\n# Convenções\n- Componentes em PascalCase, um por arquivo\n- Erro de usuário nunca expõe exception ou SQL — mensagem amigável\n- Toda query nova filtra por tenant_id\n\n# Nunca altere\n- migrations já aplicadas\n- .env e qualquer segredo\n\n# Commits\nImperativo, em português, com escopo. Sem emoji.\n```\n\nRegra prática: se você corrigiu a IA sobre a mesma coisa **duas vezes**, isso vira linha no arquivo de regras.\n\n## Vibe coding\n\nTermo popularizado em 2025: descrever o que quer e aceitar o código sem revisar linha a linha.\n\n**Funciona** em: protótipo, script descartável, prova de conceito, ferramenta interna de uso único.\n\n**Destrói** em: sistema que vai viver anos, código com dado sensível, qualquer coisa que outra pessoa vai manter. O custo aparece depois — componente duplicado, padrão inconsistente, dependência desnecessária, e ninguém sabendo por que aquilo funciona.\n\n## O case do levelsio\n\nPieter Levels construiu vários micro-SaaS sozinho, com receita alta e stack deliberadamente simples. É citado como prova de que dá para ir longe sozinho com IA.\n\nO que a citação costuma omitir: **viés de sobrevivência**. Ele acumulou anos de distribuição, audiência e capacidade de escolher problema. A IA acelerou a execução; não criou o resto. Use o case como inspiração de escopo enxuto, não como método garantido.",
+      "exercicio": "Escreva um arquivo de regras para um projeto seu real: stack, convenções de nome, o que nunca alterar, como escrever commits. Depois meça: as próximas 10 gerações precisaram de menos correção?",
+      "videos": [
+        { "t": "Busca: Cursor AI tutorial rules", "u": "https://www.youtube.com/results?search_query=cursor+ai+rules+tutorial", "k": "busca" },
+        { "t": "Busca: vibe coding o que é e riscos", "u": "https://www.youtube.com/results?search_query=vibe+coding+o+que+%C3%A9", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Cursor — documentação de rules", "u": "https://docs.cursor.com/context/rules-for-ai" },
+        { "t": "Claude Code — documentação", "u": "https://docs.anthropic.com/en/docs/claude-code/overview" }
+      ]
+    },
+    {
+      "titulo": "MCPs e automação — primeira visão",
+      "tempo": 40,
+      "resumo": "Panorama do protocolo que o módulo 03 aprofunda: por que ele existe.",
+      "conteudo": "## O problema\n\nVocê tem **N modelos** (Claude, GPT, Gemini) e **M serviços** (CRM, banco, ERP, calendário). Conectar todos dá **N × M** integrações customizadas, cada uma quebrando em ritmo diferente.\n\nO **MCP (Model Context Protocol)** transforma isso em **N + M**: o serviço fala MCP uma vez, e qualquer client entende.\n\n## A analogia melhor que USB-C\n\n**LSP (Language Server Protocol)**. Antes dele, cada IDE implementava suporte a cada linguagem. Depois, cada linguagem escreve um server e todas as IDEs ganham de graça. O MCP faz o mesmo entre LLM e ferramenta.\n\n## O que você consegue já\n\n- **Gerar testes** com o agente lendo o código real do repositório\n- **Consultar documentação atualizada** em vez de confiar na memória do modelo\n- **Navegar em sites** e extrair informação estruturada\n- **Orquestrar fluxos** com N8N e ferramentas similares\n\n## Três primitivas (detalhe no módulo 03)\n\n| Primitiva | Quem controla |\n|---|---|\n| **Tools** | O modelo decide chamar |\n| **Resources** | A aplicação escolhe e injeta |\n| **Prompts** | O usuário invoca |\n\n## Por que isso importa para você agora\n\nA maior parte do valor de IA numa empresa não está no modelo: está em conectar o modelo aos sistemas que já existem. MCP é o padrão que está vencendo essa camada. É o módulo com maior diferencial de portfólio do curso inteiro.",
+      "exercicio": "Instale um MCP server pronto (filesystem ou fetch) num client que você usa e faça três perguntas que só são respondíveis com ele ativo. Observe quando o modelo decide chamar a ferramenta e quando não.",
+      "videos": [
+        { "t": "Busca: Model Context Protocol MCP explicado", "u": "https://www.youtube.com/results?search_query=model+context+protocol+MCP+explicado", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "MCP — site oficial e especificação", "u": "https://modelcontextprotocol.io" },
+        { "t": "MCP — servers de referência", "u": "https://github.com/modelcontextprotocol/servers" }
+      ]
+    },
+    {
+      "titulo": "RAG, embeddings e busca semântica",
+      "tempo": 120,
+      "resumo": "O padrão mais usado da IA aplicada, desenhado por inteiro antes de você codar.",
+      "conteudo": "## Por que RAG existe\n\nO modelo não conhece os seus dados. As alternativas seriam: retreinar (caro, lento, e o dado muda) ou colar tudo no prompt (não cabe e custa caro).\n\n**RAG**: buscar só o pedaço relevante e injetar no prompt na hora da pergunta.\n\n## Os dois pipelines\n\n**Ingestão** (roda quando o conteúdo muda):\n```\ncarregar → dividir em chunks → gerar embeddings → indexar\n```\n\n**Consulta** (roda a cada pergunta):\n```\nembeddar pergunta → buscar top-k → montar contexto → gerar → citar fonte\n```\n\n## Chunking — onde a maioria erra\n\n| Parâmetro | Faixa típica | Efeito |\n|---|---|---|\n| Tamanho | 300–1000 tokens | Pequeno perde contexto; grande traz ruído |\n| Sobreposição | 10–20% | Evita cortar a informação exatamente na fronteira |\n\nDivida respeitando a estrutura: parágrafo, seção, item de lista. **Cortar no meio de uma frase estraga a recuperação** — o embedding daquele chunk fica sem sentido.\n\nGuarde metadados junto: arquivo de origem, seção, data. Eles permitem filtrar antes de buscar, e são o que possibilita citar a fonte.\n\n## Vector database\n\n| Opção | Quando |\n|---|---|\n| **Postgres + pgvector** | Você já tem Postgres. **Padrão deste curso** |\n| Qdrant, Weaviate | Volume grande, features avançadas de filtro |\n| Pinecone | Gerenciado, sem operar infra |\n| Chroma | Protótipo local |\n\n## Quando o RAG NÃO é a resposta\n\n- A base é pequena e cabe inteira no contexto → só coloque no prompt\n- A pergunta é agregação (\"quantos clientes atrasaram?\") → isso é **SQL**, não busca semântica\n- Você precisa de identificador exato → busca full-text ou híbrida\n- O que falta é comportamento, não conhecimento → é fine-tuning (módulo 09)\n\nEsse último ponto é a pergunta de entrevista mais comum sobre RAG.",
+      "exercicio": "Antes de codar: desenhe no papel o pipeline completo de ingestão e de consulta do seu Projeto 1, com os parâmetros que você vai usar (tamanho de chunk, sobreposição, k, modelo de embedding) e a justificativa de cada um.",
+      "videos": [
+        { "t": "Busca: RAG retrieval augmented generation explicado", "u": "https://www.youtube.com/results?search_query=RAG+retrieval+augmented+generation+explicado", "k": "busca" },
+        { "t": "Busca: pgvector Postgres busca semântica tutorial", "u": "https://www.youtube.com/results?search_query=pgvector+postgres+semantic+search+tutorial", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "RAG — paper original (Lewis et al., 2020)", "u": "https://arxiv.org/abs/2005.11401" },
+        { "t": "Supabase — busca vetorial com pgvector", "u": "https://supabase.com/docs/guides/ai" }
+      ]
+    },
+    {
+      "titulo": "Modelos abertos vs proprietários: Ollama e OpenRouter",
+      "tempo": 60,
+      "resumo": "Quando rodar local compensa, e como testar muitos modelos com um token só.",
+      "conteudo": "## Os eixos de decisão\n\n| Eixo | Proprietário | Aberto (local) |\n|---|---|---|\n| Qualidade de topo | Ganha hoje | Perto, não igual |\n| Custo | Por token | Por infraestrutura |\n| Privacidade | Dado sai do perímetro | Dado nunca sai |\n| Latência | Rede + fila | Local, previsível |\n| Manutenção | Zero | Sua |\n| Lock-in | Real | Nenhum |\n\n## Quando modelo local vence de verdade\n\n1. **Dado que não pode sair** — saúde, jurídico, exigência contratual\n2. **Volume alto de tarefa simples** — classificar milhões de mensagens\n3. **Custo previsível** — servidor fixo em vez de fatura variável\n4. **Offline** — ambiente sem internet\n\nPara raciocínio complexo, os proprietários ainda ganham com folga. Seja honesto nessa avaliação.\n\n## Ollama\n\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\nollama pull qwen2.5:7b\nollama pull nomic-embed-text\nollama run qwen2.5:7b \"explique RAG em duas frases\"\n```\n\nExpõe API compatível com o formato da OpenAI em `http://localhost:11434`. Na prática, você troca a `baseURL` e o resto do código continua igual.\n\nRegra de RAM: modelo de 7B quantizado pede ~8 GB; 13B pede ~16 GB.\n\n## OpenRouter\n\nUm token, dezenas de modelos de vários provedores, mesma interface. Serve para três coisas:\n\n- **Comparar** modelos trocando uma string\n- **Fallback** quando um provedor cai\n- **Roteamento** por custo (base do Projeto 8)\n\n## Estratégia recomendada\n\nDesenvolva com API proprietária (rápido de iterar), meça, e **depois** avalie migrar as etapas simples e de alto volume para modelo local ou barato. Otimizar antes de medir é desperdício.",
+      "exercicio": "Resolva a mesma tarefa com um modelo proprietário e com um local via Ollama. Compare qualidade (com critério escrito), latência e custo. Escreva em que cenário cada um ganha.",
+      "videos": [
+        { "t": "Busca: Ollama tutorial rodar LLM local", "u": "https://www.youtube.com/results?search_query=ollama+tutorial+rodar+llm+local", "k": "busca" },
+        { "t": "Busca: OpenRouter como usar múltiplos modelos", "u": "https://www.youtube.com/results?search_query=openrouter+tutorial", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Ollama — site e biblioteca de modelos", "u": "https://ollama.com/library" },
+        { "t": "OpenRouter — documentação e preços", "u": "https://openrouter.ai/docs" }
+      ]
+    },
+    {
+      "titulo": "Agentes — primeira visão",
+      "tempo": 40,
+      "resumo": "A diferença entre workflow com IA e agente de verdade. Aprofundado no módulo 04.",
+      "conteudo": "## A definição que importa\n\n> **Workflow com IA**: você define os passos; o modelo executa cada um.\n>\n> **Agente**: o modelo decide quais passos dar.\n\nÉ só isso — e muda tudo em custo, risco e capacidade.\n\n## O loop\n\n```\npercepção → raciocínio → ação → observação → (repete)\n```\n\nExemplo concreto:\n1. **Objetivo**: \"descubra por que o bloco das 14h não disparou\"\n2. **Raciocínio**: \"preciso ver o status da execução\"\n3. **Ação**: chama a tool `buscar_execucao`\n4. **Observação**: \"status = erro, código 131042\"\n5. **Raciocínio**: \"131042 é problema de billing, vou checar a conta\"\n6. ... até concluir ou bater o limite\n\nNenhum desses passos estava escrito no seu código. É essa a diferença.\n\n## Por que isso é perigoso\n\nO mesmo mecanismo que permite resolver problema imprevisto permite:\n- entrar em loop e queimar orçamento numa madrugada\n- chamar a ferramenta errada com o argumento errado\n- executar ação irreversível achando que era o certo\n\nPor isso o módulo 04 dedica uma unidade inteira a **guardrails**: teto de iterações, teto de custo, allowlist de ações, detecção de repetição, timeout, kill switch e aprovação humana.\n\n## Quando usar agente\n\n✅ O caminho não é previsível de antemão (diagnóstico, pesquisa, triagem)\n❌ O caminho é conhecido — aí é workflow, mais barato, mais rápido, mais confiável\n\nA resposta \"use workflow\" é frequentemente a resposta certa e quase nunca a resposta popular.",
+      "exercicio": "Escolha uma tarefa que você faz na mão toda semana. Escreva os passos. Depois responda: os passos são sempre os mesmos? Se sim, é workflow. Se dependem do que você encontra no caminho, é agente. Guarde essa análise para o módulo 04.",
+      "videos": [
+        { "t": "Busca: AI agents explicado ReAct loop", "u": "https://www.youtube.com/results?search_query=ai+agents+react+loop+explained", "k": "busca" }
+      ],
+      "leitura": [
+        { "t": "Building Effective Agents — Anthropic", "u": "https://www.anthropic.com/engineering/building-effective-agents" },
+        { "t": "ReAct — paper (2022)", "u": "https://arxiv.org/abs/2210.03629" }
+      ]
+    }
+  ]
+}

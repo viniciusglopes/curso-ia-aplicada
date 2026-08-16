@@ -3,58 +3,95 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Engenharia de IA Aplicada — Curso</title>
-<meta name="description" content="Curso autodidata de Engenharia de Software em IA Aplicada: 12 módulos, 32 semanas, 11 projetos.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<title>Engenharia de IA Aplicada</title>
+<meta name="description" content="Programa de estudo de Engenharia de Software em IA Aplicada: 12 módulos, 32 semanas, 11 projetos.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a1a17'/%3E%3Cpath d='M7 23V9h3.4l5.1 9.2L20.6 9H24v14h-2.9v-9.1L17 23h-3l-4.1-9.1V23H7z' fill='%23fbfaf8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
-<header class="topo">
-  <div class="wrap">
-    <div class="marca">
-      <span class="glifo">◍</span>
-      <div>
-        <h1 id="titulo">Engenharia de Software em IA Aplicada</h1>
-        <p id="subtitulo" class="sub">Curso autodidata · 32 semanas · 11 projetos</p>
-      </div>
-    </div>
-    <button id="tema" class="btn-icone" title="Alternar tema" aria-label="Alternar tema">◐</button>
+<header class="cab">
+  <div class="cab-in">
+    <a class="marca" href="#">
+      <span class="marca-mono">IA</span>
+      <span class="marca-txt" id="titulo">Engenharia de IA Aplicada</span>
+    </a>
+    <nav class="cab-nav">
+      <a id="link-repo-topo" href="#" target="_blank" rel="noopener">Repositório</a>
+      <button id="tema" class="txt-btn" aria-live="polite">Escuro</button>
+    </nav>
   </div>
 </header>
 
-<main class="wrap">
+<main>
 
-  <section class="painel" aria-label="Progresso geral">
-    <div class="painel-topo">
-      <div>
-        <h2>Seu progresso</h2>
-        <p class="sub" id="resumo">Carregando…</p>
-      </div>
-      <div class="pct" id="pct-geral">0%</div>
-    </div>
-    <div class="barra grande"><div class="preencher" id="barra-geral"></div></div>
-
-    <div class="stats" id="stats"></div>
-
-    <div class="acoes">
-      <button class="btn" id="exportar">Exportar progresso</button>
-      <button class="btn" id="importar-btn">Importar</button>
-      <input type="file" id="importar" accept="application/json" hidden>
-      <button class="btn perigo" id="limpar">Zerar tudo</button>
+  <section class="capa">
+    <div class="capa-in">
+      <p class="olho" id="subtitulo">32 semanas · 12 módulos · 11 projetos</p>
+      <h1>Programa de estudo em<br>engenharia de IA aplicada</h1>
+      <p class="lead">
+        Da primeira rede neural ao micro-SaaS em produção. Cada módulo termina com algo rodando,
+        não com um certificado.
+      </p>
     </div>
   </section>
 
-  <nav class="fases" id="fases" aria-label="Fases do curso"></nav>
+  <section class="medidor" aria-label="Progresso">
+    <div class="medidor-in">
+      <div class="med-num">
+        <span class="pct" id="pct-geral">0<i>%</i></span>
+        <span class="med-cap" id="resumo">—</span>
+      </div>
+      <dl class="med-lista" id="stats"></dl>
+    </div>
+    <div class="regua" aria-hidden="true"><i id="barra-geral"></i></div>
+  </section>
 
-  <section id="modulos" class="modulos"></section>
+  <section class="fases-band" aria-label="Fases">
+    <ol class="fases" id="fases"></ol>
+  </section>
+
+  <section class="indice">
+    <h2 class="rotulo">Módulos</h2>
+    <div id="modulos" class="lista-mod"></div>
+  </section>
 
   <footer class="rodape">
-    <p>Progresso salvo apenas neste navegador (localStorage). Use <b>Exportar</b> para levar para outro dispositivo.</p>
-    <p id="link-repo"></p>
+    <div class="rodape-in">
+      <p>Progresso salvo apenas neste navegador. Exporte para levar a outro dispositivo.</p>
+      <div class="acoes">
+        <button class="txt-btn" id="exportar">Exportar</button>
+        <button class="txt-btn" id="importar-btn">Importar</button>
+        <input type="file" id="importar" accept="application/json" hidden>
+        <button class="txt-btn perigo" id="limpar">Zerar</button>
+      </div>
+      <p id="link-repo"></p>
+    </div>
   </footer>
 
 </main>
+
+<div class="veu" id="fundo" hidden></div>
+
+<article class="leitor" id="gaveta" hidden aria-modal="true" role="dialog" aria-labelledby="g-titulo">
+  <header class="l-cab">
+    <div class="l-cab-in">
+      <p class="l-tag" id="g-tag"></p>
+      <button class="txt-btn" id="g-fechar" aria-label="Fechar leitura">Fechar</button>
+    </div>
+    <h2 id="g-titulo"></h2>
+    <p class="l-resumo" id="g-resumo"></p>
+  </header>
+  <div class="l-corpo" id="g-corpo"></div>
+  <footer class="l-pe">
+    <label class="marcar"><input type="checkbox" id="g-check"><span>Aula concluída</span></label>
+    <div class="l-nav">
+      <button class="txt-btn" id="g-ant">← Anterior</button>
+      <button class="txt-btn" id="g-prox">Próxima →</button>
+    </div>
+  </footer>
+</article>
 
 <script src="assets/app.js"></script>
 </body>

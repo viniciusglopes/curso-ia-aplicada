@@ -1,13 +1,50 @@
 {
-  "titulo": "Engenharia de Software em IA Aplicada",
-  "subtitulo": "Curso autodidata · 32 semanas · 11 projetos",
+  "titulo": "Engenharia de IA Aplicada",
+  "subtitulo": "Programa autodidata · 32 semanas · 11 projetos",
   "repo": "https://github.com/viniciusglopes/curso-ia-aplicada",
   "fases": [
-    { "nome": "Fundamentos", "semanas": "1–6", "modulos": ["01", "02"] },
-    { "nome": "Protocolos e Agentes", "semanas": "7–13", "modulos": ["03", "04"] },
-    { "nome": "Aplicação por domínio", "semanas": "14–20", "modulos": ["05", "06", "07"] },
-    { "nome": "Arquitetura e Governança", "semanas": "21–28", "modulos": ["08", "09", "10"] },
-    { "nome": "Capstone e Carreira", "semanas": "29–32", "modulos": ["11", "12"] }
+    {
+      "nome": "Fundamentos",
+      "semanas": "1–6",
+      "modulos": [
+        "01",
+        "02"
+      ]
+    },
+    {
+      "nome": "Protocolos e Agentes",
+      "semanas": "7–13",
+      "modulos": [
+        "03",
+        "04"
+      ]
+    },
+    {
+      "nome": "Aplicação por domínio",
+      "semanas": "14–20",
+      "modulos": [
+        "05",
+        "06",
+        "07"
+      ]
+    },
+    {
+      "nome": "Arquitetura e Governança",
+      "semanas": "21–28",
+      "modulos": [
+        "08",
+        "09",
+        "10"
+      ]
+    },
+    {
+      "nome": "Capstone e Carreira",
+      "semanas": "29–32",
+      "modulos": [
+        "11",
+        "12"
+      ]
+    }
   ],
   "modulos": [
     {
